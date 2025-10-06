@@ -45,3 +45,7 @@ gastos y objetivos de ahorro.
 ### Recomendaciones
 - Es importante poder crear una aplicacion que pueda ser escalable, con sugerencias de usuarios al igual que la recoleccion de datos para poder brindar una aplicacion web que busque ayudar a las personas con sus finanzas.
 - Es recomendable usar encuestas o entrevistas con el publico objetivo con el fin coleccionar datos que puedan ser utiles para el desarrollo de la aplicaciones.
+
+## Recopilación de Datos mediante encuesta
+- A continuación se adjunta el enlace sobre la encuesta realizada en google forms: https://forms.gle/Z37kHsvgyEFLNFh28
+- El siguiente enlace es sobre el excel descargado de las respuestas enviadas de la encuesta: https://docs.google.com/spreadsheets/d/1N5IAJ6bSpRdZBLmkI7sXp9bStE4N4RN7fFy1bwsVrXQ/edit?usp=sharing
