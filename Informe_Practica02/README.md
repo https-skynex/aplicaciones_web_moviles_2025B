@@ -140,8 +140,10 @@ El sistema presenta los **ingresos, egresos, metas y ahorros** de manera clara y
 - Si no existen datos financieros, el sistema muestra un mensaje invitando al usuario a registrar sus primeras transacciones.
 
 ## Diagramas UML
+![Diagrama UML](https://github.com/user-attachments/assets/3d58f13c-1872-491e-82a4-93535274d102)
 
 
 ## Elaboración de los primeros mockups de la aplicación que representen la interfaz de usuario en Microsoft Excel.
 A continuanción se muestra un link para accerder a Excel:
+https://epnecuador-my.sharepoint.com/:f:/g/personal/kevin_perez05_epn_edu_ec/EnnfXoCeDrxKmG3bg9Y2q4EBNl9aJuBkrLpvT_Ms12ApXQ?e=uRER7C
 
