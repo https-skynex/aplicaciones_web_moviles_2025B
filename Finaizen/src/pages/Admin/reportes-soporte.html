@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes de Soporte | Admin Panel</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        /* Estilos específicos */
+        #sidebar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+        }
+        main {
+            flex-grow: 1;
+            padding: 30px;
+            margin-left: 250px;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="sidebar-container"></div>
+        
+        <main>
+            <h1>Reportes de Soporte</h1>
+            
+        </main>
+    </div>
+
+    <script>
+        // Cargar sidebar
+        fetch('../../components/sidebar_admin.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('sidebar-container').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar el sidebar:', error));
+    </script>
+</body>
+</html>
