@@ -18,12 +18,22 @@
             display: flex;
         }
 
+        /* Estilos del Sidebar */
+        #sidebar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+        }
+
         /* --- Estilos del Contenido Principal (Dashboard) --- */
         main {
             flex-grow: 1;
             padding: 30px;
             overflow-y: auto;
             height: 100vh;
+            margin-left: 250px; /* Espacio para el sidebar */
         }
         .summary-cards {
             display: flex;
