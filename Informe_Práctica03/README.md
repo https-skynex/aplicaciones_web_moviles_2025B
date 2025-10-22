@@ -20,7 +20,15 @@ En la práctica se vieron los detalles sobre los primeros mockups para realizar 
 
 - administrar registros
   ![administrar registros](./assets/administrar_registros.png)
+  
 - nuevo ingreso
+  ![nuevo-ingreso](./assets/nuevo_ingreso.png)
+  
 - nuevo egreso
+  ![nuevo-egreso](./assets/nuevo_egreso.png)
+  
 - plan de ahorro
+  ![plan-ahorro](./assets/plan_ahorro.png)
+  
 - presupuestos
+  ![presupuestos](./assets/presupuestos.png)
