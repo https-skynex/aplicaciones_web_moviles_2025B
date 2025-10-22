@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () =>{
     const mainContent = document.querySelector("main.dashboard-admin");
 
     if (sidebarContainer) {
-        fetch("../../components/sidebar_user.html")
+        fetch("../../components/sidebar_admin.html")
             .then(response => response.text())
             .then(html => {
                 sidebarContainer.innerHTML = html;
