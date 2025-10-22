@@ -1,33 +1,35 @@
-/* src/css/nuevo_ingreso.css - REDISEÑO SOFISTICADO PASTEL */
+/* src/css/nuevo_ingreso.css - REDISEÑO NEÓN VERDE */
 
-/* --- Fondo claro y centrado para la página --- */
+/* --- Fondo oscuro y centrado para la página --- */
 .main-content {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    background-color: #f8f9fa; /* Fondo gris muy claro */
+    background-color: #1a1c20; /* Fondo oscuro principal */
 }
 
-/* --- Formulario Principal con Estilo Claro --- */
+/* --- Formulario Principal con Efecto Neón --- */
 .income-form {
-    background-color: #ffffff;
+    background-color: #252a34; /* Fondo oscuro para el formulario */
     padding: 2.5em;
     border-radius: 20px;
     width: 100%;
     max-width: 800px;
     text-align: center;
-    border: 1px solid #e9ecef;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    border: 1px solid #333a45;
+    
+    /* ¡LA MAGIA DEL NEÓN VERDE! */
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.25), inset 0 0 15px rgba(40, 167, 69, 0.15);
 }
 
 .income-form h1 {
     margin-top: 0;
-    color: #343a40;
+    color: #f0f0f0;
 }
 
 .income-form h2 {
-    color: #6c757d;
+    color: #888;
     margin-bottom: 2em;
     font-weight: normal;
 }
@@ -42,7 +44,7 @@
     display: block;
     margin-bottom: 0.8em;
     font-weight: bold;
-    color: #343a40;
+    color: #ccc;
 }
 
 .form-row {
@@ -54,13 +56,13 @@
     flex: 1;
 }
 
-/* --- Campo de Descripción --- */
+/* --- Campo de Descripción (Estilo Oscuro) --- */
 #descripcion {
     width: 100%;
     padding: 12px 15px;
-    background-color: #f8f9fa;
-    border: 2px solid #dee2e6;
-    color: #343a40;
+    background-color: #1a1c20;
+    border: 2px solid #555;
+    color: #f0f0f0;
     border-radius: 10px;
     font-size: 1em;
     box-sizing: border-box;
@@ -69,11 +71,11 @@
 
 #descripcion:focus {
     outline: none;
-    border-color: #81C784; /* Verde pastel al enfocar */
-    box-shadow: 0 0 8px rgba(129, 199, 132, 0.3);
+    border-color: #28a745; /* Verde neón al enfocar */
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
 }
 
-/* --- Lista de Frecuencia --- */
+/* --- Lista de Frecuencia (Estilo Oscuro) --- */
 .frequency-list {
     list-style: none;
     padding: 0;
@@ -83,8 +85,8 @@
 .frequency-list li {
     padding: 10px 15px;
     background: transparent;
-    border: 2px solid #dee2e6;
-    color: #495057;
+    border: 2px solid #555;
+    color: #ccc;
     border-radius: 8px;
     margin-bottom: 0.5em;
     cursor: pointer;
@@ -92,33 +94,33 @@
 }
 
 .frequency-list li:hover {
-    border-color: #81C784;
-    color: #81C784;
+    border-color: #28a745;
+    color: #28a745;
 }
 
 .frequency-list li.active {
-    background-color: #81C784;
-    color: white;
-    border-color: #81C784;
+    background-color: #28a745;
+    color: #1a1c20; /* Texto oscuro para contraste */
+    border-color: #28a745;
     font-weight: bold;
 }
 
-/* --- Selector de Días --- */
+/* --- Selector de Días (Estilo Oscuro) --- */
 .days-selector {
-    background-color: #f8f9fa;
-    border: 2px solid #dee2e6;
+    background-color: #1a1c20;
+    border: 2px solid #555;
     padding: 1.5em;
     display: flex;
     flex-wrap: wrap;
     gap: 0.7em;
     justify-content: center;
-    border-radius: 16px;
+    border-radius: 16px; /* Borde redondeado simple y moderno */
 }
 
 .day-btn {
     background-color: transparent;
-    border: 2px solid #ced4da;
-    color: #495057;
+    border: 2px solid #555;
+    color: #ccc;
     border-radius: 20px;
     padding: 8px 16px;
     font-size: 0.9em;
@@ -126,20 +128,20 @@
     transition: all 0.2s ease-in-out;
 }
 .day-btn:hover {
-    border-color: #81C784;
-    color: #81C784;
+    border-color: #28a745;
+    color: #28a745;
 }
 
 .day-btn.active {
-    background-color: #81C784;
-    color: white;
-    border-color: #81C784;
+    background-color: #28a745;
+    color: #1a1c20;
+    border-color: #28a745;
     font-weight: bold;
 }
 
-/* --- Botón de Guardar --- */
+/* --- Botón de Guardar (Estilo Oscuro) --- */
 .save-btn {
-    background-color: #81C784;
+    background-color: #28a745;
     color: white;
     border: none;
     padding: 12px 30px;
@@ -152,7 +154,7 @@
 }
 
 .save-btn:hover {
-    opacity: 0.85;
+    background-color: #218838;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(129, 199, 132, 0.3);
+    box-shadow: 0 4px 20px rgba(40, 167, 69, 0.4);
 }
