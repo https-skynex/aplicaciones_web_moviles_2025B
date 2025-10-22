@@ -15,4 +15,12 @@ En la práctica se vieron los detalles sobre los primeros mockups para realizar 
 - Se recomienda, por facilidad creativa y mejor rendimineto guiarse de una página existente para realizar los mockups.
 
 ## Capturas de las pantallas implementadas.
-En el siguiente link se adjuntan algunos mockups:
+- Dashboard
+  ![dashboard](./assets/dashboard.png)
+
+- administrar registros
+  ![administrar registros](./assets/administrar_registros.png)
+- nuevo ingreso
+- nuevo egreso
+- plan de ahorro
+- presupuestos
