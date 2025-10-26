@@ -5,6 +5,8 @@
 
 ## Descripción Breve del objetivo de la práctica.
 En la práctica se vieron los detalles sobre los primeros mockups para realizar la implementación en HTML y CSS.
+En donde se compartieron los avances realizados, además de haber implementado de una vez una estructura de carpetas adecuadas para la organizacion de los distintos documentos (html, css y javascript).
+Es importante mencionar que, contar con una organizacion adecuada de los archivos y contar con un estructura que permita el crecimiento de la aplicacion web y aplicar los cambios que sean necesarios.
 
 ## Conclusiones y recomendaciones
 ### Conclusiones
