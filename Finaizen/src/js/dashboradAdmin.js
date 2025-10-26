@@ -1,29 +1,4 @@
-document.addEventListener("DOMContentLoaded", () =>{
-     const sidebarContainer = document.getElementById("sidebar-container");
-    const mainContent = document.querySelector("main.dashboard-admin");
 
-    if (sidebarContainer) {
-        fetch("../../components/sidebar_user.html")
-            .then(response => response.text())
-            .then(html => {
-                sidebarContainer.innerHTML = html;
-                
-                // --- Lógica del Toggle (se ejecuta DESPUÉS de cargar el sidebar) ---
-                const menuToggleButton = document.getElementById("menu-toggle");
-
-                if (menuToggleButton) {
-                    menuToggleButton.addEventListener("click", () => {
-                        // Añade/quita la clase 'collapsed' a la sidebar
-                        sidebarContainer.classList.toggle("collapsed");
-                        // Añade/quita la clase 'sidebar-collapsed' al contenido principal
-                        mainContent.classList.toggle("sidebar-collapsed");
-                    });
-                }
-            })
-            .catch(err => console.error("Error al cargar el sidebar:", err));
-    }
-
-});
     // --- Script para el Gráfico ---
     const ctx = document.getElementById('userGrowthChart').getContext('2d');
     const userGrowthChart = new Chart(ctx, {
