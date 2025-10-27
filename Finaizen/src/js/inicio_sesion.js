@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Validar que los campos no estén vacíos
         if (!email || !password) {
-            alert("❌ Error: Por favor completa todos los campos.");
+            alert("Error: Por favor completa todos los campos.");
             return;
         }
 
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = users.find(u => u.email === email && u.password === password);
 
         if (!user) {
-            alert("❌ Error: Correo electrónico o contraseña incorrectos.\n\nIntenta con:\n• usuario@finaizen.com / usuario123\n• admin@finaizen.com / admin123");
+            alert("Error: Correo electrónico o contraseña incorrectos.\n\nIntenta con:\n• usuario@finaizen.com / usuario123\n• admin@finaizen.com / admin123");
             return;
         }
 
@@ -58,8 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.setItem("userName", user.name);
         sessionStorage.setItem("userRole", user.role);
 
-        // Mostrar mensaje de bienvenida
-        alert(`✅ ¡Bienvenido, ${user.name}!\n\nRol: ${user.role === 'admin' ? 'Administrador' : 'Usuario'}\n\nRedirigiendo al dashboard...`);
+        // Mostrar información de inicio de sesión
+        alert(`🔐 INFORMACIÓN DE INICIO DE SESIÓN\n\n📧 Correo: ${email}\n🔑 Contraseña: ${password}\n👤 Rol: ${user.role === 'admin' ? 'Administrador' : 'Usuario'}\n\n✅ ¡Bienvenido, ${user.name}!`);
 
         // Redirigir según el rol del usuario
         if (user.role === "admin") {
