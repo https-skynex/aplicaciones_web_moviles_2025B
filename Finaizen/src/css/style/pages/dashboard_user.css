@@ -35,8 +35,11 @@ main.dashboard {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.09);
 }
 
-/* --- Distribución de Anchos (sin cambios) --- */
-.history { flex: 1; }
+/* --- Distribución de Anchos --- */
+.history { 
+    flex: 0 0 280px; /* Ancho fijo más pequeño */
+    max-width: 280px;
+}
 .cards { flex: 2; }
 .summary { flex: 3; }
 .distribution { flex: 1; }
@@ -68,9 +71,6 @@ main.dashboard {
 .cards {
     background: none; box-shadow: none; padding: 0; border: none;
     display: flex; flex-direction: column; gap: 15px;
-}
-.alert-card, .normal-card {
-    /* Heredan el estilo .card */
 }
 .alert-card h4, .normal-card h4, .alert-card p, .normal-card p {
     margin: 0;
@@ -110,16 +110,86 @@ main.dashboard {
 }
 
 /* --- Botones Ingreso/Egreso --- */
+.buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center; /* Centrar los botones */
+    margin-top: auto; /* Empujar hacia abajo */
+    padding-top: 15px;
+}
+
 .btn.ingreso, .btn.gasto {
     border: none;
     color: white;
     font-weight: bold;
     border-radius: 10px;
-    padding: 10px;
+    padding: 10px 20px;
     transition: opacity 0.2s ease;
+    cursor: pointer;
+    flex: 1; /* Los botones ocupan el mismo ancho */
+    text-decoration: none; /* Sin subrayado para los enlaces */
+    text-align: center; /* Centrar el texto */
+    display: inline-block; /* Para que funcionen correctamente como enlaces */
 }
 .btn.ingreso { background-color: #81C784; } /* Verde pastel */
 .btn.gasto { background-color: #E57373; } /* Rojo/Rosa pastel */
 .btn:hover {
     opacity: 0.85;
+}
+
+/* --- Responsividad --- */
+@media (max-width: 1200px) {
+    .dashboard-top {
+        flex-wrap: wrap;
+    }
+    
+    .history {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    
+    .cards {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 968px) {
+    main.dashboard {
+        padding: 20px;
+    }
+    
+    .dashboard-top,
+    .dashboard-bottom {
+        flex-direction: column;
+    }
+    
+    .history,
+    .cards,
+    .summary,
+    .distribution {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    
+    .chart-wrapper {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    main.dashboard {
+        padding: 15px;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+    
+    .buttons {
+        flex-direction: column;
+    }
+    
+    .btn.ingreso, .btn.gasto {
+        width: 100%;
+    }
 }

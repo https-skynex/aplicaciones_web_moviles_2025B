@@ -11,6 +11,12 @@
         .brand-text-color {
             color: #5bc5a7;
         }
+        /* Navbar fijo en la parte superior */
+        #navbar-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
         /* Estilo para los bloques de contenido (móvil y tablet) */
         .feature-section {
             display: flex;

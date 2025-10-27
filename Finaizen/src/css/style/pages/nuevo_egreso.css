@@ -15,7 +15,7 @@
     padding: 2.5em;
     border-radius: 20px;
     width: 100%;
-    max-width: 900px;
+    max-width: 950px;
     text-align: center;
     border: 1px solid #e9ecef;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
@@ -66,7 +66,164 @@
     background-color: #E57373; color: white; border-color: #E57373;
 }
 
-/* --- Calendario (Flatpickr) --- */
+/* --- Selector de Días con Checkboxes --- */
+.days-selector {
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    padding: 1em;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6em;
+    border-radius: 16px;
+    max-width: 500px;
+}
+
+.day-checkbox {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 2px solid #ced4da;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+    min-width: 0;
+    gap: 10px;
+}
+
+.day-checkbox:hover {
+    border-color: #E57373;
+    background-color: #fef5f5;
+}
+
+.day-checkbox input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ced4da;
+    border-radius: 4px;
+    margin-right: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.day-checkbox input[type="checkbox"]:checked {
+    background-color: #E57373;
+    border-color: #E57373;
+}
+
+.day-checkbox input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.day-checkbox input[type="checkbox"]:checked ~ span {
+    color: #E57373;
+    font-weight: 600;
+}
+
+.day-checkbox span {
+    color: #495057;
+    font-size: 0.92em;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* --- Calendario Visual para Mensual --- */
+.month-day-selector {
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    padding: 1.5em;
+    border-radius: 16px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #ced4da;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #495057;
+    transition: all 0.2s ease-in-out;
+    font-weight: 500;
+}
+
+.calendar-day:hover {
+    border-color: #E57373;
+    background-color: #fef5f5;
+    transform: scale(1.05);
+}
+
+.calendar-day.selected {
+    background-color: #E57373;
+    color: white;
+    border-color: #E57373;
+    font-weight: bold;
+}
+
+.calendar-day.disabled {
+    background-color: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+    border-color: #e9ecef;
+}
+
+.calendar-day.disabled:hover {
+    transform: none;
+    border-color: #e9ecef;
+    background-color: #e9ecef;
+}
+
+/* --- Selector de Fecha (para Anual) --- */
+.date-selector {
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    padding: 1.5em;
+    border-radius: 16px;
+}
+
+.date-selector input[type="date"] {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: white;
+    border: 2px solid #ced4da;
+    color: #343a40;
+    border-radius: 10px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.date-selector input[type="date"]:focus {
+    outline: none;
+    border-color: #E57373;
+    box-shadow: 0 0 8px rgba(229, 115, 115, 0.3);
+}
+
+/* --- Calendario (Flatpickr) - Obsoleto --- */
 /* Para que el calendario se vea bien en tema claro, quitamos el 'dark.css' de Flatpickr */
 .flatpickr-calendar {
     background: #ffffff;

@@ -8,15 +8,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const ctxLine = document.getElementById("chart-line");
     const ctxPie = document.getElementById("chart-pie");
 
-    // === Gráfico de Línea (Mejorado) ===
+    let chartLine = null;
+    let chartPie = null;
+
+    // === Gráfico de Línea (Mejorado y Responsive) ===
     if (ctxLine) {
-        new Chart(ctxLine, {
+        chartLine = new Chart(ctxLine, {
             type: "line",
             data: {
                 labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct"],
                 datasets: [{
                     label: "Ahorro Mensual",
-                    data: [400, 600],
+                    data: [400, 600, 800, 700, 900, 1200],
                     borderColor: "#5e35b1", // Un morado elegante
                     backgroundColor: "rgba(94, 53, 177, 0.1)",
                     borderWidth: 3,
@@ -27,15 +30,19 @@ document.addEventListener("DOMContentLoaded", () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: false } }
+                plugins: { 
+                    legend: { display: false } 
+                },
+                scales: { 
+                    y: { beginAtZero: false } 
+                }
             }
         });
     }
 
-    // === Gráfico de Dona (Mejorado) ===
+    // === Gráfico de Dona (Mejorado y Responsive) ===
     if (ctxPie) {
-        new Chart(ctxPie, {
+        chartPie = new Chart(ctxPie, {
             type: "doughnut", // El de la imagen es tipo dona
             data: {
                 labels: ["Vivienda", "Transporte", "Comida", "Ocio"],
@@ -63,4 +70,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // === Manejar redimensionamiento de ventana ===
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            if (chartLine) {
+                chartLine.resize();
+            }
+            if (chartPie) {
+                chartPie.resize();
+            }
+        }, 100);
+    });
 });
