@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="../../css/style/base/main.css">
     <link rel="stylesheet" href="../../css/style/components/sidebar.css">
     <link rel="stylesheet" href="../../css/style/pages/nuevo_egreso.css">
-    <!-- CSS para el Calendario (¡Importante!) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
     <div class="container">
@@ -19,13 +17,24 @@
 
         <!-- Contenido principal de la página -->
         <main class="main-content">
-            <form class="expense-form">
+            <form class="expense-form" novalidate>
                 <h1>Nuevo Egreso</h1>
-                <h2>Monto: $ 15</h2>
+
+                <div class="form-group amount-group">
+                    <label for="monto">Monto:</label>
+                    <div class="amount-input-wrapper input-wrapper">
+                        <span>$</span>
+                        <input type="number" id="monto" value="15.00" step="0.01" placeholder="0.00" required>
+                        <div class="error-message"></div>
+                    </div>
+                </div>
 
                 <div class="form-group description-group">
                     <label for="descripcion-egreso">Descripción:</label>
-                    <input type="text" id="descripcion-egreso" placeholder="Ej: Suscripción streaming, comida, etc.">
+                    <div class="input-wrapper">
+                        <input type="text" id="descripcion-egreso" placeholder="Ej: Suscripción streaming, comida, etc." required>
+                        <div class="error-message"></div>
+                    </div>
                 </div>
 
                 <div class="form-row">
@@ -54,47 +63,40 @@
                     <div class="form-group">
                         <label id="time-selector-label">Seleccione día del mes:</label>
                         
-                        <!-- Selector de días de la semana (para Diario y Semanal) -->
-                        <div class="days-selector" id="days-selector" style="display: none;">
-                            <label class="day-checkbox">
-                                <input type="checkbox" data-day="lunes">
-                                <span>Lunes</span>
-                            </label>
-                            <label class="day-checkbox">
-                                <input type="checkbox" data-day="martes">
-                                <span>Martes</span>
-                            </label>
-                            <label class="day-checkbox">
-                                <input type="checkbox" data-day="miercoles">
-                                <span>Miércoles</span>
-                            </label>
-                            <label class="day-checkbox">
-                                <input type="checkbox" data-day="jueves">
-                                <span>Jueves</span>
-                            </label>
-                            <label class="day-checkbox">
-                                <input type="checkbox" data-day="viernes">
-                                <span>Viernes</span>
-                            </label>
-                            <label class="day-checkbox">
-                                <input type="checkbox" data-day="sabado">
-                                <span>Sábado</span>
-                            </label>
-                            <label class="day-checkbox">
-                                <input type="checkbox" data-day="domingo">
-                                <span>Domingo</span>
-                            </label>
+                        <div class="input-wrapper">
+                            <div class="days-selector" id="days-selector" style="display: none;">
+                                <label class="day-checkbox"><input type="checkbox" data-day="lunes"><span>Lunes</span></label>
+                                <label class="day-checkbox"><input type="checkbox" data-day="martes"><span>Martes</span></label>
+                                <label class="day-checkbox"><input type="checkbox" data-day="miercoles"><span>Miércoles</span></label>
+                                <label class="day-checkbox"><input type="checkbox" data-day="jueves"><span>Jueves</span></label>
+                                <label class="day-checkbox"><input type="checkbox" data-day="viernes"><span>Viernes</span></label>
+                                <label class="day-checkbox"><input type="checkbox" data-day="sabado"><span>Sábado</span></label>
+                                <label class="day-checkbox"><input type="checkbox" data-day="domingo"><span>Domingo</span></label>
+                            </div>
+                            <div class="error-message"></div>
                         </div>
 
-                        <!-- Selector de día del mes (para Mensual) - Calendario visual -->
                         <div class="month-day-selector" id="month-day-selector" style="display: none;">
                             <div class="calendar-grid" id="calendar-grid"></div>
                             <input type="hidden" id="day-of-month" value="">
                         </div>
 
-                        <!-- Selector de fecha completa (para Anual) -->
                         <div class="date-selector" id="date-selector" style="display: none;">
                             <input type="date" id="specific-date">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-group">
+                    <label class="notification-checkbox-label">
+                        <input type="checkbox" id="activar-notificacion">
+                        <span>Activar notificación</span>
+                    </label>
+                    <div class="time-input-container" id="time-input-container" style="display: none;">
+                        <label for="hora-notificacion">Hora:</label>
+                        <div class="input-wrapper">
+                           <input type="time" id="hora-notificacion">
+                           <div class="error-message"></div>
                         </div>
                     </div>
                 </div>
@@ -106,7 +108,6 @@
 
     <!-- Scripts -->
     <script src="../../js/main.js"></script>
-    <!-- Script para el Calendario (¡Importante!) -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="../../js/nuevo_egreso.js"></script>
 </body>
