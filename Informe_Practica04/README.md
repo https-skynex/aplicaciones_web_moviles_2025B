@@ -31,19 +31,37 @@ A continuación se listan los assets exportados para las vistas en Desktop y Tab
 
 ### Desktop
 
-- `assets/desktop/AdminDashboard.png`
-- `assets/desktop/AdminInteligencia.png`
-- `assets/desktop/Inicio.png`
-- `assets/desktop/PlanAhorro.png`
-- `assets/desktop/UserConfiguration.png`
+- Admin Dashboard (Desktop)
+	![admin dashboard - desktop](./assets/desktop/AdminDashboard.png)
+
+- Inteligencia de Mercado (Desktop)
+	![inteligencia de mercado - desktop](./assets/desktop/AdminInteligencia.png)
+
+- Inicio (Desktop)
+	![inicio - desktop](./assets/desktop/Inicio.png)
+
+- Plan de Ahorro (Desktop)
+	![plan de ahorro - desktop](./assets/desktop/PlanAhorro.png)
+
+- Configuración de Usuario (Desktop)
+	![configuración de usuario - desktop](./assets/desktop/UserConfiguration.png)
 
 ### Tablet
 
-- `assets/tablet/AdminDesktop.png`
-- `assets/tablet/AdminInteligencia.png`
-- `assets/tablet/Inicio.png`
-- `assets/tablet/PlanAhorro.png`
-- `assets/tablet/UserConfiguration.png`
+- Admin (Tablet)
+	![admin - tablet](./assets/tablet/AdminDesktop.png)
+
+- Inteligencia de Mercado (Tablet)
+	![inteligencia de mercado - tablet](./assets/tablet/AdminInteligencia.png)
+
+- Inicio (Tablet)
+	![inicio - tablet](./assets/tablet/Inicio.png)
+
+- Plan de Ahorro (Tablet)
+	![plan de ahorro - tablet](./assets/tablet/PlanAhorro.png)
+
+- Configuración de Usuario (Tablet)
+	![configuración de usuario - tablet](./assets/tablet/UserConfiguration.png)
 
 
 ## Conclusiones y recomendaciones
