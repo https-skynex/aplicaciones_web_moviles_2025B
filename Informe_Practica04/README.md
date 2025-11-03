@@ -25,6 +25,27 @@ Los que se consiguio para esta practica fue:
 - Se dejaron referencias preparadas a variables CSS en algunas vistas, con miras a centralizar un sistema de diseño en una siguiente iteración.
 
 
+## Assets de interfaz (Desktop y Tablet)
+
+A continuación se listan los assets exportados para las vistas en Desktop y Tablet usados en esta práctica.
+
+### Desktop
+
+- `assets/desktop/AdminDashboard.png`
+- `assets/desktop/AdminInteligencia.png`
+- `assets/desktop/Inicio.png`
+- `assets/desktop/PlanAhorro.png`
+- `assets/desktop/UserConfiguration.png`
+
+### Tablet
+
+- `assets/tablet/AdminDesktop.png`
+- `assets/tablet/AdminInteligencia.png`
+- `assets/tablet/Inicio.png`
+- `assets/tablet/PlanAhorro.png`
+- `assets/tablet/UserConfiguration.png`
+
+
 ## Conclusiones y recomendaciones
 ### Conclusiones
 
