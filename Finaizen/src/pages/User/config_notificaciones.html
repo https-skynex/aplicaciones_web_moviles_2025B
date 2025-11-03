@@ -13,6 +13,29 @@
 </head>
 
 <body>
+<!-- Plantilla oculta para items de notificación -->
+<template id="notification-item-template">
+    <article class="notification-item" data-id="" data-status="" data-type="">
+        <div class="notification-info">
+            <h3 class="notification-title"></h3>
+            <p class="notification-description"></p>
+            <div class="notification-meta">
+                <span class="notification-badge"></span>
+                <div class="advance-time-selector" title="Configura con cuánta anticipación deseas recibir la notificación">
+                    <label class="time-label">
+                        <span class="time-icon"></span>
+                        Notificar:
+                    </label>
+                    <select class="advance-time-select">
+                        <!-- Las opciones se llenarán desde JavaScript -->
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button class="toggle-btn"></button>
+    </article>
+</template>
+
     <div class="container">
         <!-- El sidebar de configuración se cargará aquí -->
         <div id="sidebar-container" data-sidebar="config"></div>
@@ -30,35 +53,15 @@
                         <option value="active">Solo Activos</option>
                         <option value="inactive">Solo Inactivos</option>
                     </select>
+                    <select id="notification-type-filter">
+                        <option value="all">Todos (ingresos/egresos)</option>
+                        <option value="income">Solo Ingresos</option>
+                        <option value="expense">Solo Egresos</option>
+                    </select>
                 </div>
 
                 <div class="notification-list">
-                    <!-- Notificación Inactiva -->
-                    <article class="notification-item" data-status="inactive">
-                        <div class="notification-info">
-                            <h3>Mensualidad</h3>
-                            <p>Recordatorio el día 19 de cada mes</p>
-                        </div>
-                        <button class="toggle-btn">Habilitar</button>
-                    </article>
-
-                    <!-- Notificación Activa -->
-                    <article class="notification-item" data-status="active">
-                        <div class="notification-info">
-                            <h3>Pagar la luz</h3>
-                            <p>Recordatorio el día 5 de cada mes</p>
-                        </div>
-                        <button class="toggle-btn">Deshabilitar</button>
-                    </article>
-
-                    <!-- Notificación Activa -->
-                    <article class="notification-item" data-status="active">
-                        <div class="notification-info">
-                            <h3>Pagar el internet</h3>
-                            <p>Recordatorio el día 2 de cada mes</p>
-                        </div>
-                        <button class="toggle-btn">Deshabilitar</button>
-                    </article>
+                    <!-- Las notificaciones se cargarán dinámicamente desde JavaScript -->
                 </div>
 
             </div>
