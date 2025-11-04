@@ -1,95 +1,230 @@
+// src/js/main.js
 
-document.addEventListener("DOMContentLoaded", () => {
-    const sidebarContainer = document.getElementById("sidebar-container");
-    // Usamos una clase genérica para todo el contenido principal
-    const mainContent = document.querySelector(".main-content");
+document.addEventListener('DOMContentLoaded', async () => {
+     // 1. Cargamos el HTML de todos los componentes en paralelo
+    await Promise.all([
+        loadSidebar(),
+        loadProfileModal(),
+        loadIaCorrectionModal(),
+        loadEditRecordModal(),
+        loadConfirmDialog(),
+        loadBudgetModal()
+    ]);
 
-    if (!sidebarContainer || !mainContent) {
-        console.error("No se encontraron los contenedores #sidebar-container o .main-content en esta página.");
-        return;
+    console.log('✅ Todos los componentes principales han sido cargados.');
+    
+    // 2. Ahora que el HTML está en el DOM, inicializamos y obtenemos las instancias
+    // Nota: Solo inicializamos los componentes si su placeholder existe en la página actual.
+    
+     let editModal, confirmDialog, budgetModal;
+
+    if (document.getElementById('edit-modal-placeholder')) {
+        editModal = EditRecordModal.getInstance();
+        editModal.init();
+    }
+    
+    if (document.getElementById('confirm-dialog-placeholder')) {
+        confirmDialog = ConfirmDialog.getInstance();
+        confirmDialog.init();
+        }
+
+    if (document.getElementById('budget-modal-placeholder')) { // <-- AÑADIR INICIALIZACIÓN
+        budgetModal = BudgetModal.getInstance();
+        budgetModal.init();
     }
 
-    // Leemos qué sidebar cargar desde el HTML (ver Paso 3)
-    const sidebarType = sidebarContainer.dataset.sidebar; // 'admin' o 'user'
-
-    if (!sidebarType) {
-        console.error("El contenedor #sidebar-container no tiene el atributo 'data-sidebar'.");
-        return;
+    // Inicializamos los otros modales también para otras páginas
+    if (document.getElementById('modal-placeholder')) {
+        ProfileModal.getInstance();
+    }
+    if (document.getElementById('ia-modal-placeholder')) {
+        IaCorrectionModal.getInstance();
     }
 
-    const sidebarFile = `../../components/sidebar_${sidebarType}.html`;
+    // 3. Llamamos a las funciones de inicialización de página, pasando las instancias necesarias
+    if (typeof initConfigPerfilesPage === 'function') {
+        initConfigPerfilesPage();
+    }
+    if (typeof initSupervisionPage === 'function') {
+        initSupervisionPage();
+    }
+    
+    // CORRECCIÓN CLAVE: Pasamos las instancias a la función de la página
+    if (typeof initAdminRegistrosPage === 'function') {
+        // Solo llamamos a la función si sus dependencias fueron inicializadas
+        if (editModal && confirmDialog) {
+            initAdminRegistrosPage(editModal, confirmDialog);
+        } else {
+            console.error('No se pudo inicializar la página de registros porque faltan uno o más componentes.');
+        }
+    }
 
-    // --- Cargar el Sidebar y Activar el Toggle ---
-    fetch(sidebarFile)
-        .then(response => {
-            if (!response.ok) throw new Error(`No se pudo cargar ${sidebarFile}`);
-            return response.text();
-        })
-        .then(html => {
-            sidebarContainer.innerHTML = html;
-            
-            // Adjuntar el evento al botón DESPUÉS de que la sidebar se haya cargado
-            const menuToggleButton = document.getElementById("menu-toggle");
-            if (menuToggleButton) {
-                menuToggleButton.addEventListener("click", () => {
-                    sidebarContainer.classList.toggle("collapsed");
-                    mainContent.classList.toggle("sidebar-collapsed");
-                });
-            }
-
-            // --- CARGAR MENÚ FLOTANTE DEL USUARIO ---
-            loadSidebarMenu();
-        })
-        .catch(err => console.error("Error al cargar y configurar el sidebar:", err));
+    if (typeof initAdminRegistrosPage === 'function') {
+        initAdminRegistrosPage(editModal, confirmDialog);
+    }
+    if (typeof initPresupuestosPage === 'function') { // <-- AÑADIR LLAMADA
+        initPresupuestosPage(budgetModal, confirmDialog);
+    }
 });
 
-// Función para cargar el menú flotante del usuario
-function loadSidebarMenu() {
-    const dropdownContainer = document.getElementById("user-dropdown-container");
-    
-    if (!dropdownContainer) {
-        return; // No hay contenedor para el dropdown
+/**
+ * Carga el sidebar y su menú desplegable asociado.
+ */
+async function loadSidebar() {
+    const sidebarContainer = document.getElementById('sidebar-container');
+    const mainContent = document.querySelector('.main-content');
+
+    if (!sidebarContainer || !mainContent) {
+        // Esta página no tiene sidebar, terminamos la función.
+        return;
     }
 
-    // Cargar el componente del dropdown
-    fetch('../../components/sidebar_menu.html')
-        .then(response => {
-            if (!response.ok) throw new Error('No se pudo cargar sidebar_menu.html');
-            return response.text();
-        })
-        .then(html => {
-            dropdownContainer.innerHTML = html;
-            
-            // Inicializar eventos del dropdown
-            initSidebarMenu();
-        })
-        .catch(err => console.error("Error al cargar el menú flotante:", err));
+    const sidebarType = sidebarContainer.dataset.sidebar;
+    if (!sidebarType) {
+        console.error("El #sidebar-container no tiene 'data-sidebar'.");
+        return;
+    }
+
+    try {
+        const sidebarFile = `../../components/sidebar/sidebar_${sidebarType}.html`;
+        const response = await fetch(sidebarFile);
+        if (!response.ok) throw new Error(`No se pudo cargar ${sidebarFile}`);
+        
+        sidebarContainer.innerHTML = await response.text();
+        
+        // Adjuntar eventos al contenido recién cargado del sidebar
+        const menuToggleButton = document.getElementById('menu-toggle');
+        if (menuToggleButton) {
+            menuToggleButton.addEventListener('click', () => {
+                sidebarContainer.classList.toggle('collapsed');
+                mainContent.classList.toggle('sidebar-collapsed');
+            });
+        }
+
+        // Cargar y configurar el menú del usuario
+        await loadSidebarMenu();
+
+    } catch (err) {
+        console.error('Error al cargar y configurar el sidebar:', err);
+    }
 }
 
-// Función para inicializar el menú flotante del usuario
+/**
+ * Carga el modal de perfil y lo inicializa.
+ */
+async function loadProfileModal() {
+    const modalPlaceholder = document.getElementById('modal-placeholder');
+    // Si la página no tiene el placeholder, no necesita el modal.
+    if (!modalPlaceholder) {
+        return;
+    }
+
+    try {
+        const response = await fetch('../../components/modals/modal_perfil.html');
+        if (!response.ok) {
+            throw new Error(`Error al cargar el modal: ${response.statusText}`);
+        }
+        
+        modalPlaceholder.innerHTML = await response.text();
+        
+        // Inicializa el script del modal DESPUÉS de que su HTML haya sido cargado.
+        ProfileModal.getInstance();
+        console.log('✅ Modal de perfil cargado e inicializado.');
+
+    } catch (error) {
+        console.error('❌ Falló la carga del modal de perfil:', error);
+        modalPlaceholder.innerHTML = '<p style="color:red; text-align:center;">Error al cargar el componente del modal.</p>';
+    }
+}
+
+
+// --- FUNCIONES DEL MENÚ DEL SIDEBAR (se mantienen igual) ---
+
+async function loadSidebarMenu() {
+    const dropdownContainer = document.getElementById("user-dropdown-container");
+    if (!dropdownContainer) return;
+
+    try {
+        const response = await fetch('../../components/sidebar/sidebar_menu.html');
+        if (!response.ok) throw new Error('No se pudo cargar sidebar_menu.html');
+        
+        dropdownContainer.innerHTML = await response.text();
+        initSidebarMenu(); // Inicializar eventos del dropdown
+    } catch (err) {
+        console.error("Error al cargar el menú flotante:", err);
+    }
+}
+
 function initSidebarMenu() {
     const userMenuTrigger = document.getElementById("user-menu-trigger");
     const userDropdown = document.getElementById("user-dropdown");
+    if (!userMenuTrigger || !userDropdown) return;
 
-    if (!userMenuTrigger || !userDropdown) {
-        return; // No hay menú en esta página
-    }
-
-    // Toggle del menú al hacer clic en el usuario
     userMenuTrigger.addEventListener("click", (e) => {
         e.stopPropagation();
         userDropdown.classList.toggle("active");
     });
 
-    // Cerrar el menú al hacer clic fuera
     document.addEventListener("click", (e) => {
         if (!userMenuTrigger.contains(e.target) && !userDropdown.contains(e.target)) {
             userDropdown.classList.remove("active");
         }
     });
 
-    // Prevenir que el menú se cierre al hacer clic dentro de él
     userDropdown.addEventListener("click", (e) => {
         e.stopPropagation();
     });
+}
+
+async function loadIaCorrectionModal() {
+    const modalPlaceholder = document.getElementById('ia-modal-placeholder');
+    if (!modalPlaceholder) return; 
+
+    try {
+        const response = await fetch('../../components/modals/modal_correccion_ia.html');
+        if (!response.ok) throw new Error('Error al cargar el modal de IA');
+        
+        const modalHTML = await response.text(); // Guardamos el HTML en una variable
+        modalPlaceholder.innerHTML = modalHTML;
+        
+        // --- LÍNEAS DE DEPURACIÓN AÑADIDAS ---
+        console.log('HTML del modal inyectado:', modalPlaceholder.innerHTML);
+        console.log('¿Se encuentra #keyword-weight?:', document.getElementById('keyword-weight'));
+        // --- FIN DE LÍNEAS DE DEPURACIÓN ---
+
+        // Ahora inicializa
+        IaCorrectionModal.getInstance();
+        
+    } catch (error) {
+        console.error('❌ Falló la carga del modal de corrección de IA:', error);
+    }
+}
+
+async function loadEditRecordModal() {
+    const placeholder = document.getElementById('edit-modal-placeholder');
+    if (!placeholder) return;
+    try {
+        const response = await fetch('../../components/modals/modal_edit_record.html');
+        placeholder.innerHTML = await response.text();
+        // YA NO SE LLAMA A .init() AQUÍ
+    } catch (e) { console.error('Error al cargar el modal de edición:', e); }
+}
+
+async function loadConfirmDialog() {
+    const placeholder = document.getElementById('confirm-dialog-placeholder');
+    if (!placeholder) return;
+    try {
+        const response = await fetch('../../components/confirm dialog/confirm_dialog.html');
+        placeholder.innerHTML = await response.text();
+        // YA NO SE LLAMA A .init() AQUÍ
+    } catch (e) { console.error('Error al cargar el diálogo de confirmación:', e); }
+}
+
+async function loadBudgetModal() {
+    const placeholder = document.getElementById('budget-modal-placeholder');
+    if (!placeholder) return;
+    try {
+        const response = await fetch('../../components/modals/modal_budget.html');
+        placeholder.innerHTML = await response.text();
+    } catch (e) { console.error('Error al cargar el modal de presupuestos:', e); }
 }
