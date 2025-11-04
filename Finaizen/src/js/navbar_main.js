@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const navbarFile = "../../components/navbar_main.html";
+    const navbarFile = "../../components/navbar/navbar_main.html";
 
     // Cargar el Navbar
     fetch(navbarFile)
