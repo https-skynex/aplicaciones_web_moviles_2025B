@@ -1,5 +1,21 @@
 // src/js/main.js
 
+/**
+ * Maneja el logout del usuario
+ * Limpia sesiones y redirige a index.html
+ */
+function handleLogout(event) {
+    event.preventDefault();
+    
+    // Llamar a SessionManager para limpiar sesiones
+    if (typeof SessionManager !== 'undefined' && SessionManager.logout) {
+        SessionManager.logout();
+    }
+    
+    // Redirigir a index.html
+    window.location.href = '../Base/index.html';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
      // 1. Cargamos el HTML de todos los componentes en paralelo
     await Promise.all([

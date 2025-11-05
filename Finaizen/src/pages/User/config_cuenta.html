@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración de Cuenta | Finaizen</title>
+
+    <!-- ⚡ VERIFICACIÓN INMEDIATA DE AUTENTICACIÓN -->
+    <script src="../../js/auth/authCheck.js"></script>
+
     <!-- Estilos base y del sidebar (los mismos que usas en el dashboard) -->
     <link rel="stylesheet" href="../../css/style/base/main.css">
     <link rel="stylesheet" href="../../css/style/components/sidebar.css">
@@ -83,7 +87,16 @@
     </div>
 
     <!-- JS para cargar el sidebar y manejar interacciones -->
+    <script src="../../js/auth/sessionManager.js"></script>
+    <script src="../../js/auth/authGuard.js"></script>
     <script src="../../js/configCuenta.js"></script>
     <script src="../../js/main.js"></script> <!-- Si tienes un JS principal -->
+
+    <script>
+        // Proteger esta página - solo usuarios autenticados
+        document.addEventListener('DOMContentLoaded', () => {
+            AuthGuard.requireUser();
+        });
+    </script>
 </body>
 </html>

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supervisión de IA | Admin Panel</title>
+
+    <!-- ⚡ VERIFICACIÓN INMEDIATA DE AUTENTICACIÓN -->
+    <script src="../../js/auth/authCheck.js"></script>
+
     <link rel="stylesheet" href="../../css/style/base/main.css">
     <link rel="stylesheet" href="../../css/style/components/sidebar.css">
     <link rel="stylesheet" href="../../css/style/pages/supervision_categorias.css">
@@ -90,12 +94,21 @@
 
  <!-- CARGAMOS LOS SCRIPTS EN ORDEN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../../js/auth/sessionManager.js"></script>
+    <script src="../../js/auth/authGuard.js"></script>
     <!-- 1. El componente del modal (define la clase) -->
     <script src="../../js/components/modals/modal_correccion_ia.js"></script>
     <!-- 2. La lógica de la página (usa la clase del modal) -->
     <script src="../../js/supervision-categorias.js"></script>
     <!-- 3. El orquestador principal (carga el HTML e inicia todo) -->
     <script src="../../js/main.js"></script>
+
+    <script>
+        // Proteger esta página - solo admins
+        document.addEventListener('DOMContentLoaded', () => {
+            AuthGuard.requireAdmin();
+        });
+    </script>
 </body>
 </html>
 

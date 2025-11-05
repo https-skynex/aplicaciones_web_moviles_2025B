@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             
             console.log("Datos listos para enviar:", formData);
-            alert(`✅ ¡Nuevo ingreso guardado!\n\nMonto: $${formData.monto}\nDescripción: ${formData.descripcion}`);
+            alert(`✅ ¡Nuevo ingreso guardado!\n\nMonto: $${formData.monto}\nDescripción: ${formData.descripcion}\nFrecuencia: ${formData.frecuencia}\nNotificación: ${formData.notificacionActivada ? 'Sí' : 'No'}${formData.notificacionActivada ? ` a las ${formData.horaNotificacion}` : ''}`);
             incomeForm.reset();
             updateTimeSelector('semanal');
             document.querySelector('.frequency-list li[data-value="semanal"]').classList.add('active');

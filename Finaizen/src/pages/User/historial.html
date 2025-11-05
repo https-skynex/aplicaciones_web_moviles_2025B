@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial de Transacciones | Finaizen</title>
+
+    <!-- ⚡ VERIFICACIÓN INMEDIATA DE AUTENTICACIÓN -->
+    <script src="../../js/auth/authCheck.js"></script>
+
     <!-- CSS Global y Específico -->
     <link rel="stylesheet" href="../../css/style/base/main.css">
     <link rel="stylesheet" href="../../css/style/components/sidebar.css">
@@ -301,7 +305,16 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../../js/auth/sessionManager.js"></script>
+    <script src="../../js/auth/authGuard.js"></script>
     <script src="../../js/main.js"></script>
     <script src="../../js/historial.js"></script>
+
+    <script>
+        // Proteger esta página - solo usuarios autenticados
+        document.addEventListener('DOMContentLoaded', () => {
+            AuthGuard.requireUser();
+        });
+    </script>
 </body>
 </html>

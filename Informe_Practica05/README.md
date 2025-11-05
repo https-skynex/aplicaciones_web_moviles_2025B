@@ -57,24 +57,45 @@ Los principales logros de esta práctica fueron:
 
 ## Capturas de las funcionalidades implementadas
 
+### 1. Autenticación y Login
+![Login](./assets/Login.png)
+*Pantalla de inicio de sesión con validación de credenciales*
+
+### 2. Alerta de Login Necesario
+![Alert Login Necesario](./assets/Alert%20Login%20Necesario.png)
+*Sistema de protección de rutas que redirige a login cuando no hay sesión válida*
+
+### 3. Nuevo Ingreso
+![Ingreso](./assets/Ingreso.png)
+*Formulario de registro de nuevos ingresos con validación en tiempo real*
+
+### 4. Historial de Transacciones
+![Historial](./assets/Historial.png)
+*Vista del historial de todas las transacciones (ingresos y egresos) realizadas*
+
+### 5. Administración de Perfiles
+![Perfiles](./assets/Perfiles.png)
+*Pantalla para gestionar múltiples perfiles financieros personalizados*
+
+### 6. Presupuestos Mensuales
+![Presupuestos](./assets/Presupuestos.png)
+*Herramienta para crear y monitorear presupuestos por categoría*
+
 
 ## Conclusiones y recomendaciones
 ### Conclusiones
 
-- La validación de formularios en tiempo real mejora significativamente la experiencia del usuario, permitiendo correcciones inmediatas antes del envío. El patrón de funciones `showError()` y `clearError()` resultó escalable y reutilizable.
-- La manipulación del DOM mediante JavaScript puro (Vanilla JS) demostró ser suficiente para la mayoría de las funcionalidades, sin necesidad de frameworks pesados. El uso de `fetch()` para carga dinámica de componentes HTML mantuvo el código modular y mantenible.
+- La validación de formularios en tiempo real ayuda a identificar que se esten guardando u seleccionando los valores dentro de los formularios, permitiendo correcciones inmediatas antes del envío. El patrón de funciones `showError()` y `clearError()` resultó escalable y reutilizable.
+- La manipulación del DOM mediante JavaScript puro demuestra ser suficiente para la mayoría de las funcionalidades, sin necesidad de frameworks pesados. El uso de `fetch()` para carga dinámica de componentes HTML mantuvo el código modular y mantenible.
 - Chart.js se integró exitosamente para visualización de datos financieros, con configuración responsive que se adapta automáticamente a diferentes tamaños de pantalla mediante eventos de `resize`.
 - El patrón de desarrollo modular (un archivo JS por página/funcionalidad) facilita el mantenimiento, debugging y escalabilidad del proyecto. La centralización de funcionalidades compartidas en `main.js` evitó duplicación de código.
-- El manejo de eventos delegados y el uso de dataset attributes permitió crear interfaces dinámicas sin necesidad de IDs únicos para cada elemento generado programáticamente.
+- El manejo de eventos delegados y el uso de dataset attributes permite crear interfaces dinámicas sin necesidad de IDs únicos para cada elemento generado programáticamente.
 
 ### Recomendaciones
 
-- **Implementar LocalStorage o SessionStorage**: Para persistir los datos de ingresos, egresos y configuraciones del usuario entre sesiones, evitando pérdida de información al recargar la página.
-- **Migrar a un sistema de componentes más robusto**: Considerar el uso de Web Components o un framework ligero como Alpine.js para manejar estados complejos y reactividad, especialmente cuando la aplicación crezca.
+- **Implementacion de LocalStorage o SessionStorage**: Para persistir los datos de ingresos, egresos y configuraciones del usuario entre sesiones, evitando pérdida de información al recargar la página.
+- **Migracion a un sistema de componentes más robusto**: Considerar el uso de Web Components o un framework ligero como Alpine.js para manejar estados complejos y reactividad, especialmente cuando la aplicación crezca.
 - **Añadir manejo de errores en peticiones asíncronas**: Implementar bloques try-catch en las funciones `fetch()` y mostrar mensajes de error amigables al usuario en caso de fallo de carga de componentes.
-- **Optimizar eventos de scroll y resize**: Implementar técnicas de debouncing/throttling para mejorar el rendimiento, especialmente en el listener de `resize` de los gráficos de Chart.js.
-- **Validación del lado del servidor**: Aunque se implementó validación del lado del cliente, es crucial añadir validación en el backend para garantizar la integridad y seguridad de los datos.
-- **Accesibilidad (a11y)**: Añadir atributos ARIA (`aria-invalid`, `aria-describedby`) a los campos con errores de validación y asegurar que los mensajes de error sean anunciados por lectores de pantalla.
 - **Testing automatizado**: Implementar pruebas unitarias con Jest o Vitest para validar las funciones de validación, manipulación del DOM y manejo de eventos, asegurando la robustez del código.
 - **Documentación de funciones**: Añadir JSDoc a las funciones clave para mejorar la mantenibilidad y facilitar la colaboración en equipo.
 

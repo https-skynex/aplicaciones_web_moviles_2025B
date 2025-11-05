@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Usuarios | Admin Panel</title>
+
+    <!-- ⚡ VERIFICACIÓN INMEDIATA DE AUTENTICACIÓN -->
+    <script src="../../js/auth/authCheck.js"></script>
+
     <link rel="stylesheet" href="../../css/style/base/main.css">
     <link rel="stylesheet" href="../../css/style/components/sidebar.css">
     <link rel="stylesheet" href="../../css/style/pages/gestion_usuarios.css">
@@ -55,7 +59,16 @@
     </main>
 </div>
 
+<script src="../../js/auth/sessionManager.js"></script>
+<script src="../../js/auth/authGuard.js"></script>
 <script src="../../js/gestion-usuarios.js"></script>
 <script src="../../js/main.js"></script>
+
+<script>
+    // Proteger esta página - solo admins
+    document.addEventListener('DOMContentLoaded', () => {
+        AuthGuard.requireAdmin();
+    });
+</script>
 </body>
 </html>

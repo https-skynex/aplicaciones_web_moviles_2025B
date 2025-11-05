@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presupuestos Mensuales | Finaizen</title>
+
+    <!-- ⚡ VERIFICACIÓN INMEDIATA DE AUTENTICACIÓN -->
+    <script src="../../js/auth/authCheck.js"></script>
+
     <!-- CSS Global y Específico -->
     <link rel="stylesheet" href="../../css/style/base/main.css">
     <link rel="stylesheet" href="../../css/style/components/sidebar.css">
@@ -38,10 +42,19 @@
     </div>
 
     <!-- 1. Definiciones de los componentes -->
+    <script src="../../js/auth/sessionManager.js"></script>
+    <script src="../../js/auth/authGuard.js"></script>
     <script src="../../js/components/modals/modal_budget.js"></script>
     <script src="../../js/components/confim dialog/confirm_dialog.js"></script>
     <!-- 2. Orquestador y lógica de la página -->
     <script src="../../js/main.js"></script>
     <script src="../../js/presupuestos.js"></script>
+
+    <script>
+        // Proteger esta página - solo usuarios autenticados
+        document.addEventListener('DOMContentLoaded', () => {
+            AuthGuard.requireUser();
+        });
+    </script>
 </body>
 </html>
