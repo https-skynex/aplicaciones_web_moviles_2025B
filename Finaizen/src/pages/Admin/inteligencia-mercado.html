@@ -4,124 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inteligencia de Mercado | Admin Panel</title>
+
+    <!-- ⚡ VERIFICACIÓN INMEDIATA DE AUTENTICACIÓN -->
+    <script src="../../js/auth/authCheck.js"></script>
+
     <!-- Estilos generales y del dashboard que ya tienes -->
-    <link rel="stylesheet" href="../../css/styles.css">
-    <link rel="stylesheet" href="../../css/dashboard.css">
-
-    <style>
-        /* --- Estilos para el Sidebar Fijo --- */
-        #sidebar-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh; /* Ocupa toda la altura de la pantalla */
-            z-index: 1000; /* Un valor alto para asegurar que esté por encima de otros elementos */
-        }
-
-        /* --- Estilos específicos para la página de Inteligencia de Mercado --- */
-        .main-content {
-            flex-grow: 1;
-            padding: 30px;
-            margin-left: 290px; /* Ajusta este valor al ancho de tu sidebar */
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        /* --- Contenedor de Filtros --- */
-        .filters-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #dee2e6;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-group h3 {
-            margin: 0;
-            font-size: 1.2em;
-            color: #333;
-            border-right: 2px solid #eee;
-            padding-right: 20px;
-        }
-
-        .filter-item { display: flex; flex-direction: column; gap: 5px; }
-        .filter-item label { font-size: 0.9em; color: #666; }
-        .filter-item select {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            background-color: #f8f9fa;
-            min-width: 150px;
-        }
-        
-        .comparison-controls {
-            padding-top: 15px;
-            margin-top: 15px;
-            border-top: 1px solid #eee;
-        }
-        
-        #comparison-filters-container {
-            display: none;
-            background-color: #f7f9fc;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        /* --- Contenedores de Gráficos --- */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-        }
-
-        .card {
-            background-color: #fff;
-            border-radius: 12px;
-            padding: 1.5em;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1em;
-        }
-
-        #dataTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1em;
-        }
-        #dataTable th, #dataTable td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .insights-card { border-left: 6px solid #4e79a7; }
-
-        /* Media Query para responsividad de la cuadrícula */
-        @media (max-width: 1200px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../../css/style/base/main.css">
+    <link rel="stylesheet" href="../../css/style/components/sidebar.css">
+    <link rel="stylesheet" href="../../css/style/pages/inteligencia_mercado.css">
 </head>
 <body>
 
 <div class="container">
-    <div id="sidebar-container"></div>
+    <div id="sidebar-container" data-sidebar="admin"></div>
 
     <main class="main-content">
         <section class="filters-container">
@@ -209,200 +104,17 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../js/auth/sessionManager.js"></script>
+<script src="../../js/auth/authGuard.js"></script>
+<script src="../../js/inteligencia-mercado.js"></script>
+<script src="../../js/main.js"></script>
+
 <script>
-    // --- Script para cargar el Sidebar ---
-    fetch('../../components/sidebar_admin.html')
-        .then(response => response.ok ? response.text() : Promise.reject('No se pudo cargar.'))
-        .then(data => { document.getElementById('sidebar-container').innerHTML = data; })
-        .catch(error => console.error('Error al cargar el sidebar:', error));
-
-    // --- Mockup Extendido de Base de Datos ---
-    const mockDatabase = {
-        quito: {
-            "18-25": {
-                expenses: [35000, 28000, 22000, 18000, 15000],
-                incomeSources: [600, 150, 50, 200], // Sueldo, Emprendimiento, Becas, Otros
-                trends: { income: [800, 850, 900, 880, 920, 950], expenses: [700, 720, 750, 800, 780, 810] }
-            },
-            "26-35": {
-                expenses: [42000, 31000, 25000, 20000, 17000],
-                incomeSources: [1500, 400, 0, 300],
-                trends: { income: [2200, 2250, 2300, 2350, 2400, 2450], expenses: [1800, 1900, 1850, 2000, 2100, 2050] }
-            },
-             "36-50": {
-                expenses: [55000, 25000, 28000, 22000, 19000],
-                incomeSources: [2500, 800, 0, 500],
-                trends: { income: [3800, 3850, 3900, 4000, 4100, 4050], expenses: [3000, 3100, 3200, 3150, 3300, 3400] }
-            }
-        },
-        guayaquil: {
-            // ... (datos similares para Guayaquil)
-             "18-25": {
-                expenses: [38000, 26000, 24000, 20000, 13000],
-                incomeSources: [650, 120, 80, 150],
-                trends: { income: [850, 880, 910, 900, 940, 980], expenses: [750, 780, 790, 820, 800, 850] }
-            },
-            "26-35": {
-                expenses: [45000, 33000, 22000, 18000, 16000],
-                incomeSources: [1600, 350, 0, 350],
-                trends: { income: [2300, 2350, 2400, 2450, 2500, 2550], expenses: [1900, 1950, 2000, 2100, 2150, 2200] }
-            },
-             "36-50": {
-                expenses: [58000, 22000, 26000, 25000, 21000],
-                incomeSources: [2800, 700, 0, 600],
-                trends: { income: [4100, 4200, 4150, 4300, 4400, 4350], expenses: [3200, 3300, 3400, 3350, 3500, 3600] }
-            }
-        }
-    };
-    const expenseLabels = ['Restaurantes', 'Suscripciones', 'Transporte', 'Ocio', 'Ropa'];
-    const incomeLabels = ['Sueldo', 'Emprendimiento', 'Becas', 'Otros'];
-    const trendLabels = ['Mes 1', 'Mes 2', 'Mes 3', 'Mes 4', 'Mes 5', 'Mes 6'];
-
-    // --- Inicialización de Gráficos ---
-    const expenseChart = new Chart(document.getElementById('topCategoriesChart').getContext('2d'), {
-        type: 'bar', data: { labels: expenseLabels, datasets: [] },
-        options: { responsive: true, scales: { x: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } }
+    // Proteger esta página - solo admins
+    document.addEventListener('DOMContentLoaded', () => {
+        AuthGuard.requireAdmin();
     });
-    const incomeChart = new Chart(document.getElementById('incomeSourceChart').getContext('2d'), {
-        type: 'doughnut', data: { 
-            labels: incomeLabels, 
-            datasets: [{ 
-                data: [],
-                backgroundColor: [
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 205, 86)',
-                    'rgb(75, 192, 192)',
-                    'rgb(201, 203, 207)'
-                ]
-            }] 
-        },
-        options: { responsive: true, plugins: { legend: { position: 'top' } } }
-    });
-    const trendsChart = new Chart(document.getElementById('trendsChart').getContext('2d'), {
-        type: 'line', data: { labels: trendLabels, datasets: [] },
-        options: { responsive: true, plugins: { legend: { position: 'top' } }, interaction: { mode: 'index', intersect: false } }
-    });
-
-    // --- Referencias a Elementos del DOM ---
-    const ageSelect1 = document.getElementById('age-range-1'), locSelect1 = document.getElementById('location-1');
-    const ageSelect2 = document.getElementById('age-range-2'), locSelect2 = document.getElementById('location-2');
-    const compareToggle = document.getElementById('compare-toggle');
-    const insightText = document.getElementById('insight-text');
-    const tableHeader = document.querySelector('#dataTable thead'), tableBody = document.querySelector('#dataTable tbody');
-
-    // --- Funciones Principales ---
-    function updateDashboard() {
-        const isComparing = compareToggle.checked;
-        const group1 = { age: ageSelect1.value, loc: locSelect1.value, label: `${ageSelect1.options[ageSelect1.selectedIndex].text} en ${locSelect1.options[locSelect1.selectedIndex].text}` };
-        const dataGroup1 = mockDatabase[group1.loc][group1.age];
-        
-        // Actualizar Gráfico de Gastos
-        const expenseDS1 = { label: group1.label, data: dataGroup1.expenses, backgroundColor: 'rgba(54, 162, 235, 0.7)' };
-        expenseChart.data.datasets = [expenseDS1];
-        
-        // Actualizar Gráfico de Ingresos y Tendencias (solo para el grupo principal)
-        incomeChart.data.datasets[0].data = dataGroup1.incomeSources;
-        trendsChart.data.datasets = [
-            { label: 'Ingresos', data: dataGroup1.trends.income, borderColor: 'rgb(75, 192, 192)', tension: 0.1 },
-            { label: 'Egresos', data: dataGroup1.trends.expenses, borderColor: 'rgb(255, 99, 132)', tension: 0.1 }
-        ];
-
-        if (isComparing) {
-            const group2 = { age: ageSelect2.value, loc: locSelect2.value, label: `${ageSelect2.options[ageSelect2.selectedIndex].text} en ${locSelect2.options[locSelect2.selectedIndex].text}` };
-            const dataGroup2 = mockDatabase[group2.loc][group2.age];
-            const expenseDS2 = { label: group2.label, data: dataGroup2.expenses, backgroundColor: 'rgba(255, 99, 132, 0.7)' };
-            expenseChart.data.datasets.push(expenseDS2);
-            // Nota: Los otros gráficos no se actualizan en modo comparación para mantener la simplicidad.
-        }
-        
-        expenseChart.update();
-        incomeChart.update();
-        trendsChart.update();
-        populateTable();
-        generateInsight();
-    }
-
-    function populateTable() {
-        const data1 = expenseChart.data.datasets[0].data;
-        tableHeader.innerHTML = `<tr><th>Categoría</th><th>${expenseChart.data.datasets[0].label} (USD)</th></tr>`;
-        tableBody.innerHTML = '';
-        
-        if (compareToggle.checked) {
-            const data2 = expenseChart.data.datasets[1].data;
-            tableHeader.innerHTML = `<tr><th>Categoría</th><th>${expenseChart.data.datasets[0].label} (USD)</th><th>${expenseChart.data.datasets[1].label} (USD)</th></tr>`;
-            expenseLabels.forEach((label, i) => {
-                tableBody.innerHTML += `<tr><td>${label}</td><td>$${data1[i].toLocaleString()}</td><td>$${data2[i].toLocaleString()}</td></tr>`;
-            });
-        } else {
-            expenseLabels.forEach((label, i) => {
-                tableBody.innerHTML += `<tr><td>${label}</td><td>$${data1[i].toLocaleString()}</td></tr>`;
-            });
-        }
-    }
-    
-    function generateInsight() {
-        const ds1 = expenseChart.data.datasets[0];
-        const topCat1 = expenseLabels[ds1.data.indexOf(Math.max(...ds1.data))];
-        let insight = `Para el grupo <strong>${ds1.label}</strong>, la categoría con mayor gasto es <strong>${topCat1}</strong>.`;
-        
-        const incomeData = incomeChart.data.datasets[0].data;
-        const topIncome = incomeLabels[incomeData.indexOf(Math.max(...incomeData))];
-        insight += ` Su principal fuente de ingresos es <strong>${topIncome}</strong>.`;
-
-        if(compareToggle.checked) {
-            const ds2 = expenseChart.data.datasets[1];
-            const topCat2 = expenseLabels[ds2.data.indexOf(Math.max(...ds2.data))];
-            insight += `<br>En comparación, para <strong>${ds2.label}</strong>, la categoría principal es <strong>${topCat2}</strong>.`
-        }
-        insightText.innerHTML = insight;
-    }
-
-    // --- Función para Descargar CSV ---
-    function downloadCSV() {
-        let csvContent = "data:text/csv;charset=utf-8,";
-        const header = Array.from(tableHeader.querySelectorAll("th")).map(th => th.textContent);
-        csvContent += header.join(",") + "\r\n";
-
-        const rows = tableBody.querySelectorAll("tr");
-        rows.forEach(row => {
-            const rowData = Array.from(row.querySelectorAll("td")).map(td => `"${td.textContent.replace(/\$/g, '')}"`);
-            csvContent += rowData.join(",") + "\r\n";
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "inteligencia_de_mercado.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // --- Listeners de Eventos ---
-    [ageSelect1, locSelect1, ageSelect2, locSelect2, compareToggle].forEach(el => {
-        el.addEventListener('change', updateDashboard);
-    });
-    document.getElementById('download-csv-btn').addEventListener('click', downloadCSV);
-
-    compareToggle.addEventListener('change', () => {
-        document.getElementById('comparison-filters-container').style.display = compareToggle.checked ? 'block' : 'none';
-    });
-
-    document.getElementById('toggle-view').addEventListener('click', (e) => {
-        const chartWrapper = document.getElementById('chart-wrapper');
-        const tableContainer = document.getElementById('dataTable-container');
-        const isChartVisible = chartWrapper.style.display !== 'none';
-        
-        chartWrapper.style.display = isChartVisible ? 'none' : 'block';
-        tableContainer.style.display = isChartVisible ? 'block' : 'none';
-        e.target.textContent = isChartVisible ? 'Ver Gráfico' : 'Ver Tabla';
-    });
-
-    // --- Carga Inicial ---
-    window.onload = updateDashboard;
-
 </script>
-
 </body>
 </html>
 
