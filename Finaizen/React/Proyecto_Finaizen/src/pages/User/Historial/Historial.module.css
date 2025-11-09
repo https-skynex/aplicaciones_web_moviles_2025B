@@ -8,22 +8,17 @@
 
 .historialContainer {
   flex: 1;
-  margin-left: 250px;
+  margin-left: 0;
   padding: 2rem;
-  width: calc(100% - 250px);
+  width: 100%;
   min-width: 0;
   box-sizing: border-box;
   transition: margin-left 0.3s ease, width 0.3s ease;
   overflow-x: hidden;
 }
 
-.historialContainer.collapsed {
-  margin-left: 80px;
-  width: calc(100% - 80px);
-}
-
 .loadingContainer {
-  margin-left: 250px;
+  margin-left: 0;
   padding: 3rem;
   text-align: center;
   color: #6b7280;
@@ -31,8 +26,25 @@
   transition: margin-left 0.3s ease;
 }
 
-.loadingContainer.collapsed {
-  margin-left: 80px;
+/* Solo en desktop aplicar margin */
+@media (min-width: 1025px) {
+  .historialContainer {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+  }
+
+  .historialContainer.collapsed {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+  }
+
+  .loadingContainer {
+    margin-left: 250px;
+  }
+
+  .loadingContainer.collapsed {
+    margin-left: 80px;
+  }
 }
 
 /* Header */
@@ -146,6 +158,14 @@
   letter-spacing: 0.05em;
 }
 
+.historialTable th:nth-child(5) {
+  text-align: right;
+}
+
+.historialTable th:nth-child(6) {
+  text-align: center;
+}
+
 .historialTable tbody tr {
   border-bottom: 1px solid #e5e7eb;
   transition: background-color 0.2s ease;
@@ -207,6 +227,39 @@
 .badge.egreso {
   background-color: #fee2e2;
   color: #991b1b;
+}
+
+/* Columna de acciones */
+.actionsColumn {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.editButton,
+.deleteButton {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.375rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin: 0 0.25rem;
+}
+
+.editButton:hover {
+  background-color: #dbeafe;
+  transform: scale(1.1);
+}
+
+.deleteButton:hover {
+  background-color: #fee2e2;
+  transform: scale(1.1);
+}
+
+.editButton:active,
+.deleteButton:active {
+  transform: scale(0.95);
 }
 
 /* Empty State */
@@ -294,6 +347,81 @@
   .filterRow {
     grid-template-columns: 1fr;
   }
+
+  /* Ocultar tabla y mostrar cards en tablets/móvil */
+  .historialTable thead {
+    display: none;
+  }
+
+  .historialTable,
+  .historialTable tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .historialTable tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .historialTable tbody tr:hover {
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .historialTable td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border: none;
+    text-align: right;
+  }
+
+  .historialTable td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-align: left;
+    flex: 1;
+  }
+
+  .historialTable td:not(:last-child) {
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dateColumn,
+  .descriptionColumn,
+  .categoryColumn,
+  .montoColumn {
+    text-align: right;
+  }
+
+  .actionsColumn {
+    justify-content: flex-end;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e5e7eb !important;
+    margin-top: 0.5rem;
+  }
+
+  .actionsColumn::before {
+    content: 'Acciones:';
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -320,22 +448,6 @@
 
   .statValue {
     font-size: 1.5rem;
-  }
-
-  /* Tabla responsive - scroll horizontal */
-  .tableContainer {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .historialTable {
-    min-width: 600px;
-  }
-
-  .historialTable th,
-  .historialTable td {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.875rem;
   }
 
   .pagination {

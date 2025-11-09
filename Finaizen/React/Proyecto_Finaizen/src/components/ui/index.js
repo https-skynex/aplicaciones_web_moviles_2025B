@@ -7,3 +7,4 @@ export { default as SimpleBarChart } from './SimpleBarChart';
 export { default as FloatingActionButton } from './FloatingActionButton';
 export { default as Toast } from './Toast';
 export { default as ConfirmDialog } from './ConfirmDialog';
+export { default as PresupuestoCard } from './PresupuestoCard';

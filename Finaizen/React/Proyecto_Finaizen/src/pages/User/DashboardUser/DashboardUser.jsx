@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
-import { Button, Card, SimpleBarChart, FloatingActionButton, Toast } from '../../../components/ui';
+import { Button, Card, SimpleBarChart, FloatingActionButton, Toast, PresupuestoCard } from '../../../components/ui';
 import { Sidebar } from '../../../components/layout';
 import styles from './DashboardUser.module.css';
 
@@ -69,13 +69,50 @@ function DashboardUser() {
     setIngresos(ing);
     setEgresos(egr);
     setHistorial(hist);
-    setPresupuestos(pres);
     setLogros(logr);
 
     // Calcular estadísticas del mes actual
     const now = new Date();
     const mesActual = now.getMonth() + 1;
     const anioActual = now.getFullYear();
+
+    // Filtrar presupuestos del mes actual
+    const presupuestosMesActual = pres.filter(p => 
+      p.mes === mesActual && p.anio === anioActual && p.activo
+    );
+
+    // Calcular gasto real por categoría del mes actual
+    const presupuestosConGastoReal = presupuestosMesActual.map(presupuesto => {
+      // Obtener egresos del mes actual para esta categoría
+      const gastosCategoria = hist.filter(h => 
+        h.tipo === 'egreso' &&
+        h.categoria === presupuesto.categoria &&
+        h.mes === mesActual &&
+        h.anio === anioActual
+      );
+
+      const montoGastadoReal = gastosCategoria.reduce((sum, h) => sum + h.monto, 0);
+
+      // Crear un nuevo objeto con el gasto real calculado
+      return {
+        ...presupuesto,
+        montoGastado: montoGastadoReal,
+        porcentajeGastado: presupuesto.montoLimite > 0 
+          ? (montoGastadoReal / presupuesto.montoLimite) * 100 
+          : 0,
+        estado: (() => {
+          const porcentaje = presupuesto.montoLimite > 0 
+            ? (montoGastadoReal / presupuesto.montoLimite) * 100 
+            : 0;
+          if (porcentaje >= 100) return 'danger';
+          if (porcentaje >= presupuesto.alertaEn) return 'warning';
+          if (porcentaje >= 50) return 'neutral';
+          return 'ok';
+        })()
+      };
+    });
+
+    setPresupuestos(presupuestosConGastoReal);
 
     const historialMes = hist.filter(h => h.mes === mesActual && h.anio === anioActual);
     
@@ -283,24 +320,14 @@ function DashboardUser() {
                 {presupuestos.length === 0 ? (
                   <p className={styles.emptyMessage}>No tienes presupuestos configurados</p>
                 ) : (
-                  presupuestos.slice(0, 4).map(pres => (
-                    <div key={pres.id} className={styles.presupuestoItem}>
-                      <div className={styles.presupuestoHeader}>
-                        <span className={styles.presupuestoCategoria}>{pres.categoria}</span>
-                        <span className={styles.presupuestoMonto}>
-                          {currentPerfil.simboloMoneda}{pres.montoGastado}/{pres.montoLimite}
-                        </span>
-                      </div>
-                      <div className={styles.progressBar}>
-                        <div 
-                          className={`${styles.progressFill} ${styles[pres.estado]}`}
-                          style={{ width: `${Math.min(pres.porcentajeGastado, 100)}%` }}
-                        />
-                      </div>
-                      <span className={styles.presupuestoEstado}>
-                        {pres.porcentajeGastado.toFixed(2)}% usado
-                      </span>
-                    </div>
+                  presupuestos.slice(0, 3).map(pres => (
+                    <PresupuestoCard
+                      key={pres.id}
+                      presupuesto={pres}
+                      simboloMoneda={currentPerfil.simboloMoneda}
+                      showActions={false}
+                      compact={false}
+                    />
                   ))
                 )}
               </div>

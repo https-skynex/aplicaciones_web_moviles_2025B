@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
 import { Sidebar } from '../../../components/layout';
-import { Card, Button } from '../../../components/ui';
+import { Card, Button, ConfirmDialog, Toast } from '../../../components/ui';
+import EditRecordModal from '../../../components/modals/EditRecordModal';
 import styles from './Historial.module.css';
 
 /**
@@ -38,6 +39,13 @@ function Historial() {
   const [historial, setHistorial] = useState([]);
   const [filteredHistorial, setFilteredHistorial] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState(null);
+
+  // Estados para editar/eliminar
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState(null);
 
   // Estados de filtros
   const [filters, setFilters] = useState({
@@ -146,6 +154,82 @@ function Historial() {
       anio: new Date().getFullYear(),
       searchTerm: ''
     });
+  };
+
+  // Manejadores para editar
+  const handleEdit = (record) => {
+    setEditingRecord(record);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = (updatedRecord) => {
+    try {
+      // Encontrar el registro en mockDB
+      const index = mockDB.historial.findIndex(r => r.id === updatedRecord.id);
+      
+      if (index !== -1) {
+        // Actualizar en mockDB
+        Object.assign(mockDB.historial[index], updatedRecord);
+        mockDB.saveToLocalStorage();
+
+        // Actualizar estados locales
+        setHistorial(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
+        setFilteredHistorial(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
+
+        // Mostrar notificación
+        setToast({
+          type: 'success',
+          message: '✓ Registro actualizado exitosamente'
+        });
+      }
+    } catch (error) {
+      console.error('Error al actualizar registro:', error);
+      setToast({
+        type: 'error',
+        message: '✗ Error al actualizar el registro'
+      });
+    } finally {
+      setShowEditModal(false);
+      setEditingRecord(null);
+    }
+  };
+
+  // Manejadores para eliminar
+  const handleDelete = (record) => {
+    setRecordToDelete(record);
+    setShowConfirmDialog(true);
+  };
+
+  const confirmDelete = () => {
+    if (!recordToDelete) return;
+
+    try {
+      // Eliminar del mockDB.historial
+      const index = mockDB.historial.findIndex(r => r.id === recordToDelete.id);
+      if (index !== -1) {
+        mockDB.historial.splice(index, 1);
+        mockDB.saveToLocalStorage();
+
+        // Actualizar estados locales
+        setHistorial(prev => prev.filter(r => r.id !== recordToDelete.id));
+        setFilteredHistorial(prev => prev.filter(r => r.id !== recordToDelete.id));
+
+        // Mostrar notificación
+        setToast({
+          type: 'success',
+          message: '✓ Registro eliminado exitosamente'
+        });
+      }
+    } catch (error) {
+      console.error('Error al eliminar registro:', error);
+      setToast({
+        type: 'error',
+        message: '✗ Error al eliminar el registro'
+      });
+    } finally {
+      setShowConfirmDialog(false);
+      setRecordToDelete(null);
+    }
   };
 
   // Meses del año
@@ -335,32 +419,49 @@ function Historial() {
                       <th>Descripción</th>
                       <th>Categoría</th>
                       <th>Monto</th>
+                      <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {currentItems.map(registro => (
                       <tr key={registro.id}>
-                        <td className={styles.dateColumn}>
+                        <td className={styles.dateColumn} data-label="Fecha">
                           {new Date(registro.fechaEjecucion).toLocaleDateString('es-ES', {
                             day: '2-digit',
                             month: 'short',
                             year: 'numeric'
                           })}
                         </td>
-                        <td>
+                        <td data-label="Tipo">
                           <span className={`${styles.badge} ${styles[registro.tipo]}`}>
                             {registro.tipo === 'ingreso' ? '💰 Ingreso' : '💸 Egreso'}
                           </span>
                         </td>
-                        <td className={styles.descriptionColumn}>
+                        <td className={styles.descriptionColumn} data-label="Descripción">
                           {registro.descripcion}
                         </td>
-                        <td className={styles.categoryColumn}>
+                        <td className={styles.categoryColumn} data-label="Categoría">
                           {registro.categoria}
                         </td>
-                        <td className={`${styles.montoColumn} ${styles[registro.tipo]}`}>
+                        <td className={`${styles.montoColumn} ${styles[registro.tipo]}`} data-label="Monto">
                           {registro.tipo === 'ingreso' ? '+' : '-'}
                           {currentPerfil.simboloMoneda}{registro.monto.toLocaleString()}
+                        </td>
+                        <td className={styles.actionsColumn}>
+                          <button
+                            className={styles.editButton}
+                            onClick={() => handleEdit(registro)}
+                            title="Editar"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDelete(registro)}
+                            title="Eliminar"
+                          >
+                            🗑️
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -406,6 +507,43 @@ function Historial() {
           </div>
         </Card>
       </div>
+
+      {/* Modal de edición */}
+      <EditRecordModal
+        isOpen={showEditModal}
+        record={editingRecord}
+        onSave={handleSaveEdit}
+        onCancel={() => {
+          setShowEditModal(false);
+          setEditingRecord(null);
+        }}
+        simboloMoneda={currentPerfil.simboloMoneda}
+      />
+
+      {/* Diálogo de confirmación para eliminar */}
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        title="Confirmar eliminación"
+        message={`¿Estás seguro de que quieres eliminar "${recordToDelete?.descripcion}"?`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        confirmVariant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setShowConfirmDialog(false);
+          setRecordToDelete(null);
+        }}
+      />
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+          duration={5000}
+        />
+      )}
     </div>
   );
 }

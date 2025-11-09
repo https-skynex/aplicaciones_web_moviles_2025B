@@ -9,6 +9,7 @@ import NuevoIngreso from './pages/User/NuevoIngreso';
 import NuevoEgreso from './pages/User/NuevoEgreso';
 import Historial from './pages/User/Historial';
 import AdministrarRegistros from './pages/User/AdministrarRegistros';
+import Presupuestos from './pages/User/Presupuestos';
 import TestDashboard from './pages/User/TestDashboard';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
         <Route path="/user/nuevo-egreso" element={<NuevoEgreso />} />
         <Route path="/user/historial" element={<Historial />} />
         <Route path="/user/administrar-registros" element={<AdministrarRegistros />} />
+        <Route path="/user/presupuestos" element={<Presupuestos />} />
 
         {/* Ruta temporal para dashboard admin (crear después) */}
         <Route path="/admin/dashboard" element={<div style={{padding: '2rem', textAlign: 'center'}}>Dashboard Admin - En construcción</div>} />

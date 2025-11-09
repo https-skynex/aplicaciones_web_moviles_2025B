@@ -369,6 +369,75 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  /* Tablets y móviles: mismo comportamiento */
+  .mobileMenuButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Ocultar botón de toggle, mostrar botón de cerrar */
+  .toggleBtn {
+    display: none;
+  }
+
+  .mobileCloseBtn {
+    display: block;
+  }
+
+  .sidebarContainer {
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebarContainer.mobileOpen {
+    transform: translateX(0);
+  }
+
+  /* Ignorar el estado colapsado en tablets/móviles */
+  .sidebarContainer.collapsed {
+    width: 280px;
+    transform: translateX(-100%);
+  }
+
+  .sidebarContainer.collapsed.mobileOpen {
+    width: 280px;
+    transform: translateX(0);
+  }
+
+  /* Forzar visibilidad de elementos */
+  .sidebarContainer.collapsed .sidebarHeader h2,
+  .sidebarContainer.collapsed .sidebarNav a,
+  .sidebarContainer.collapsed .sidebarFooter .user p {
+    display: block;
+  }
+
+  .sidebarContainer.collapsed .sidebarNav li {
+    text-align: left;
+    padding: 0.7em 1em;
+  }
+
+  .sidebarContainer.collapsed .sidebarNav li::before {
+    display: none;
+  }
+
+  .sidebarContainer.collapsed .user {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .sidebarContainer.collapsed .user.disabled {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .mobileOverlay {
+    display: block;
+  }
+}
+
 @media (max-width: 768px) {
   .mobileMenuButton {
     display: flex;
