@@ -1,0 +1,438 @@
+/* Mobile Menu Button */
+.mobileMenuButton {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background: #0a2a43;
+  border: none;
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease;
+}
+
+.mobileMenuButton:hover {
+  background: #1c4c73;
+}
+
+/* Mobile Close Button */
+.mobileCloseBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0.25rem;
+}
+
+/* Mobile Overlay */
+.mobileOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* Sidebar Container */
+.sidebarContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1000;
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+.sidebarContainer.collapsed {
+  width: 80px;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #0a2a43;
+  color: white;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Header */
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+  flex-shrink: 0;
+}
+
+.sidebarHeader h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.toggleBtn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0.25rem;
+}
+
+/* Navigation */
+.sidebarNav {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.sidebarNav::-webkit-scrollbar {
+  width: 0;
+}
+
+.sidebarNav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebarNav li {
+  padding: 0.7em 1em;
+}
+
+.sidebarNav a {
+  text-decoration: none;
+  color: white;
+  display: block;
+  transition: background-color 0.3s;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.sidebarNav a:hover {
+  background-color: #1c4c73;
+}
+
+.sidebarNav a.active {
+  background-color: #1c4c73;
+  font-weight: 600;
+}
+
+/* Footer */
+.sidebarFooter {
+  text-align: center;
+  padding: 1em;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  background-color: #0a2a43;
+  z-index: 10;
+  position: relative;
+}
+
+.sidebarFooter .user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.8em;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebarFooter .user:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebarFooter .user.disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+.sidebarFooter .user.disabled:hover {
+  background-color: transparent;
+}
+
+.sidebarFooter .user img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sidebarFooter .user p {
+  margin: 0;
+  font-size: 0.85em;
+  color: #ffffff;
+  line-height: 1.2;
+  text-align: left;
+}
+
+/* User Dropdown */
+.userDropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 280px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+  margin-bottom: 10px;
+}
+
+.userDropdown.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Dropdown Header */
+.dropdownHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1em;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #0a2a43 0%, #1c4c73 100%);
+  border-radius: 12px 12px 0 0;
+}
+
+.dropdownHeader img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.userInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95em;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userEmail {
+  margin: 0;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dropdown Menu */
+.dropdownMenu {
+  list-style: none;
+  padding: 0.5em 0;
+  margin: 0;
+}
+
+.dropdownMenu li {
+  padding: 0;
+}
+
+.dropdownMenu li a,
+.dropdownMenu li button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75em 1em;
+  color: #343a40;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.dropdownMenu li a:hover,
+.dropdownMenu li button:hover {
+  background-color: #f8f9fa;
+  color: #0a2a43;
+}
+
+.dropdownMenu .icon {
+  font-size: 1.2em;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.dropdownMenu .text {
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.divider {
+  height: 1px;
+  background-color: #e9ecef;
+  margin: 0.5em 0;
+}
+
+.logoutLink {
+  color: #dc3545 !important;
+}
+
+.logoutLink:hover {
+  background-color: #fff5f5 !important;
+}
+
+/* Collapsed State */
+.sidebarContainer.collapsed .sidebarHeader h2,
+.sidebarContainer.collapsed .sidebarNav a {
+  display: none;
+}
+
+.sidebarContainer.collapsed .sidebarNav li {
+  text-align: center;
+  padding: 0.7em 0;
+}
+
+.sidebarContainer.collapsed .sidebarNav li::before {
+  content: '•';
+  color: white;
+  font-size: 1.5rem;
+}
+
+.sidebarContainer.collapsed .sidebarFooter .user p {
+  display: none;
+}
+
+.sidebarContainer.collapsed .sidebarHeader,
+.sidebarContainer.collapsed .sidebarFooter .user {
+  justify-content: center;
+}
+
+.sidebarContainer.collapsed .userDropdown {
+  left: 100%;
+  bottom: 0;
+  margin-left: 10px;
+  margin-bottom: 0;
+}
+
+/* Variants */
+.sidebar.admin {
+  background-color: #4a148c;
+}
+
+.sidebar.config {
+  background-color: #006064;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mobileMenuButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Ocultar botón de toggle en móvil, mostrar botón de cerrar */
+  .toggleBtn {
+    display: none;
+  }
+
+  .mobileCloseBtn {
+    display: block;
+  }
+
+  .sidebarContainer {
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebarContainer.mobileOpen {
+    transform: translateX(0);
+  }
+
+  /* En móvil, ignorar el estado colapsado */
+  .sidebarContainer.collapsed {
+    width: 280px;
+    transform: translateX(-100%);
+  }
+
+  .sidebarContainer.collapsed.mobileOpen {
+    width: 280px;
+    transform: translateX(0);
+  }
+
+  /* Forzar visibilidad de elementos en móvil */
+  .sidebarContainer.collapsed .sidebarHeader h2,
+  .sidebarContainer.collapsed .sidebarNav a,
+  .sidebarContainer.collapsed .sidebarFooter .user p {
+    display: block;
+  }
+
+  .sidebarContainer.collapsed .sidebarNav li {
+    text-align: left;
+    padding: 0.7em 1em;
+  }
+
+  .sidebarContainer.collapsed .sidebarNav li::before {
+    display: none;
+  }
+
+  .sidebarContainer.collapsed .user {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .sidebarContainer.collapsed .user.disabled {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .mobileOverlay {
+    display: block;
+  }
+}
