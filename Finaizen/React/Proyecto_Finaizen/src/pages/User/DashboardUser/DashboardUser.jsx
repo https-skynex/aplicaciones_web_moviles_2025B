@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
-import { Button, Card, SimpleBarChart, FloatingActionButton, Toast, PresupuestoCard } from '../../../components/ui';
+import { FloatingActionButton, Toast } from '../../../components/ui';
 import { Sidebar } from '../../../components/layout';
+import { StatsCards, ChartsSection, PresupuestosSection, TransaccionesRecientes } from '../../../components/dashboard';
 import styles from './DashboardUser.module.css';
 
 /**
@@ -22,7 +23,6 @@ function DashboardUser() {
   const [presupuestos, setPresupuestos] = useState([]);
   const [logros, setLogros] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [chartView, setChartView] = useState('monthly'); // 'monthly' o 'last6months'
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -165,53 +165,59 @@ function DashboardUser() {
   const chartDataMonthly = [
     { label: 'Ingresos', value: stats.totalIngresos, color: '#10b981' },
     { label: 'Egresos', value: stats.totalEgresos, color: '#ef4444' },
-    { label: 'Balance', value: Math.abs(stats.balance), color: stats.balance >= 0 ? '#14b8a6' : '#f59e0b' }
+    { label: 'Balance', value: stats.balance, color: stats.balance >= 0 ? '#14b8a6' : '#f59e0b' }
   ];
 
-  // Datos para la gráfica de últimos 6 meses
-  const getLast6MonthsData = () => {
-    const months = [];
+  // Datos para la gráfica de balance mensual (últimos 6 meses incluyendo el actual)
+  const getBalanceMensual = () => {
     const now = new Date();
+    const mesActual = now.getMonth() + 1; // 1-12
+    const anioActual = now.getFullYear();
     
+    // Generar array de los últimos 6 meses
+    const ultimos6Meses = [];
     for (let i = 5; i >= 0; i--) {
-      const targetDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const targetMonth = targetDate.getMonth();
-      const targetYear = targetDate.getFullYear();
+      const fecha = new Date(anioActual, mesActual - 1 - i, 1);
+      // Obtener el último día del mes
+      const ultimoDia = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
       
-      const monthIngresos = historial
-        .filter(h => {
-          const fecha = new Date(h.fechaEjecucion);
-          return h.tipo === 'ingreso' && 
-                 fecha.getMonth() === targetMonth && 
-                 fecha.getFullYear() === targetYear;
-        })
-        .reduce((sum, h) => sum + h.monto, 0);
-      
-      const monthEgresos = historial
-        .filter(h => {
-          const fecha = new Date(h.fechaEjecucion);
-          return h.tipo === 'egreso' && 
-                 fecha.getMonth() === targetMonth && 
-                 fecha.getFullYear() === targetYear;
-        })
-        .reduce((sum, h) => sum + h.monto, 0);
-      
-      const monthBalance = monthIngresos - monthEgresos;
-      
-      months.push({
-        label: targetDate.toLocaleDateString('es', { month: 'short' }),
-        value: Math.abs(monthBalance),
-        color: monthBalance >= 0 ? '#14b8a6' : '#f59e0b'
+      ultimos6Meses.push({
+        mes: fecha.getMonth() + 1,
+        anio: fecha.getFullYear(),
+        // Solo mostrar el nombre del mes (ej: "Jun", "Jul", "Ago")
+        label: ultimoDia.toLocaleDateString('es', { month: 'short' }).replace('.', '')
       });
     }
     
-    return months;
+    // Calcular balance para cada mes
+    const balancesPorMes = ultimos6Meses.map(periodo => {
+      const registrosMes = historial.filter(h => 
+        h.mes === periodo.mes && h.anio === periodo.anio
+      );
+      
+      const ingresos = registrosMes
+        .filter(h => h.tipo === 'ingreso')
+        .reduce((sum, h) => sum + h.monto, 0);
+      
+      const egresos = registrosMes
+        .filter(h => h.tipo === 'egreso')
+        .reduce((sum, h) => sum + h.monto, 0);
+      
+      const balance = ingresos - egresos;
+      
+      return {
+        label: periodo.label,
+        value: balance,
+        color: balance >= 0 ? '#14b8a6' : '#f59e0b',
+        ingresos,
+        egresos
+      };
+    });
+    
+    return balancesPorMes;
   };
 
-  const chartDataLast6Months = getLast6MonthsData();
-
-  // Datos según el estado del toggle
-  const chartData = chartView === 'monthly' ? chartDataMonthly : chartDataLast6Months;
+  const chartDataBalance = getBalanceMensual();
 
   // Logros desbloqueados
   const logrosDesbloqueados = logros.filter(l => l.desbloqueado).length;
@@ -259,126 +265,36 @@ function DashboardUser() {
         </header>
 
         {/* Stats Cards */}
-        <div className={styles.statsGrid}>
-          <Card variant="success" icon="💰" title="Ingresos del Mes">
-            <div className={styles.statValue}>
-              {currentPerfil.simboloMoneda}{stats.totalIngresos.toLocaleString()}
-            </div>
-          </Card>
+        <StatsCards 
+          stats={stats}
+          simboloMoneda={currentPerfil.simboloMoneda}
+          logrosDesbloqueados={logrosDesbloqueados}
+          totalLogros={logros.length}
+        />
 
-          <Card variant="danger" icon="💸" title="Egresos del Mes">
-            <div className={styles.statValue}>
-              {currentPerfil.simboloMoneda}{stats.totalEgresos.toLocaleString()}
-            </div>
-          </Card>
-
-          <Card variant={stats.balance >= 0 ? 'primary' : 'warning'} icon="📊" title="Balance">
-            <div className={styles.statValue}>
-              {currentPerfil.simboloMoneda}{stats.balance.toLocaleString()}
-            </div>
-          </Card>
-
-          <Card variant="default" icon="🎯" title="Logros Desbloqueados">
-            <div className={styles.statValue}>
-              {logrosDesbloqueados}/{logros.length}
-            </div>
-          </Card>
-        </div>
-
-        {/* Gráfica - Full Width */}
-        <div className={styles.chartSection}>
-          <Card 
-            title={chartView === 'monthly' ? 'Balance Mensual' : 'Balance Últimos 6 Meses'} 
-            subtitle={chartView === 'monthly' ? 'Resumen de este mes' : 'Tendencia semestral'}
-          >
-            <div className={styles.chartHeader}>
-              <div className={styles.chartToggle}>
-                <button 
-                  className={`${styles.toggleButton} ${chartView === 'monthly' ? styles.active : ''}`}
-                  onClick={() => setChartView('monthly')}
-                >
-                  Mensual
-                </button>
-                <button 
-                  className={`${styles.toggleButton} ${chartView === 'last6months' ? styles.active : ''}`}
-                  onClick={() => setChartView('last6months')}
-                >
-                  6 Meses
-                </button>
-              </div>
-            </div>
-            <SimpleBarChart data={chartData} height="250px" />
-          </Card>
-        </div>
+        {/* Gráficas - Responsive Layout */}
+        <ChartsSection 
+          chartDataMonthly={chartDataMonthly}
+          chartDataBalance={chartDataBalance}
+        />
 
         {/* Main Content Grid - Presupuestos y Transacciones */}
         <div className={styles.mainGrid}>
           {/* Presupuestos */}
           <div className={styles.leftColumn}>
-            <Card title="Presupuestos" subtitle={`${presupuestos.length} activos`} icon="🎯">
-              <div className={styles.presupuestosList}>
-                {presupuestos.length === 0 ? (
-                  <p className={styles.emptyMessage}>No tienes presupuestos configurados</p>
-                ) : (
-                  presupuestos.slice(0, 3).map(pres => (
-                    <PresupuestoCard
-                      key={pres.id}
-                      presupuesto={pres}
-                      simboloMoneda={currentPerfil.simboloMoneda}
-                      showActions={false}
-                      compact={false}
-                    />
-                  ))
-                )}
-              </div>
-              {presupuestos.length > 0 && (
-                <Button 
-                  variant="link" 
-                  onClick={() => navigate('/user/presupuestos')}
-                  className={styles.viewAllButton}
-                >
-                  Ver todos →
-                </Button>
-              )}
-            </Card>
+            <PresupuestosSection 
+              presupuestos={presupuestos}
+              simboloMoneda={currentPerfil.simboloMoneda}
+            />
           </div>
 
           {/* Transacciones Recientes */}
           <div className={styles.rightColumn}>
-            <Card title="Transacciones Recientes" subtitle="Últimos movimientos" icon="📋">
-              <div className={styles.historialList}>
-                {historial.length === 0 ? (
-                  <p className={styles.emptyMessage}>No hay transacciones registradas</p>
-                ) : (
-                  historial.slice(0, 5).map(registro => (
-                    <div key={registro.id} className={styles.historialItem}>
-                      <div className={styles.historialIcon}>
-                        {registro.tipo === 'ingreso' ? '💰' : '💸'}
-                      </div>
-                      <div className={styles.historialInfo}>
-                        <span className={styles.historialDescripcion}>{registro.descripcion}</span>
-                        <span className={styles.historialFecha}>
-                          {new Date(registro.fechaEjecucion).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <span className={`${styles.historialMonto} ${styles[registro.tipo]}`}>
-                        {registro.tipo === 'ingreso' ? '+' : '-'}
-                        {currentPerfil.simboloMoneda}{registro.monto.toLocaleString()}
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
-              {historial.length > 5 && (
-                <Button 
-                  variant="link" 
-                  onClick={() => navigate('/user/historial')}
-                  className={styles.viewAllButton}
-                >
-                  Ver todo el historial →
-                </Button>
-              )}
-            </Card>
+            <TransaccionesRecientes 
+              historial={historial}
+              simboloMoneda={currentPerfil.simboloMoneda}
+              maxItems={8}
+            />
           </div>
         </div>
 

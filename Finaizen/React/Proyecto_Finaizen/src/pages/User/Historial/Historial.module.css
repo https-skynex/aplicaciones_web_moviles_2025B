@@ -336,8 +336,9 @@
 
 @media (max-width: 1024px) {
   .historialContainer {
-    margin-left: 80px;
-    width: calc(100% - 80px);
+    margin-left: 0;
+    width: 100%;
+    padding-top: 5rem; /* Espacio para el botón flotante */
   }
 
   .statsGrid {
@@ -427,14 +428,14 @@
 @media (max-width: 768px) {
   .historialContainer {
     padding: 1rem;
+    padding-top: 4.5rem; /* Espacio para el botón flotante */
     margin-left: 0;
     width: 100%;
-    padding-top: 4rem;
   }
 
   .loadingContainer {
     margin-left: 0;
-    padding-top: 5rem;
+    padding-top: 4.5rem;
   }
 
   .headerContent h1 {

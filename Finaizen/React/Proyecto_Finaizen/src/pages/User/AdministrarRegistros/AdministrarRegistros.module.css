@@ -341,8 +341,9 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .mainContent {
-    margin-left: 80px;
-    width: calc(100% - 80px);
+    margin-left: 0;
+    width: 100%;
+    padding-top: 5rem; /* Espacio para el botón flotante */
   }
 
   .recordsColumns {
@@ -372,13 +373,14 @@
 @media (max-width: 768px) {
   .mainContent {
     padding: 0;
+    padding-top: 4.5rem; /* Espacio para el botón flotante */
     margin-left: 0;
     width: 100%;
   }
 
   .loadingContainer {
     margin-left: 0;
-    padding-top: 5rem;
+    padding-top: 4.5rem;
   }
 
   .recordsManager {

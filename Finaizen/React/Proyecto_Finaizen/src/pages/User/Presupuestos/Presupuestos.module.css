@@ -137,12 +137,14 @@
 @media (max-width: 1024px) {
   .mainContent {
     padding: 1.5rem;
+    padding-top: 5rem; /* Espacio para el botón flotante */
   }
 }
 
 @media (max-width: 768px) {
   .mainContent {
     padding: 1rem;
+    padding-top: 4.5rem; /* Espacio para el botón flotante */
   }
 
   .header {
