@@ -27,11 +27,11 @@ function Historial() {
 
   // Menú dropdown del usuario
   const userDropdownItems = [
-    { icon: '👤', label: 'Mi Cuenta', path: '/user/config-cuenta' },
-    { icon: '👥', label: 'Perfiles', path: '/user/config-perfiles' },
-    { icon: '🔔', label: 'Notificaciones', path: '/user/config-notificaciones' },
-    { icon: '🔒', label: 'Seguridad', path: '/user/config-seguridad' },
-    { icon: '❓', label: 'Ayuda', path: '/user/config-ayuda' },
+    { icon: '👤', label: 'Mi Cuenta', path: '/user/config/cuenta' },
+    { icon: '👥', label: 'Perfiles', path: '/user/config/perfiles' },
+    { icon: '🔔', label: 'Notificaciones', path: '/user/config/notificaciones' },
+    { icon: '🔒', label: 'Seguridad', path: '/user/config/seguridad' },
+    { icon: '❓', label: 'Ayuda', path: '/user/config/ayuda' },
   ];
   
   // Estados

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
-import { Ingreso, Egreso, CATEGORIAS_INGRESO, CATEGORIAS_EGRESO } from '../../../models';
+import { Ingreso, Egreso, RegistroHistorial, CATEGORIAS_INGRESO, CATEGORIAS_EGRESO } from '../../../models';
 import { Button, Toast } from '../../ui';
 import { Sidebar } from '../../layout';
 import styles from './TransactionForm.module.css';
@@ -124,6 +124,20 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
     }
   }, [formData.frecuencia]); // Solo cuando cambie la frecuencia
 
+  // useEffect: Ajustar minutos exactos al cargar inicialmente si es ocasional
+  useEffect(() => {
+    // Solo ejecutar una vez al montar el componente y si no estamos en modo edición
+    if (!isEditMode && formData.frecuencia === 'ocasional') {
+      const currentMinutes = now.getMinutes();
+      const minutosActuales = currentMinutes.toString().padStart(2, '0');
+      
+      // Solo actualizar si los minutos son diferentes (evitar loop)
+      if (formData.minutos !== minutosActuales) {
+        setFormData(prev => ({ ...prev, minutos: minutosActuales }));
+      }
+    }
+  }, []); // Solo al montar
+
   /**
    * Manejo de cambios en inputs (onChange)
    * Actualiza el estado del formulario
@@ -152,6 +166,26 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
       diaMes: frecuencia === 'mensual' ? currentDay : null,
       fechaEspecifica: (frecuencia === 'ocasional' || frecuencia === 'anual') ? currentDate : ''
     };
+    
+    // Si cambia A ocasional, ajustar a los minutos actuales exactos
+    if (frecuencia === 'ocasional' && formData.frecuencia !== 'ocasional') {
+      const currentMinutes = now.getMinutes();
+      updates.minutos = currentMinutes.toString().padStart(2, '0');
+    }
+    
+    // Si cambia DE ocasional a otra frecuencia, redondear minutos al intervalo de 15 más cercano
+    if (formData.frecuencia === 'ocasional' && frecuencia !== 'ocasional') {
+      const currentMinutes = parseInt(formData.minutos);
+      let roundedMinutes;
+      
+      if (currentMinutes < 8) roundedMinutes = '00';
+      else if (currentMinutes < 23) roundedMinutes = '15';
+      else if (currentMinutes < 38) roundedMinutes = '30';
+      else if (currentMinutes < 53) roundedMinutes = '45';
+      else roundedMinutes = '00';
+      
+      updates.minutos = roundedMinutes;
+    }
     
     setFormData(prev => ({ ...prev, ...updates }));
   };
@@ -284,6 +318,75 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
    * Crear nueva transacción
    */
   const createTransaction = () => {
+    // Si es OCASIONAL, crear directamente en transacciones (historial)
+    if (formData.frecuencia === 'ocasional') {
+      createOcasionalTransaction();
+      return;
+    }
+
+    // Si NO es ocasional, crear en ingresos/egresos (recurrente)
+    createRecurringTransaction();
+  };
+
+  /**
+   * Crear transacción ocasional (directa al historial)
+   */
+  const createOcasionalTransaction = () => {
+    // Generar ID único para el registro de historial
+    const historialId = mockDB.historial.length > 0 
+      ? Math.max(...mockDB.historial.map(t => t.id)) + 1 
+      : 1;
+
+    // Crear registro directamente en historial
+    const registroHistorial = new RegistroHistorial({
+      id: historialId,
+      perfilId: currentPerfil.id,
+      tipo: type,
+      monto: parseFloat(formData.monto),
+      descripcion: formData.descripcion,
+      categoria: formData.categoria,
+      transaccionOrigenId: null, // No tiene origen porque es ocasional
+      fechaEjecucion: new Date(formData.fechaEspecifica),
+      mes: new Date(formData.fechaEspecifica).getMonth() + 1,
+      anio: new Date(formData.fechaEspecifica).getFullYear()
+    });
+
+    // Agregar a historial
+    mockDB.historial.push(registroHistorial);
+
+    // Agregar al perfil (si el método existe)
+    if (currentPerfil.agregarTransaccion) {
+      currentPerfil.agregarTransaccion(registroHistorial.id);
+    }
+
+    // Guardar en localStorage
+    mockDB.saveToLocalStorage();
+
+    console.log('=== TRANSACCIÓN OCASIONAL REGISTRADA ===');
+    console.log('Tipo:', type);
+    console.log('Registro en historial:', registroHistorial);
+    console.log('Total transacciones en historial:', mockDB.historial.length);
+
+    // Callback para el componente padre
+    if (onSubmitSuccess) {
+      onSubmitSuccess(registroHistorial);
+    }
+
+    // Redirigir al dashboard con notificación
+    navigate('/user/dashboard', {
+      state: {
+        notification: {
+          type: 'success',
+          message: `✓ ${type === 'ingreso' ? 'Ingreso' : 'Egreso'} ocasional registrado en historial`
+        }
+      }
+    });
+  };
+
+  /**
+   * Crear transacción recurrente (en ingresos/egresos)
+   */
+  const createRecurringTransaction = () => {
     // Preparar datos para el modelo
     const transactionData = {
       id: type === 'ingreso' 
@@ -344,7 +447,7 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
       state: {
         notification: {
           type: 'success',
-          message: `✓ ${type === 'ingreso' ? 'Ingreso' : 'Egreso'} registrado exitosamente`
+          message: `✓ ${type === 'ingreso' ? 'Ingreso' : 'Egreso'} recurrente registrado exitosamente`
         }
       }
     });
@@ -447,11 +550,11 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
   ];
 
   const userDropdownItems = [
-    { icon: '👤', label: 'Mi Cuenta', path: '/user/config-cuenta' },
-    { icon: '👥', label: 'Perfiles', path: '/user/config-perfiles' },
-    { icon: '🔔', label: 'Notificaciones', path: '/user/config-notificaciones' },
-    { icon: '🔒', label: 'Seguridad', path: '/user/config-seguridad' },
-    { icon: '❓', label: 'Ayuda', path: '/user/config-ayuda' },
+    { icon: '👤', label: 'Mi Cuenta', path: '/user/config/cuenta' },
+    { icon: '👥', label: 'Perfiles', path: '/user/config/perfiles' },
+    { icon: '🔔', label: 'Notificaciones', path: '/user/config/notificaciones' },
+    { icon: '🔒', label: 'Seguridad', path: '/user/config/seguridad' },
+    { icon: '❓', label: 'Ayuda', path: '/user/config/ayuda' },
   ];
 
   // Array de días de la semana
@@ -483,10 +586,23 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
     return opciones;
   };
 
-  // Opciones de minutos (00, 15, 30, 45)
-  const opcionesMinutos = ['00', '15', '30', '45'];
+  // Generar opciones de minutos dinámicamente según frecuencia
+  const generarOpcionesMinutos = () => {
+    if (formData.frecuencia === 'ocasional') {
+      // Para ocasional: 00-59
+      const opciones = [];
+      for (let m = 0; m < 60; m++) {
+        opciones.push(m.toString().padStart(2, '0'));
+      }
+      return opciones;
+    } else {
+      // Para otros: intervalos de 15 minutos
+      return ['00', '15', '30', '45'];
+    }
+  };
 
   const opcionesHora = generarOpcionesHora();
+  const opcionesMinutos = generarOpcionesMinutos();
 
   // Generar días del mes (1-31)
   const diasDelMes = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -606,7 +722,6 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
                       value={formData.hora}
                       onChange={(e) => setFormData({ ...formData, hora: e.target.value })}
                     >
-                      <option value="">Hora</option>
                       {opcionesHora.map(hora => (
                         <option key={hora} value={hora}>{hora}</option>
                       ))}
@@ -623,7 +738,6 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
                       onChange={(e) => setFormData({ ...formData, minutos: e.target.value })}
                       disabled={!formData.hora}
                     >
-                      <option value="">Min</option>
                       {opcionesMinutos.map(min => (
                         <option key={min} value={min}>{min}</option>
                       ))}

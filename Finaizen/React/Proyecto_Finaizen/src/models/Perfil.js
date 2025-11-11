@@ -12,6 +12,7 @@ class Perfil {
     createdAt = new Date(),
     ingresos = [],
     egresos = [],
+    transacciones = [],
     presupuestos = [],
     logros = [],
     configuracion = {}
@@ -22,8 +23,9 @@ class Perfil {
     this.moneda = moneda;
     this.simboloMoneda = simboloMoneda;
     this.createdAt = createdAt instanceof Date ? createdAt : new Date(createdAt);
-    this.ingresos = ingresos; // Array de IDs de ingresos
-    this.egresos = egresos; // Array de IDs de egresos
+    this.ingresos = ingresos; // Array de IDs de ingresos recurrentes
+    this.egresos = egresos; // Array de IDs de egresos recurrentes
+    this.transacciones = transacciones; // Array de IDs de transacciones (historial)
     this.presupuestos = presupuestos; // Array de IDs de presupuestos
     this.logros = logros; // Array de IDs de logros
     this.configuracion = configuracion; // Configuraciones del perfil
@@ -60,6 +62,15 @@ class Perfil {
   agregarEgreso(egresoId) {
     if (!this.egresos.includes(egresoId)) {
       this.egresos.push(egresoId);
+    }
+  }
+
+  /**
+   * Agrega una transacción al historial del perfil
+   */
+  agregarTransaccion(transaccionId) {
+    if (!this.transacciones.includes(transaccionId)) {
+      this.transacciones.push(transaccionId);
     }
   }
 
@@ -124,6 +135,7 @@ class Perfil {
       createdAt: this.createdAt.toISOString(),
       ingresos: this.ingresos,
       egresos: this.egresos,
+      transacciones: this.transacciones,
       presupuestos: this.presupuestos,
       logros: this.logros,
       configuracion: this.configuracion

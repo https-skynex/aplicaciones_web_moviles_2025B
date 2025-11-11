@@ -27,11 +27,11 @@ function AdministrarRegistros() {
 
   // Menú dropdown del usuario
   const userDropdownItems = [
-    { icon: '👤', label: 'Mi Cuenta', path: '/user/config-cuenta' },
-    { icon: '👥', label: 'Perfiles', path: '/user/config-perfiles' },
-    { icon: '🔔', label: 'Notificaciones', path: '/user/config-notificaciones' },
-    { icon: '🔒', label: 'Seguridad', path: '/user/config-seguridad' },
-    { icon: '❓', label: 'Ayuda', path: '/user/config-ayuda' },
+    { icon: '👤', label: 'Mi Cuenta', path: '/user/config/cuenta' },
+    { icon: '👥', label: 'Perfiles', path: '/user/config/perfiles' },
+    { icon: '🔔', label: 'Notificaciones', path: '/user/config/notificaciones' },
+    { icon: '🔒', label: 'Seguridad', path: '/user/config/seguridad' },
+    { icon: '❓', label: 'Ayuda', path: '/user/config/ayuda' },
   ];
   
   // Estados
@@ -82,14 +82,14 @@ function AdministrarRegistros() {
    */
   const loadRecords = () => {
     try {
-      // Filtrar ingresos del perfil
+      // Filtrar ingresos del perfil (excluyendo ocasionales)
       const perfilIngresos = mockDB.ingresos.filter(
-        ing => currentPerfil.ingresos.includes(ing.id)
+        ing => currentPerfil.ingresos.includes(ing.id) && ing.frecuencia !== 'ocasional'
       );
 
-      // Filtrar egresos del perfil
+      // Filtrar egresos del perfil (excluyendo ocasionales)
       const perfilEgresos = mockDB.egresos.filter(
-        eg => currentPerfil.egresos.includes(eg.id)
+        eg => currentPerfil.egresos.includes(eg.id) && eg.frecuencia !== 'ocasional'
       );
 
       setIngresos(perfilIngresos);

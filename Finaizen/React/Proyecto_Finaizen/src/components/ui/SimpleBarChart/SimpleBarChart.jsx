@@ -1,6 +1,6 @@
 import styles from './SimpleBarChart.module.css';
 import PropTypes from 'prop-types';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import BalanceTooltipModal from '../../modals/BalanceTooltipModal';
 
 /**
@@ -14,7 +14,21 @@ function SimpleBarChart({ data = [], maxValue, height = '200px', title = 'Balanc
   const [hoveredBar, setHoveredBar] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const barRefs = useRef([]);
-  const max = maxValue || Math.max(...data.map(item => item.value));
+  
+  // Recalcular el máximo cuando cambien los datos
+  const max = useMemo(() => {
+    if (maxValue) return maxValue;
+    
+    // Si no hay datos, retornar un valor mínimo para evitar división por 0
+    if (data.length === 0) return 100;
+    
+    // Obtener todos los valores absolutos para la escala
+    const valores = data.map(item => Math.abs(item.value));
+    const maxValor = Math.max(...valores);
+    
+    // Si todos los valores son 0, retornar un valor mínimo
+    return maxValor > 0 ? maxValor : 100;
+  }, [data, maxValue]); // Recalcular cuando cambien data o maxValue
 
   useEffect(() => {
     if (hoveredBar !== null && barRefs.current[hoveredBar]) {
@@ -41,7 +55,9 @@ function SimpleBarChart({ data = [], maxValue, height = '200px', title = 'Balanc
       <div className={styles.chartContainer} style={{ height }}>
         <div className={styles.bars}>
           {data.map((item, index) => {
-            const percentage = (item.value / max) * 100;
+            // Calcular porcentaje usando valor absoluto para la altura
+            const percentage = max > 0 ? (Math.abs(item.value) / max) * 100 : 0;
+            
             return (
               <div 
                 key={index} 

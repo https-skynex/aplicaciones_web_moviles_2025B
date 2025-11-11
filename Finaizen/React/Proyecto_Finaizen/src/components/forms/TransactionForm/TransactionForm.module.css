@@ -522,6 +522,12 @@
 
   .formActions {
     flex-direction: column;
+    align-items: center;
+  }
+
+  .formActions button {
+    width: 100%;
+    max-width: 300px;
   }
 
   .monthDaySelector {

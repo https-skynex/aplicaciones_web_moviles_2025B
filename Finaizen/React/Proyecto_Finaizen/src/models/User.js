@@ -11,7 +11,9 @@ class User {
     nombreUsuario,
     contraseña,
     pais = 'Ecuador',
+    ciudad = '',
     fechaNacimiento,
+    genero = '',
     rol = 'user', // 'user' | 'admin'
     perfiles = [],
     notificaciones = [],
@@ -25,7 +27,9 @@ class User {
     this.nombreUsuario = nombreUsuario;
     this.contraseña = contraseña; // En producción, esto estaría hasheado
     this.pais = pais;
+    this.ciudad = ciudad;
     this.fechaNacimiento = new Date(fechaNacimiento);
+    this.genero = genero; // 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir'
     this.rol = rol;
     this.perfiles = perfiles; // Array de IDs de perfiles
     this.notificaciones = notificaciones;
@@ -103,7 +107,9 @@ class User {
       nombreUsuario: this.nombreUsuario,
       contraseña: this.contraseña,
       pais: this.pais,
+      ciudad: this.ciudad,
       fechaNacimiento: this.fechaNacimiento.toISOString(),
+      genero: this.genero,
       rol: this.rol,
       perfiles: this.perfiles,
       notificaciones: this.notificaciones,

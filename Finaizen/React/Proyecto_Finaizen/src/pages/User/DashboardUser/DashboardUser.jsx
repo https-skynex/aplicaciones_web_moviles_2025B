@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
@@ -154,11 +154,11 @@ function DashboardUser() {
 
   // Menú dropdown del usuario
   const userDropdownItems = [
-    { icon: '👤', label: 'Mi Cuenta', path: '/user/config-cuenta' },
-    { icon: '�', label: 'Perfiles', path: '/user/config-perfiles' },
-    { icon: '�', label: 'Notificaciones', path: '/user/config-notificaciones' },
-    { icon: '🔒', label: 'Seguridad', path: '/user/config-seguridad' },
-    { icon: '❓', label: 'Ayuda', path: '/user/config-ayuda' },
+    { icon: '👤', label: 'Mi Cuenta', path: '/user/config/cuenta' },
+    { icon: '💼', label: 'Perfiles', path: '/user/config/perfiles' },
+    { icon: '🔔', label: 'Notificaciones', path: '/user/config/notificaciones' },
+    { icon: '🔒', label: 'Seguridad', path: '/user/config/seguridad' },
+    { icon: '❓', label: 'Ayuda', path: '/user/config/ayuda' },
   ];
 
   // Datos para la gráfica del mes actual
@@ -169,7 +169,8 @@ function DashboardUser() {
   ];
 
   // Datos para la gráfica de balance mensual (últimos 6 meses incluyendo el actual)
-  const getBalanceMensual = () => {
+  // useMemo para recalcular cuando cambie el historial o el perfil
+  const chartDataBalance = useMemo(() => {
     const now = new Date();
     const mesActual = now.getMonth() + 1; // 1-12
     const anioActual = now.getFullYear();
@@ -215,9 +216,7 @@ function DashboardUser() {
     });
     
     return balancesPorMes;
-  };
-
-  const chartDataBalance = getBalanceMensual();
+  }, [historial, currentPerfil?.id]); // Recalcular cuando cambie el historial o el perfil
 
   // Logros desbloqueados
   const logrosDesbloqueados = logros.filter(l => l.desbloqueado).length;

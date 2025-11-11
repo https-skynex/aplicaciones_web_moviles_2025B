@@ -6,6 +6,7 @@ import RegistroHistorial from '../models/RegistroHistorial';
 import Presupuesto from '../models/Presupuesto';
 import Logro, { LOGROS_PREDEFINIDOS } from '../models/Logro';
 import Notificacion from '../models/Notificacion';
+import SecurityLog, { EventTypes, EventCategories, SeverityLevels, EventStatus } from '../models/SecurityLog';
 
 /**
  * MockDatabase - Base de Datos Simulada para Finaizen
@@ -22,6 +23,19 @@ class MockDatabase {
     this.presupuestos = [];
     this.logros = [];
     this.notificaciones = [];
+    this.securityLogs = [];
+    
+    // Configuración de seguridad
+    this.securityConfig = {
+      maxLoginAttempts: 5,              // Máximo de intentos antes de bloqueo
+      loginAttemptWindow: 15 * 60 * 1000, // Ventana de tiempo (15 min en ms)
+      sessionTimeout: 30 * 60 * 1000,    // Timeout de sesión (30 min)
+      requireStrongPassword: true,
+      require2FA: false
+    };
+    
+    // Rastreo de intentos de login por usuario
+    this.loginAttempts = {};
     
     // Usuario actualmente autenticado
     this.currentUser = null;
@@ -51,7 +65,10 @@ class MockDatabase {
         historial: this.historial.map(h => h.toJSON()),
         presupuestos: this.presupuestos.map(p => p.toJSON()),
         logros: this.logros.map(l => l.toJSON()),
-        notificaciones: this.notificaciones.map(n => n.toJSON())
+        notificaciones: this.notificaciones.map(n => n.toJSON()),
+        securityLogs: this.securityLogs.map(s => s.toJSON()),
+        securityConfig: this.securityConfig,
+        loginAttempts: this.loginAttempts
       };
       localStorage.setItem('finaizen_mockdb', JSON.stringify(data));
       console.log('✓ Datos guardados en localStorage');
@@ -72,17 +89,27 @@ class MockDatabase {
       
       // Reconstruir objetos desde JSON
       this.users = data.users.map(u => new User(u));
-      this.perfiles = data.perfiles.map(p => new Perfil(p));
+      this.perfiles = data.perfiles.map(p => {
+        // Migración: Agregar array transacciones si no existe
+        if (!p.transacciones) {
+          p.transacciones = [];
+        }
+        return new Perfil(p);
+      });
       this.ingresos = data.ingresos.map(i => new Ingreso(i));
       this.egresos = data.egresos.map(e => new Egreso(e));
       this.historial = data.historial.map(h => new RegistroHistorial(h));
       this.presupuestos = data.presupuestos.map(p => new Presupuesto(p));
       this.logros = data.logros.map(l => new Logro(l));
       this.notificaciones = data.notificaciones.map(n => new Notificacion(n));
+      this.securityLogs = (data.securityLogs || []).map(s => new SecurityLog(s));
+      this.securityConfig = data.securityConfig || this.securityConfig;
+      this.loginAttempts = data.loginAttempts || {};
 
       console.log('✓ Datos cargados desde localStorage');
       console.log('Ingresos:', this.ingresos.length);
       console.log('Egresos:', this.egresos.length);
+      console.log('Historial:', this.historial.length);
       return true;
     } catch (error) {
       console.error('Error al cargar desde localStorage:', error);
@@ -115,7 +142,9 @@ class MockDatabase {
       nombreUsuario: 'admin',
       contraseña: 'admin123', // En producción estaría hasheado
       pais: 'Ecuador',
+      ciudad: 'Quito',
       fechaNacimiento: '1995-05-15',
+      genero: 'masculino',
       rol: 'admin',
       createdAt: new Date('2024-01-01')
     });
@@ -129,7 +158,9 @@ class MockDatabase {
       nombreUsuario: 'maria.gonzalez',
       contraseña: 'maria123',
       pais: 'Ecuador',
+      ciudad: 'Guayaquil',
       fechaNacimiento: '1998-03-20',
+      genero: 'femenino',
       rol: 'user',
       createdAt: new Date('2024-02-15')
     });
@@ -143,7 +174,9 @@ class MockDatabase {
       nombreUsuario: 'carlos.ramirez',
       contraseña: 'carlos123',
       pais: 'México',
+      ciudad: 'Ciudad de México',
       fechaNacimiento: '1992-08-10',
+      genero: 'masculino',
       rol: 'user',
       createdAt: new Date('2024-03-01')
     });
@@ -815,9 +848,284 @@ class MockDatabase {
     
     return notifs.sort((a, b) => b.createdAt - a.createdAt);
   }
+
+  // =====================================================
+  // SEGURIDAD Y LOGS
+  // =====================================================
+
+  /**
+   * Crea un log de seguridad
+   */
+  createSecurityLog(logData) {
+    const log = new SecurityLog(logData);
+    this.securityLogs.push(log);
+    this.saveToLocalStorage();
+    
+    // Si es evento crítico, puede disparar alertas adicionales
+    if (log.severity === SeverityLevels.CRITICAL) {
+      console.warn('🚨 Evento de seguridad crítico:', log.description);
+    }
+    
+    return log;
+  }
+
+  /**
+   * Obtiene todos los logs de seguridad ordenados por fecha
+   */
+  getAllSecurityLogs() {
+    return [...this.securityLogs].sort((a, b) => 
+      new Date(b.timestamp) - new Date(a.timestamp)
+    );
+  }
+
+  /**
+   * Filtra logs de seguridad por criterios
+   */
+  getSecurityLogs(filters = {}) {
+    let logs = [...this.securityLogs];
+    
+    if (filters.userId) {
+      logs = logs.filter(log => log.userId === filters.userId);
+    }
+    
+    if (filters.userEmail) {
+      logs = logs.filter(log => 
+        log.userEmail && log.userEmail.toLowerCase().includes(filters.userEmail.toLowerCase())
+      );
+    }
+    
+    if (filters.eventType) {
+      logs = logs.filter(log => log.eventType === filters.eventType);
+    }
+    
+    if (filters.eventCategory) {
+      logs = logs.filter(log => log.eventCategory === filters.eventCategory);
+    }
+    
+    if (filters.status) {
+      logs = logs.filter(log => log.status === filters.status);
+    }
+    
+    if (filters.severity) {
+      logs = logs.filter(log => log.severity === filters.severity);
+    }
+    
+    if (filters.startDate) {
+      logs = logs.filter(log => 
+        new Date(log.timestamp) >= new Date(filters.startDate)
+      );
+    }
+    
+    if (filters.endDate) {
+      logs = logs.filter(log => 
+        new Date(log.timestamp) <= new Date(filters.endDate)
+      );
+    }
+    
+    if (filters.searchTerm) {
+      const term = filters.searchTerm.toLowerCase();
+      logs = logs.filter(log => 
+        (log.userEmail && log.userEmail.toLowerCase().includes(term)) ||
+        log.description.toLowerCase().includes(term) ||
+        log.ipAddress.includes(term)
+      );
+    }
+    
+    return logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  }
+
+  /**
+   * Obtiene los últimos N logs de un usuario
+   */
+  getUserRecentActivity(userId, limit = 10) {
+    return this.securityLogs
+      .filter(log => log.userId === userId)
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .slice(0, limit);
+  }
+
+  /**
+   * Obtiene estadísticas de seguridad
+   */
+  getSecurityStats(hours = 24) {
+    const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
+    const recentLogs = this.securityLogs.filter(log => 
+      new Date(log.timestamp) >= cutoffTime
+    );
+    
+    // Agrupar por categoría
+    const byCategory = {};
+    Object.values(EventCategories).forEach(cat => {
+      byCategory[cat] = recentLogs.filter(log => log.eventCategory === cat).length;
+    });
+    
+    // Agrupar por severidad
+    const bySeverity = {};
+    Object.values(SeverityLevels).forEach(sev => {
+      bySeverity[sev] = recentLogs.filter(log => log.severity === sev).length;
+    });
+    
+    return {
+      totalEvents: recentLogs.length,
+      failedLogins: recentLogs.filter(log => 
+        log.eventType === EventTypes.LOGIN_FAILURE
+      ).length,
+      criticalEvents: recentLogs.filter(log => 
+        log.severity === SeverityLevels.CRITICAL
+      ).length,
+      blockedAccounts: new Set(
+        recentLogs
+          .filter(log => log.eventType === EventTypes.ACCOUNT_SUSPENDED)
+          .map(log => log.userId)
+      ).size,
+      uniqueIPs: new Set(recentLogs.map(log => log.ipAddress)).size,
+      byCategory,
+      bySeverity
+    };
+  }
+
+  /**
+   * Rastrea intentos de login
+   */
+  trackLoginAttempt(email, success, ipAddress = null) {
+    const ip = ipAddress || `192.168.1.${Math.floor(Math.random() * 255)}`;
+    
+    if (!this.loginAttempts[email]) {
+      this.loginAttempts[email] = {
+        count: 0,
+        firstAttempt: Date.now(),
+        lastAttempt: Date.now(),
+        ips: []
+      };
+    }
+    
+    const attempt = this.loginAttempts[email];
+    const now = Date.now();
+    
+    // Resetear si pasó la ventana de tiempo
+    if (now - attempt.firstAttempt > this.securityConfig.loginAttemptWindow) {
+      attempt.count = 0;
+      attempt.firstAttempt = now;
+      attempt.ips = [];
+    }
+    
+    if (!success) {
+      attempt.count++;
+      attempt.lastAttempt = now;
+      if (!attempt.ips.includes(ip)) {
+        attempt.ips.push(ip);
+      }
+      
+      // Crear log de intento fallido
+      this.createSecurityLog({
+        userId: null,
+        userEmail: email,
+        eventType: EventTypes.LOGIN_FAILURE,
+        eventCategory: EventCategories.AUTENTICACION,
+        description: `Intento de inicio de sesión fallido`,
+        ipAddress: ip,
+        status: EventStatus.FAILURE,
+        severity: attempt.count >= 3 ? SeverityLevels.HIGH : SeverityLevels.MEDIUM,
+        metadata: {
+          attemptNumber: attempt.count,
+          totalAttempts: attempt.count
+        }
+      });
+      
+      // Bloquear si excede intentos
+      if (attempt.count >= this.securityConfig.maxLoginAttempts) {
+        this.createSecurityLog({
+          userId: null,
+          userEmail: email,
+          eventType: EventTypes.MULTIPLE_LOGIN_FAILURES,
+          eventCategory: EventCategories.SOSPECHOSO,
+          description: `Cuenta bloqueada por múltiples intentos fallidos (${attempt.count})`,
+          ipAddress: ip,
+          status: EventStatus.FAILURE,
+          severity: SeverityLevels.CRITICAL,
+          metadata: {
+            totalAttempts: attempt.count,
+            timeWindow: this.securityConfig.loginAttemptWindow,
+            ips: attempt.ips
+          }
+        });
+        
+        return { blocked: true, attempts: attempt.count };
+      }
+      
+      return { blocked: false, attempts: attempt.count };
+    } else {
+      // Login exitoso
+      const user = this.users.find(u => u.email === email);
+      
+      this.createSecurityLog({
+        userId: user?.id || null,
+        userEmail: email,
+        eventType: EventTypes.LOGIN_SUCCESS,
+        eventCategory: EventCategories.AUTENTICACION,
+        description: 'Inicio de sesión exitoso',
+        ipAddress: ip,
+        status: EventStatus.SUCCESS,
+        severity: SeverityLevels.LOW
+      });
+      
+      // Resetear contador de intentos
+      delete this.loginAttempts[email];
+      return { blocked: false, attempts: 0 };
+    }
+  }
+
+  /**
+   * Verifica si un usuario está bloqueado
+   */
+  isUserBlocked(email) {
+    const attempt = this.loginAttempts[email];
+    if (!attempt) return false;
+    
+    const now = Date.now();
+    
+    // Si pasó la ventana de tiempo, ya no está bloqueado
+    if (now - attempt.firstAttempt > this.securityConfig.loginAttemptWindow) {
+      delete this.loginAttempts[email];
+      return false;
+    }
+    
+    return attempt.count >= this.securityConfig.maxLoginAttempts;
+  }
+
+  /**
+   * Método de debugging para verificar datos del perfil actual
+   */
+  debugCurrentProfile() {
+    if (!this.currentPerfil) {
+      console.log('❌ No hay perfil activo');
+      return;
+    }
+
+    console.log('=== DEBUG PERFIL ACTUAL ===');
+    console.log('ID:', this.currentPerfil.id);
+    console.log('Nombre:', this.currentPerfil.nombre);
+    console.log('Usuario ID:', this.currentPerfil.userId);
+    console.log('\n📊 DATOS DEL PERFIL:');
+    console.log('Ingresos recurrentes (IDs):', this.currentPerfil.ingresos);
+    console.log('Egresos recurrentes (IDs):', this.currentPerfil.egresos);
+    console.log('Transacciones (IDs):', this.currentPerfil.transacciones || []);
+    console.log('\n📋 REGISTROS EN MOCKDB:');
+    console.log('Total ingresos recurrentes:', this.ingresos.filter(i => i.perfilId === this.currentPerfil.id).length);
+    console.log('Total egresos recurrentes:', this.egresos.filter(e => e.perfilId === this.currentPerfil.id).length);
+    console.log('Total en historial:', this.historial.filter(h => h.perfilId === this.currentPerfil.id).length);
+    console.log('\n📝 DETALLE HISTORIAL:');
+    const historialPerfil = this.historial.filter(h => h.perfilId === this.currentPerfil.id);
+    historialPerfil.forEach(h => {
+      console.log(`- [${h.tipo}] ${h.descripcion}: $${h.monto} (${h.fechaEjecucion.toLocaleDateString()}) - OrigenID: ${h.transaccionOrigenId || 'Ocasional'}`);
+    });
+  }
 }
 
 // Crear instancia única (Singleton)
 const mockDB = new MockDatabase();
+
+// Exportar tipos de eventos para uso fácil
+export { EventTypes, EventCategories, SeverityLevels, EventStatus };
 
 export default mockDB;

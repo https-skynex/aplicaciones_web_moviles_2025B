@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import mockDB from '../utils/mockDatabase';
+import mockDB, { EventTypes, EventCategories, SeverityLevels, EventStatus } from '../utils/mockDatabase';
 
 /**
  * AuthContext - Contexto de Autenticación Global
@@ -75,7 +75,19 @@ export const AuthProvider = ({ children }) => {
    * @returns {Object} Resultado del login
    */
   const login = (correoOUsername, contraseña) => {
+    // Verificar si el usuario está bloqueado
+    const isBlocked = mockDB.isUserBlocked(correoOUsername);
+    if (isBlocked) {
+      return {
+        success: false,
+        message: 'Cuenta temporalmente bloqueada por múltiples intentos fallidos. Intente más tarde.'
+      };
+    }
+
     const result = mockDB.login(correoOUsername, contraseña);
+    
+    // Registrar intento de login
+    mockDB.trackLoginAttempt(correoOUsername, result.success);
     
     if (result.success) {
       setCurrentUser(result.user);
@@ -99,6 +111,19 @@ export const AuthProvider = ({ children }) => {
    * Cierra sesión
    */
   const logout = () => {
+    // Registrar logout
+    if (currentUser) {
+      mockDB.createSecurityLog({
+        userId: currentUser.id,
+        userEmail: currentUser.email,
+        eventType: EventTypes.LOGOUT,
+        eventCategory: EventCategories.AUTENTICACION,
+        description: 'Cierre de sesión',
+        status: EventStatus.SUCCESS,
+        severity: SeverityLevels.LOW
+      });
+    }
+    
     mockDB.logout();
     setCurrentUser(null);
     setCurrentPerfil(null);
@@ -115,6 +140,37 @@ export const AuthProvider = ({ children }) => {
     const result = mockDB.register(userData);
     
     if (result.success) {
+      // Registrar evento de creación de cuenta
+      mockDB.createSecurityLog({
+        userId: result.user.id,
+        userEmail: result.user.email,
+        eventType: EventTypes.ACCOUNT_CREATED,
+        eventCategory: EventCategories.ACCESO,
+        description: 'Nueva cuenta creada',
+        status: EventStatus.SUCCESS,
+        severity: SeverityLevels.MEDIUM,
+        metadata: {
+          userName: result.user.nombre,
+          rol: result.user.rol
+        }
+      });
+
+      // Registrar creación de perfil inicial
+      mockDB.createSecurityLog({
+        userId: result.user.id,
+        userEmail: result.user.email,
+        eventType: EventTypes.PERFIL_CREATED,
+        eventCategory: EventCategories.CONFIGURACION,
+        description: `Perfil financiero creado: ${result.perfil.nombre}`,
+        status: EventStatus.SUCCESS,
+        severity: SeverityLevels.MEDIUM,
+        metadata: {
+          perfilId: result.perfil.id,
+          perfilNombre: result.perfil.nombre,
+          moneda: result.perfil.moneda
+        }
+      });
+
       setCurrentUser(result.user);
       setCurrentPerfil(result.perfil);
       setPerfiles([result.perfil]);
@@ -135,15 +191,44 @@ export const AuthProvider = ({ children }) => {
    */
   const cambiarPerfil = (perfilId) => {
     const perfil = perfiles.find(p => p.id === perfilId);
-    if (perfil) {
+    if (perfil && currentUser) {
       mockDB.currentPerfil = perfil;
       setCurrentPerfil(perfil);
+
+      // Registrar cambio de perfil
+      mockDB.createSecurityLog({
+        userId: currentUser.id,
+        userEmail: currentUser.email,
+        eventType: EventTypes.PERFIL_SWITCHED,
+        eventCategory: EventCategories.CONFIGURACION,
+        description: `Cambio a perfil: ${perfil.nombre}`,
+        status: EventStatus.SUCCESS,
+        severity: SeverityLevels.LOW,
+        metadata: {
+          perfilId: perfil.id,
+          perfilNombre: perfil.nombre
+        }
+      });
 
       // Actualizar sesión guardada
       const session = JSON.parse(localStorage.getItem('finaizen_session') || '{}');
       session.perfilId = perfilId;
       localStorage.setItem('finaizen_session', JSON.stringify(session));
     }
+  };
+
+  /**
+   * Actualiza la información del usuario actual
+   * @param {Object} updatedUser - Datos actualizados del usuario
+   */
+  const updateUser = (updatedUser) => {
+    setCurrentUser(updatedUser);
+    mockDB.currentUser = updatedUser;
+    
+    // Actualizar sesión guardada
+    const session = JSON.parse(localStorage.getItem('finaizen_session') || '{}');
+    session.userId = updatedUser.id;
+    localStorage.setItem('finaizen_session', JSON.stringify(session));
   };
 
   /**
@@ -173,6 +258,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     register,
     cambiarPerfil,
+    updateUser,
     actualizarPerfiles
   };
 

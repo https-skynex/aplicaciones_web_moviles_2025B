@@ -10,7 +10,14 @@ import NuevoEgreso from './pages/User/NuevoEgreso';
 import Historial from './pages/User/Historial';
 import AdministrarRegistros from './pages/User/AdministrarRegistros';
 import Presupuestos from './pages/User/Presupuestos';
-import TestDashboard from './pages/User/TestDashboard';
+
+// Configuración
+import ConfigLayout from './components/layout/ConfigLayout';
+import ConfigCuenta from './pages/User/Config/ConfigCuenta';
+import ConfigSeguridad from './pages/User/Config/ConfigSeguridad';
+import ConfigPerfiles from './pages/User/Config/ConfigPerfiles';
+import ConfigNotificaciones from './pages/User/Config/ConfigNotificaciones';
+import ConfigAyuda from './pages/User/Config/ConfigAyuda';
 
 function App() {
   return (
@@ -30,6 +37,17 @@ function App() {
         <Route path="/user/historial" element={<Historial />} />
         <Route path="/user/administrar-registros" element={<AdministrarRegistros />} />
         <Route path="/user/presupuestos" element={<Presupuestos />} />
+
+        {/* Configuración - Rutas anidadas */}
+        <Route path="/user/config" element={<ConfigLayout />}>
+          <Route path="cuenta" element={<ConfigCuenta />} />
+          <Route path="seguridad" element={<ConfigSeguridad />} />
+          <Route path="perfiles" element={<ConfigPerfiles />} />
+          <Route path="notificaciones" element={<ConfigNotificaciones />} />
+          <Route path="ayuda" element={<ConfigAyuda />} />
+          {/* Redirigir /user/config a cuenta por defecto */}
+          <Route index element={<Navigate to="cuenta" replace />} />
+        </Route>
 
         {/* Ruta temporal para dashboard admin (crear después) */}
         <Route path="/admin/dashboard" element={<div style={{padding: '2rem', textAlign: 'center'}}>Dashboard Admin - En construcción</div>} />

@@ -13,10 +13,11 @@ import styles from './Sidebar.module.css';
 function Sidebar({ menuItems, userMenuItems = [], variant = 'user', onCollapsedChange }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showPerfilesDropdown, setShowPerfilesDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser, currentPerfil, logout } = useAuth();
+  const { currentUser, currentPerfil, perfiles, cambiarPerfil, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -26,9 +27,10 @@ function Sidebar({ menuItems, userMenuItems = [], variant = 'user', onCollapsedC
   const toggleCollapse = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    // Cerrar el dropdown cuando se colapsa
+    // Cerrar ambos dropdowns cuando se colapsa
     if (newState) {
       setShowUserDropdown(false);
+      setShowPerfilesDropdown(false);
     }
     if (onCollapsedChange) {
       onCollapsedChange(newState);
@@ -48,7 +50,27 @@ function Sidebar({ menuItems, userMenuItems = [], variant = 'user', onCollapsedC
     // Solo permitir click en el perfil si no está colapsado
     if (!isCollapsed) {
       setShowUserDropdown(!showUserDropdown);
+      // Cerrar dropdown de perfiles si está abierto
+      if (showPerfilesDropdown) {
+        setShowPerfilesDropdown(false);
+      }
     }
+  };
+
+  const handlePerfilesClick = () => {
+    // Solo permitir click si no está colapsado
+    if (!isCollapsed) {
+      setShowPerfilesDropdown(!showPerfilesDropdown);
+      // Cerrar dropdown de usuario si está abierto
+      if (showUserDropdown) {
+        setShowUserDropdown(false);
+      }
+    }
+  };
+
+  const handleSwitchPerfil = (perfilId) => {
+    cambiarPerfil(perfilId);
+    setShowPerfilesDropdown(false);
   };
 
   return (
@@ -106,61 +128,105 @@ function Sidebar({ menuItems, userMenuItems = [], variant = 'user', onCollapsedC
           </nav>
 
           {/* Footer del Sidebar - User Menu */}
-          <div className={styles.sidebarFooter}>
-            <div 
-              className={`${styles.user} ${isCollapsed ? styles.disabled : ''}`}
-              onClick={handleUserClick}
-            >
-              <img
-                src={currentPerfil?.foto || 'https://placehold.co/40x40/6c757d/ffffff?text=U'}
-                alt="Usuario"
-              />
-              {!isCollapsed && <p>{currentUser?.nombreCompleto || 'Usuario'}</p>}
-            </div>
-
-            {/* User Dropdown Menu - Solo mostrar si NO está colapsado */}
-            {showUserDropdown && !isCollapsed && (
-              <div className={`${styles.userDropdown} ${styles.active}`}>
-                <div className={styles.dropdownHeader}>
-                  <img
-                    src={currentPerfil?.foto || 'https://placehold.co/50x50/6c757d/ffffff?text=U'}
-                    alt="Usuario"
-                  />
-                  <div className={styles.userInfo}>
-                    <p className={styles.userName}>{currentUser?.nombreCompleto}</p>
-                    <p className={styles.userEmail}>{currentUser?.email}</p>
+          {variant !== 'config' && (
+            <div className={styles.sidebarFooter}>
+              {/* Selector de Perfiles */}
+              <div 
+                className={`${styles.perfiles} ${isCollapsed ? styles.disabled : ''}`}
+                onClick={handlePerfilesClick}
+              >
+                <span className={styles.perfilIcon}>💼</span>
+                {!isCollapsed && (
+                  <div className={styles.perfilInfo}>
+                    <p className={styles.perfilLabel}>Perfil</p>
+                    <p className={styles.perfilName}>{currentPerfil?.nombre || 'Sin perfil'}</p>
                   </div>
-                </div>
-
-                <ul className={styles.dropdownMenu}>
-                  {userMenuItems.map((item, index) => (
-                    <li key={index}>
-                      {item.divider ? (
-                        <div className={styles.divider}></div>
-                      ) : (
-                        <Link to={item.path} onClick={() => setShowUserDropdown(false)}>
-                          <span className={styles.icon}>{item.icon}</span>
-                          <span className={styles.text}>{item.label}</span>
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                  
-                  <li><div className={styles.divider}></div></li>
-                  
-                  <li>
-                    <button 
-                      onClick={handleLogout}
-                      className={styles.logoutLink}
-                    >
-                      <span className={styles.icon}>🚪</span>
-                      <span className={styles.text}>Cerrar sesión</span>
-                    </button>
-                  </li>
-                </ul>
+                )}
               </div>
-            )}
-          </div>
+
+              {/* Dropdown de Perfiles */}
+              {showPerfilesDropdown && !isCollapsed && perfiles.length > 0 && (
+                <div className={`${styles.perfilesDropdown} ${styles.active}`}>
+                  <div className={styles.dropdownHeader}>
+                    <span className={styles.dropdownTitle}>Cambiar perfil</span>
+                  </div>
+                  <ul className={styles.perfilesList}>
+                    {perfiles.map((perfil) => (
+                      <li 
+                        key={perfil.id}
+                        className={perfil.id === currentPerfil?.id ? styles.activePerfil : ''}
+                        onClick={() => handleSwitchPerfil(perfil.id)}
+                      >
+                        <span className={styles.perfilIcon}>💼</span>
+                        <div className={styles.perfilDetails}>
+                          <span className={styles.perfilNombre}>{perfil.nombre}</span>
+                          <span className={styles.perfilMoneda}>{perfil.moneda}</span>
+                        </div>
+                        {perfil.id === currentPerfil?.id && (
+                          <span className={styles.checkmark}>✓</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Usuario */}
+              <div 
+                className={`${styles.user} ${isCollapsed ? styles.disabled : ''}`}
+                onClick={handleUserClick}
+              >
+                <img
+                  src={currentPerfil?.foto || 'https://placehold.co/40x40/6c757d/ffffff?text=U'}
+                  alt="Usuario"
+                />
+                {!isCollapsed && <p>{currentUser?.nombreCompleto || 'Usuario'}</p>}
+              </div>
+
+              {/* User Dropdown Menu - Solo mostrar si NO está colapsado */}
+              {showUserDropdown && !isCollapsed && (
+                <div className={`${styles.userDropdown} ${styles.active}`}>
+                  <div className={styles.dropdownHeader}>
+                    <img
+                      src={currentPerfil?.foto || 'https://placehold.co/50x50/6c757d/ffffff?text=U'}
+                      alt="Usuario"
+                    />
+                    <div className={styles.userInfo}>
+                      <p className={styles.userName}>{currentUser?.nombreCompleto}</p>
+                      <p className={styles.userEmail}>{currentUser?.email}</p>
+                    </div>
+                  </div>
+
+                  <ul className={styles.dropdownMenu}>
+                    {userMenuItems.map((item, index) => (
+                      <li key={index}>
+                        {item.divider ? (
+                          <div className={styles.divider}></div>
+                        ) : (
+                          <Link to={item.path} onClick={() => setShowUserDropdown(false)}>
+                            <span className={styles.icon}>{item.icon}</span>
+                            <span className={styles.text}>{item.label}</span>
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                    
+                    <li><div className={styles.divider}></div></li>
+                    
+                    <li>
+                      <button 
+                        onClick={handleLogout}
+                        className={styles.logoutLink}
+                      >
+                        <span className={styles.icon}>🚪</span>
+                        <span className={styles.text}>Cerrar sesión</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </aside>
       </div>
 
