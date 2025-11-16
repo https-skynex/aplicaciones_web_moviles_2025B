@@ -184,7 +184,7 @@ class MockDatabase {
     this.users.push(admin, user1, user2);
 
     // =====================================================
-    // PERFILES
+    // PERFILES DE USUARIO
     // =====================================================
     
     // Perfil 0: Perfil Admin
