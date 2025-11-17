@@ -517,7 +517,11 @@
 
 /* Variants */
 .sidebar.admin {
-  background-color: #4a148c;
+  background-color: #0a2a43;
+}
+
+.sidebar.admin .sidebarFooter {
+  background-color: #0a2a43;
 }
 
 .sidebar.config {

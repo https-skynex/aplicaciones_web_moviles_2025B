@@ -19,6 +19,9 @@ import ConfigPerfiles from './pages/User/Config/ConfigPerfiles';
 import ConfigNotificaciones from './pages/User/Config/ConfigNotificaciones';
 import ConfigAyuda from './pages/User/Config/ConfigAyuda';
 
+// Admin
+import { DashboardAdmin, InteligenciaMercado, GestionRoles, GestionUsuarios, SupervisionCategorias, RegistroSeguridad, ReportesSoporte } from './pages/Admin';
+
 function App() {
   return (
     <AuthProvider>
@@ -50,7 +53,13 @@ function App() {
         </Route>
 
         {/* Ruta temporal para dashboard admin (crear después) */}
-        <Route path="/admin/dashboard" element={<div style={{padding: '2rem', textAlign: 'center'}}>Dashboard Admin - En construcción</div>} />
+        <Route path="/admin/dashboard" element={<DashboardAdmin />} />
+        <Route path="/admin/inteligencia-mercado" element={<InteligenciaMercado />} />
+        <Route path="/admin/gestion-roles" element={<GestionRoles />} />
+        <Route path="/admin/gestion-usuarios" element={<GestionUsuarios />} />
+        <Route path="/admin/supervision-categorias" element={<SupervisionCategorias />} />
+        <Route path="/admin/registro-seguridad" element={<RegistroSeguridad />} />
+        <Route path="/admin/reportes-soporte" element={<ReportesSoporte />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
