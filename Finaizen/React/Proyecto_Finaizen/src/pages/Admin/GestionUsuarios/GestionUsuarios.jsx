@@ -12,6 +12,7 @@ import {
   ConfirmActionModal 
 } from '../../../components/users/UserModals';
 import { usersData, ROLES } from '../../../utils/usersData';
+import { adminSidebarMenuItems, adminDropdownMenuItems } from '../../../config/adminSidebarConfig';
 import styles from './GestionUsuarios.module.css';
 
 function GestionUsuarios() {
@@ -39,22 +40,6 @@ function GestionUsuarios() {
     role: 'todos',
     status: 'todos'
   });
-
-  // Configuración del menú
-  const adminMenuItems = [
-    { label: 'Dashboard', path: '/admin/dashboard' },
-    { label: 'Gestión de Usuarios', path: '/admin/gestion-usuarios' },
-    { label: 'Gestión de Roles', path: '/admin/gestion-roles' },
-    { label: 'Supervisión de Categorías', path: '/admin/supervision-categorias' },
-    { label: 'Registro de Seguridad', path: '/admin/registro-seguridad' },
-    { label: 'Inteligencia de Mercado', path: '/admin/inteligencia-mercado' },
-    { label: 'Reportes y Soporte', path: '/admin/reportes-soporte' }
-  ];
-
-  const userMenuItems = [
-    { label: 'Mi Perfil', path: '/user/config/cuenta', icon: '👤' },
-    { label: 'Configuración', path: '/user/config/seguridad', icon: '⚙️' }
-  ];
 
   // Proteger ruta
   useEffect(() => {
@@ -174,8 +159,8 @@ function GestionUsuarios() {
   return (
     <div className={styles.container}>
       <Sidebar 
-        menuItems={adminMenuItems}
-        userMenuItems={userMenuItems}
+        menuItems={adminSidebarMenuItems}
+        userMenuItems={adminDropdownMenuItems}
         variant="admin"
         onCollapsedChange={setIsCollapsed}
       />
