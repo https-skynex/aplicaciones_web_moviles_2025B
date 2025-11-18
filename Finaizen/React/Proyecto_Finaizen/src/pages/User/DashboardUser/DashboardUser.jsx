@@ -5,6 +5,7 @@ import mockDB from '../../../utils/mockDatabase';
 import { FloatingActionButton, Toast } from '../../../components/ui';
 import { Sidebar } from '../../../components/layout';
 import { StatsCards, ChartsSection, PresupuestosSection, TransaccionesRecientes } from '../../../components/dashboard';
+import { userSidebarMenuItems, userDropdownMenuItems } from '../../../config/sidebarConfig';
 import styles from './DashboardUser.module.css';
 
 /**
@@ -142,25 +143,6 @@ function DashboardUser() {
     navigate('/login');
   };
 
-  // Menú items para el Sidebar de Usuario
-  const userMenuItems = [
-    { label: 'Dashboard', path: '/user/dashboard' },
-    { label: 'Administrador ingresos/egresos', path: '/user/administrar-registros' },
-    { label: 'Plan de Ahorros', path: '/user/plan-ahorro' },
-    { label: 'Ajuste de presupuestos', path: '/user/presupuestos' },
-    { label: 'Planificador de deudas', path: '/user/planificador-deudas' },
-    { label: 'Logros y Recompensas', path: '/user/logros' },
-  ];
-
-  // Menú dropdown del usuario
-  const userDropdownItems = [
-    { icon: '👤', label: 'Mi Cuenta', path: '/user/config/cuenta' },
-    { icon: '💼', label: 'Perfiles', path: '/user/config/perfiles' },
-    { icon: '🔔', label: 'Notificaciones', path: '/user/config/notificaciones' },
-    { icon: '🔒', label: 'Seguridad', path: '/user/config/seguridad' },
-    { icon: '❓', label: 'Ayuda', path: '/user/config/ayuda' },
-  ];
-
   // Datos para la gráfica del mes actual
   const chartDataMonthly = [
     { label: 'Ingresos', value: stats.totalIngresos, color: '#10b981' },
@@ -233,8 +215,8 @@ function DashboardUser() {
     return (
       <div className={styles.dashboardPage}>
         <Sidebar 
-          menuItems={userMenuItems} 
-          userMenuItems={userDropdownItems} 
+          menuItems={userSidebarMenuItems} 
+          userMenuItems={userDropdownMenuItems} 
           variant="user"
           onCollapsedChange={setSidebarCollapsed}
         />
@@ -248,8 +230,8 @@ function DashboardUser() {
   return (
     <div className={styles.dashboardPage}>
       <Sidebar 
-        menuItems={userMenuItems} 
-        userMenuItems={userDropdownItems} 
+        menuItems={userSidebarMenuItems} 
+        userMenuItems={userDropdownMenuItems} 
         variant="user"
         onCollapsedChange={setSidebarCollapsed}
       />

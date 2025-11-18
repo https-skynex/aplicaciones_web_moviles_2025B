@@ -4,6 +4,7 @@ import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
 import { Sidebar } from '../../../components/layout';
 import { Button, Toast, ConfirmDialog } from '../../../components/ui';
+import { userSidebarMenuItems, userDropdownMenuItems } from '../../../config/sidebarConfig';
 import styles from './AdministrarRegistros.module.css';
 
 /**
@@ -14,25 +15,6 @@ function AdministrarRegistros() {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, currentPerfil, loading: authLoading } = useAuth();
-  
-  // Menú items para el Sidebar de Usuario
-  const userMenuItems = [
-    { label: 'Dashboard', path: '/user/dashboard' },
-    { label: 'Administrador ingresos/egresos', path: '/user/administrar-registros' },
-    { label: 'Plan de Ahorros', path: '/user/plan-ahorro' },
-    { label: 'Ajuste de presupuestos', path: '/user/presupuestos' },
-    { label: 'Planificador de deudas', path: '/user/planificador-deudas' },
-    { label: 'Logros y Recompensas', path: '/user/logros' },
-  ];
-
-  // Menú dropdown del usuario
-  const userDropdownItems = [
-    { icon: '👤', label: 'Mi Cuenta', path: '/user/config/cuenta' },
-    { icon: '👥', label: 'Perfiles', path: '/user/config/perfiles' },
-    { icon: '🔔', label: 'Notificaciones', path: '/user/config/notificaciones' },
-    { icon: '🔒', label: 'Seguridad', path: '/user/config/seguridad' },
-    { icon: '❓', label: 'Ayuda', path: '/user/config/ayuda' },
-  ];
   
   // Estados
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -236,8 +218,8 @@ function AdministrarRegistros() {
     return (
       <div className={styles.adminPage}>
         <Sidebar 
-          menuItems={userMenuItems} 
-          userMenuItems={userDropdownItems} 
+          menuItems={userSidebarMenuItems} 
+          userMenuItems={userDropdownMenuItems} 
           variant="user"
           onCollapsedChange={setSidebarCollapsed}
         />
@@ -255,8 +237,8 @@ function AdministrarRegistros() {
   return (
     <div className={styles.adminPage}>
       <Sidebar 
-        menuItems={userMenuItems} 
-        userMenuItems={userDropdownItems} 
+        menuItems={userSidebarMenuItems} 
+        userMenuItems={userDropdownMenuItems} 
         variant="user"
         onCollapsedChange={setSidebarCollapsed}
       />

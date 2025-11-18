@@ -6,6 +6,7 @@ import RoleCard from '../../../components/roles/RoleCard';
 import RoleModal from '../../../components/roles/RoleModal';
 import DeleteRoleModal from '../../../components/roles/DeleteRoleModal';
 import { initialRoles, allPermissions } from '../../../utils/rolesData';
+import { adminSidebarMenuItems, adminDropdownMenuItems } from '../../../config/adminSidebarConfig';
 import styles from './GestionRoles.module.css';
 
 /**
@@ -71,22 +72,6 @@ function GestionRoles() {
     }
   };
 
-  // Configuración del menú
-  const adminMenuItems = [
-    { label: 'Dashboard', path: '/admin/dashboard' },
-    { label: 'Gestión de Usuarios', path: '/admin/gestion-usuarios' },
-    { label: 'Gestión de Roles', path: '/admin/gestion-roles' },
-    { label: 'Supervisión de Categorías', path: '/admin/supervision-categorias' },
-    { label: 'Registro de Seguridad', path: '/admin/registro-seguridad' },
-    { label: 'Inteligencia de Mercado', path: '/admin/inteligencia-mercado' },
-    { label: 'Reportes y Soporte', path: '/admin/reportes-soporte' }
-  ];
-
-  const userMenuItems = [
-    { label: 'Mi Perfil', path: '/config/perfil', icon: '👤' },
-    { label: 'Configuración', path: '/config/cuenta', icon: '⚙️' }
-  ];
-
   if (!currentUser || !isAdmin) {
     return null;
   }
@@ -94,8 +79,8 @@ function GestionRoles() {
   return (
     <div className={styles.container}>
       <Sidebar
-        menuItems={adminMenuItems}
-        userMenuItems={userMenuItems}
+        menuItems={adminSidebarMenuItems}
+        userMenuItems={adminDropdownMenuItems}
         variant="admin"
         onCollapsedChange={setIsCollapsed}
       />

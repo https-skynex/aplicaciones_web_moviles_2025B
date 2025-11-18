@@ -6,6 +6,7 @@ import mockDB from '../../../utils/mockDatabase';
 import { Ingreso, Egreso, RegistroHistorial, CATEGORIAS_INGRESO, CATEGORIAS_EGRESO } from '../../../models';
 import { Button, Toast } from '../../ui';
 import { Sidebar } from '../../layout';
+import { userSidebarMenuItems, userDropdownMenuItems } from '../../../config/sidebarConfig';
 import styles from './TransactionForm.module.css';
 
 /**
@@ -539,24 +540,6 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
     setErrors({});
   };
 
-  // Menú items para el Sidebar
-  const userMenuItems = [
-    { label: 'Dashboard', path: '/user/dashboard' },
-    { label: 'Administrador ingresos/egresos', path: '/user/administrar-registros' },
-    { label: 'Plan de Ahorros', path: '/user/plan-ahorro' },
-    { label: 'Ajuste de presupuestos', path: '/user/presupuestos' },
-    { label: 'Planificador de deudas', path: '/user/planificador-deudas' },
-    { label: 'Logros y Recompensas', path: '/user/logros' },
-  ];
-
-  const userDropdownItems = [
-    { icon: '👤', label: 'Mi Cuenta', path: '/user/config/cuenta' },
-    { icon: '👥', label: 'Perfiles', path: '/user/config/perfiles' },
-    { icon: '🔔', label: 'Notificaciones', path: '/user/config/notificaciones' },
-    { icon: '🔒', label: 'Seguridad', path: '/user/config/seguridad' },
-    { icon: '❓', label: 'Ayuda', path: '/user/config/ayuda' },
-  ];
-
   // Array de días de la semana
   const diasSemanaLabels = [
     { index: 1, label: 'Lunes', short: 'L' },
@@ -614,8 +597,8 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
   return (
     <div className={styles.pageContainer}>
       <Sidebar 
-        menuItems={userMenuItems}
-        userMenuItems={userDropdownItems}
+        menuItems={userSidebarMenuItems}
+        userMenuItems={userDropdownMenuItems}
         variant="user"
         onCollapsedChange={setSidebarCollapsed}
       />

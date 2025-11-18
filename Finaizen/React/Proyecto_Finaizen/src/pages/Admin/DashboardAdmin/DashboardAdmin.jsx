@@ -4,6 +4,7 @@ import { useAuth } from '../../../context/AuthContext';
 import Sidebar from '../../../components/layout/Sidebar';
 import AdminSummaryCards from '../../../components/dashboard/AdminSummaryCards';
 import UserGrowthChart from '../../../components/dashboard/UserGrowthChart';
+import { adminSidebarMenuItems, adminDropdownMenuItems } from '../../../config/adminSidebarConfig';
 import mockDB from '../../../utils/mockDatabase';
 import styles from './DashboardAdmin.module.css';
 
@@ -67,22 +68,6 @@ function DashboardAdmin() {
     }
   }, [currentUser, isAdmin]);
 
-  // Configuración del menú del sidebar para admin
-  const adminMenuItems = [
-    { label: 'Dashboard', path: '/admin/dashboard' },
-    { label: 'Gestión de Usuarios', path: '/admin/gestion-usuarios' },
-    { label: 'Gestión de Roles', path: '/admin/gestion-roles' },
-    { label: 'Supervisión de Categorías', path: '/admin/supervision-categorias' },
-    { label: 'Registro de Seguridad', path: '/admin/registro-seguridad' },
-    { label: 'Inteligencia de Mercado', path: '/admin/inteligencia-mercado' },
-    { label: 'Reportes y Soporte', path: '/admin/reportes-soporte' }
-  ];
-
-  const userMenuItems = [
-    { label: 'Mi Perfil', path: '/config/perfil', icon: '👤' },
-    { label: 'Configuración', path: '/config/cuenta', icon: '⚙️' }
-  ];
-
   if (!currentUser || !isAdmin) {
     return null; // No mostrar nada mientras redirige
   }
@@ -90,8 +75,8 @@ function DashboardAdmin() {
   return (
     <div className={styles.container}>
       <Sidebar 
-        menuItems={adminMenuItems}
-        userMenuItems={userMenuItems}
+        menuItems={adminSidebarMenuItems}
+        userMenuItems={adminDropdownMenuItems}
         variant="admin"
         onCollapsedChange={setIsCollapsed}
       />
