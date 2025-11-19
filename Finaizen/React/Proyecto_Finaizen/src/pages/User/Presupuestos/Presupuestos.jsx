@@ -1,14 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useLocation } from 'react-router-dom';
-import Sidebar from '../../../components/layout/Sidebar';
 import Toast from '../../../components/ui/Toast';
 import PresupuestoCard from '../../../components/ui/PresupuestoCard';
 import BudgetModal from '../../../components/modals/BudgetModal';
 import ConfirmDialog from '../../../components/ui/ConfirmDialog';
 import Button from '../../../components/ui/Button';
 import mockDB from '../../../utils/mockDatabase';
-import { userSidebarMenuItems, userDropdownMenuItems } from '../../../config/sidebarConfig';
 import styles from './Presupuestos.module.css';
 
 /**
@@ -24,7 +22,6 @@ export default function Presupuestos() {
   const [deletingPresupuesto, setDeletingPresupuesto] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [filtro, setFiltro] = useState('todos'); // 'todos', 'mensual', 'semanal', 'anual'
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const cargarPresupuestos = useCallback(() => {
     if (!currentPerfil) return;
@@ -193,15 +190,7 @@ export default function Presupuestos() {
   });
 
   return (
-    <div className={styles.container}>
-      <Sidebar 
-        menuItems={userSidebarMenuItems}
-        userMenuItems={userDropdownMenuItems}
-        variant="user"
-        onCollapsedChange={setSidebarCollapsed}
-      />
-      
-      <div className={`${styles.mainContent} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
+    <div className={styles.content}>
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerContent}>
@@ -274,37 +263,36 @@ export default function Presupuestos() {
             </div>
           )}
         </div>
-      </div>
 
-      {/* Modal de creación/edición */}
-      <BudgetModal
-        isOpen={showModal}
-        presupuesto={editingPresupuesto}
-        onSave={handleSave}
-        onCancel={handleCloseModal}
-        simboloMoneda={currentPerfil?.simboloMoneda || '$'}
-      />
-
-      {/* Diálogo de confirmación para eliminar */}
-      <ConfirmDialog
-        isOpen={deletingPresupuesto !== null}
-        title="Eliminar Presupuesto"
-        message={`¿Estás seguro de que deseas eliminar el presupuesto de "${deletingPresupuesto?.categoria}"? Esta acción no se puede deshacer.`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
-        confirmVariant="danger"
-        onConfirm={confirmDelete}
-        onCancel={() => setDeletingPresupuesto(null)}
-      />
-
-      {/* Toast de notificaciones */}
-      {toast.show && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast({ show: false, message: '', type: 'success' })}
+        {/* Modal de creación/edición */}
+        <BudgetModal
+          isOpen={showModal}
+          presupuesto={editingPresupuesto}
+          onSave={handleSave}
+          onCancel={handleCloseModal}
+          simboloMoneda={currentPerfil?.simboloMoneda || '$'}
         />
-      )}
-    </div>
+
+        {/* Diálogo de confirmación para eliminar */}
+        <ConfirmDialog
+          isOpen={deletingPresupuesto !== null}
+          title="Eliminar Presupuesto"
+          message={`¿Estás seguro de que deseas eliminar el presupuesto de "${deletingPresupuesto?.categoria}"? Esta acción no se puede deshacer.`}
+          confirmText="Eliminar"
+          cancelText="Cancelar"
+          confirmVariant="danger"
+          onConfirm={confirmDelete}
+          onCancel={() => setDeletingPresupuesto(null)}
+        />
+
+        {/* Toast de notificaciones */}
+        {toast.show && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast({ show: false, message: '', type: 'success' })}
+          />
+        )}
+      </div>
   );
 }

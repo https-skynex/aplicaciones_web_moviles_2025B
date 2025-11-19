@@ -1,31 +1,9 @@
 /* Contenedor principal */
-.container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f5f7fa;
-  position: relative;
-}
-
-/* Contenido principal */
-.mainContent {
-  flex: 1;
-  padding: 2rem;
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
+.content {
+  width: 100%;
   min-height: 100vh;
   position: relative;
   z-index: 1;
-}
-
-/* Solo en desktop aplicar margin */
-@media (min-width: 1025px) {
-  .mainContent {
-    margin-left: 250px;
-  }
-
-  .mainContent.sidebarCollapsed {
-    margin-left: 80px;
-  }
 }
 
 /* Header */

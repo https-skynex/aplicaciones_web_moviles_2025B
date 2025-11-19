@@ -5,8 +5,6 @@ import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
 import { Ingreso, Egreso, RegistroHistorial, CATEGORIAS_INGRESO, CATEGORIAS_EGRESO } from '../../../models';
 import { Button, Toast } from '../../ui';
-import { Sidebar } from '../../layout';
-import { userSidebarMenuItems, userDropdownMenuItems } from '../../../config/sidebarConfig';
 import styles from './TransactionForm.module.css';
 
 /**
@@ -71,9 +69,6 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
 
   // Estado para errores de validación
   const [errors, setErrors] = useState({});
-
-  // Estado del sidebar
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Categorías según el tipo
   const categorias = type === 'ingreso' ? CATEGORIAS_INGRESO : CATEGORIAS_EGRESO;
@@ -558,16 +553,8 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
   }
 
   return (
-    <div className={styles.pageContainer}>
-      <Sidebar 
-        menuItems={userSidebarMenuItems}
-        userMenuItems={userDropdownMenuItems}
-        variant="user"
-        onCollapsedChange={setSidebarCollapsed}
-      />
-
-      <div className={`${styles.mainContent} ${sidebarCollapsed ? styles.collapsed : ''}`}>
-        <form className={styles.transactionForm} onSubmit={handleSubmit} noValidate>
+    <div className={styles.mainContent}>
+      <form className={styles.transactionForm} onSubmit={handleSubmit} noValidate>
           <h1>
             {isEditMode 
               ? `Editar ${type === 'ingreso' ? 'Ingreso' : 'Egreso'}`
@@ -800,19 +787,18 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
             </Button>
           </div>
         </form>
-      </div>
 
-      {/* Toast de notificación */}
-      {toast && (
-        <Toast
-          type={toast.type}
-          message={toast.message}
-          onClose={() => setToast(null)}
-          duration={5000}
-        />
-      )}
-    </div>
-  );
+        {/* Toast de notificación */}
+        {toast && (
+          <Toast
+            type={toast.type}
+            message={toast.message}
+            onClose={() => setToast(null)}
+            duration={5000}
+          />
+        )}
+      </div>
+    );
 }
 
 TransactionForm.propTypes = {

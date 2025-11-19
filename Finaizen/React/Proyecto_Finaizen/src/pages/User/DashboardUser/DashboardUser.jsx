@@ -3,9 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
 import { FloatingActionButton, Toast } from '../../../components/ui';
-import { Sidebar } from '../../../components/layout';
 import { StatsCards, ChartsSection, PresupuestosSection, TransaccionesRecientes } from '../../../components/dashboard';
-import { userSidebarMenuItems, userDropdownMenuItems } from '../../../config/sidebarConfig';
 import styles from './DashboardUser.module.css';
 
 /**
@@ -22,7 +20,6 @@ function DashboardUser() {
   const [presupuestos, setPresupuestos] = useState([]);
   const [logros, setLogros] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [toast, setToast] = useState(null);
 
   // Estadísticas calculadas
@@ -206,30 +203,14 @@ function DashboardUser() {
   // Mostrar loading mientras carga auth o datos
   if (authLoading || loading || !currentPerfil) {
     return (
-      <div className={styles.dashboardPage}>
-        <Sidebar 
-          menuItems={userSidebarMenuItems} 
-          userMenuItems={userDropdownMenuItems} 
-          variant="user"
-          onCollapsedChange={setSidebarCollapsed}
-        />
-        <div className={`${styles.loadingContainer} ${sidebarCollapsed ? styles.collapsed : ''}`}>
-          <p>Cargando dashboard...</p>
-        </div>
+      <div className={styles.loadingContainer}>
+        <p>Cargando dashboard...</p>
       </div>
     );
   }
 
   return (
-    <div className={styles.dashboardPage}>
-      <Sidebar 
-        menuItems={userSidebarMenuItems} 
-        userMenuItems={userDropdownMenuItems} 
-        variant="user"
-        onCollapsedChange={setSidebarCollapsed}
-      />
-      
-      <div className={`${styles.dashboardContainer} ${sidebarCollapsed ? styles.collapsed : ''}`}>
+    <div className={styles.dashboardContainer}>
         {/* Header */}
         <header className={styles.dashboardHeader}>
           <div className={styles.welcomeSection}>
@@ -289,7 +270,6 @@ function DashboardUser() {
           />
         )}
       </div>
-    </div>
   );
 }
 

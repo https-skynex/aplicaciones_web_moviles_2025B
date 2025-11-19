@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import mockDB, { EventTypes, EventCategories, SeverityLevels, EventStatus } from '../../../../utils/mockDatabase';
 import Perfil from '../../../../models/Perfil';
-import { Toast } from '../../../../components/ui';
+import { Toast, ConfirmDialog } from '../../../../components/ui';
 import ProfileCard from '../../../../components/cards/ProfileCard';
 import ProfileModal from '../../../../components/modals/ProfileModal';
 import styles from './ConfigPerfiles.module.css';
@@ -12,6 +12,8 @@ const ConfigPerfiles = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const [showModal, setShowModal] = useState(false);
   const [editingPerfil, setEditingPerfil] = useState(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [perfilToDelete, setPerfilToDelete] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -122,27 +124,8 @@ const ConfigPerfiles = () => {
       return;
     }
 
-    if (confirm(`¿Estás seguro de eliminar el perfil "${perfil.nombre}"?`)) {
-      const index = mockDB.perfiles.findIndex(p => p.id === perfil.id);
-      if (index !== -1) {
-        mockDB.perfiles.splice(index, 1);
-        mockDB.saveToLocalStorage();
-
-        mockDB.createSecurityLog({
-          userId: currentUser.id,
-          userEmail: currentUser.email,
-          eventType: EventTypes.PERFIL_DELETED,
-          eventCategory: EventCategories.CONFIGURACION,
-          description: `Perfil "${perfil.nombre}" eliminado`,
-          status: EventStatus.SUCCESS,
-          severity: SeverityLevels.MEDIUM,
-          metadata: { perfilId: perfil.id }
-        });
-
-        showToast('✅ Perfil eliminado correctamente', 'success');
-        actualizarPerfiles();
-      }
-    }
+    setPerfilToDelete(perfil);
+    setShowConfirmDialog(true);
   };
 
   const handleSwitchPerfil = (perfil) => {
@@ -153,6 +136,38 @@ const ConfigPerfiles = () => {
 
     cambiarPerfil(perfil.id);
     showToast(`✅ Cambiado a perfil: ${perfil.nombre}`, 'success');
+  };
+
+  const confirmDelete = () => {
+    if (!perfilToDelete) return;
+
+    const index = mockDB.perfiles.findIndex(p => p.id === perfilToDelete.id);
+    if (index !== -1) {
+      mockDB.perfiles.splice(index, 1);
+      mockDB.saveToLocalStorage();
+
+      mockDB.createSecurityLog({
+        userId: currentUser.id,
+        userEmail: currentUser.email,
+        eventType: EventTypes.PERFIL_DELETED,
+        eventCategory: EventCategories.CONFIGURACION,
+        description: `Perfil "${perfilToDelete.nombre}" eliminado`,
+        status: EventStatus.SUCCESS,
+        severity: SeverityLevels.MEDIUM,
+        metadata: { perfilId: perfilToDelete.id }
+      });
+
+      showToast('✅ Perfil eliminado correctamente', 'success');
+      actualizarPerfiles();
+    }
+
+    setShowConfirmDialog(false);
+    setPerfilToDelete(null);
+  };
+
+  const handleCancelConfirm = () => {
+    setShowConfirmDialog(false);
+    setPerfilToDelete(null);
   };
 
   return (
@@ -191,6 +206,17 @@ const ConfigPerfiles = () => {
         perfil={editingPerfil}
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
+      />
+
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        title="Confirmar eliminación"
+        message={`¿Estás seguro de que quieres eliminar el perfil "${perfilToDelete?.nombre}"?`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        confirmVariant="danger"
+        onConfirm={confirmDelete}
+        onCancel={handleCancelConfirm}
       />
 
       {toast.show && (

@@ -144,7 +144,7 @@ class Ingreso {
       frecuencia: this.frecuencia,
       diasSemana: this.diasSemana,
       diaMes: this.diaMes,
-      fechaEspecifica: this.fechaEspecifica && !isNaN(this.fechaEspecifica.getTime()) ? this.fechaEspecifica.toISOString() : null,
+      fechaEspecifica: this.fechaEspecifica ? (this.fechaEspecifica instanceof Date ? this.fechaEspecifica.toISOString() : this.fechaEspecifica) : null,
       delay: this.delay,
       notificacionActiva: this.notificacionActiva,
       activo: this.activo,

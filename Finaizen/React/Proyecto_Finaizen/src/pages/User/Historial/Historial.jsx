@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
-import { Sidebar } from '../../../components/layout';
 import { Card, Button, ConfirmDialog, Toast } from '../../../components/ui';
 import EditRecordModal from '../../../components/modals/EditRecordModal';
-import { userSidebarMenuItems, userDropdownMenuItems } from '../../../config/sidebarConfig';
 import styles from './Historial.module.css';
 
 /**
@@ -17,17 +15,16 @@ function Historial() {
   const { currentUser, currentPerfil, loading: authLoading } = useAuth();
   
   // Estados
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [historial, setHistorial] = useState([]);
   const [filteredHistorial, setFilteredHistorial] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
   // Estados para editar/eliminar
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editingRecord, setEditingRecord] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [recordToEdit, setRecordToEdit] = useState(null);
 
   // Estados de filtros
   const [filters, setFilters] = useState({
@@ -138,48 +135,20 @@ function Historial() {
     });
   };
 
-  // Manejadores para editar
-  const handleEdit = (record) => {
-    setEditingRecord(record);
-    setShowEditModal(true);
-  };
-
-  const handleSaveEdit = (updatedRecord) => {
-    try {
-      // Encontrar el registro en mockDB
-      const index = mockDB.historial.findIndex(r => r.id === updatedRecord.id);
-      
-      if (index !== -1) {
-        // Actualizar en mockDB
-        Object.assign(mockDB.historial[index], updatedRecord);
-        mockDB.saveToLocalStorage();
-
-        // Actualizar estados locales
-        setHistorial(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
-        setFilteredHistorial(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
-
-        // Mostrar notificación
-        setToast({
-          type: 'success',
-          message: '✓ Registro actualizado exitosamente'
-        });
-      }
-    } catch (error) {
-      console.error('Error al actualizar registro:', error);
-      setToast({
-        type: 'error',
-        message: '✗ Error al actualizar el registro'
-      });
-    } finally {
-      setShowEditModal(false);
-      setEditingRecord(null);
-    }
-  };
-
   // Manejadores para eliminar
   const handleDelete = (record) => {
     setRecordToDelete(record);
     setShowConfirmDialog(true);
+  };
+
+  const handleEdit = (record) => {
+    setRecordToEdit(record);
+    setShowEditModal(true);
+  };
+
+  const handleCancelConfirm = () => {
+    setShowConfirmDialog(false);
+    setRecordToDelete(null);
   };
 
   const confirmDelete = () => {
@@ -214,6 +183,45 @@ function Historial() {
     }
   };
 
+  const handleCloseToast = () => {
+    setToast(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setRecordToEdit(null);
+  };
+
+  const handleSaveEdit = (updatedRecord) => {
+    try {
+      // Actualizar en mockDB.historial
+      const index = mockDB.historial.findIndex(r => r.id === updatedRecord.id);
+      if (index !== -1) {
+        mockDB.historial[index] = updatedRecord;
+        mockDB.saveToLocalStorage();
+
+        // Actualizar estados locales
+        setHistorial(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
+        setFilteredHistorial(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
+
+        // Mostrar notificación
+        setToast({
+          type: 'success',
+          message: '✓ Registro actualizado exitosamente'
+        });
+      }
+    } catch (error) {
+      console.error('Error al actualizar registro:', error);
+      setToast({
+        type: 'error',
+        message: '✗ Error al actualizar el registro'
+      });
+    } finally {
+      setShowEditModal(false);
+      setRecordToEdit(null);
+    }
+  };
+
   // Meses del año
   const meses = [
     { value: 1, label: 'Enero' },
@@ -236,16 +244,8 @@ function Historial() {
 
   if (authLoading || loading) {
     return (
-      <div className={styles.historialPage}>
-        <Sidebar 
-          menuItems={userSidebarMenuItems} 
-          userMenuItems={userDropdownMenuItems} 
-          variant="user"
-          onCollapsedChange={setSidebarCollapsed}
-        />
-        <div className={`${styles.loadingContainer} ${sidebarCollapsed ? styles.collapsed : ''}`}>
-          <p>Cargando historial...</p>
-        </div>
+      <div className={styles.loadingContainer}>
+        <p>Cargando historial...</p>
       </div>
     );
   }
@@ -256,15 +256,8 @@ function Historial() {
   }
 
   return (
-    <div className={styles.historialPage}>
-      <Sidebar 
-        menuItems={userSidebarMenuItems} 
-        userMenuItems={userDropdownMenuItems} 
-        variant="user"
-        onCollapsedChange={setSidebarCollapsed}
-      />
-      
-      <div className={`${styles.historialContainer} ${sidebarCollapsed ? styles.collapsed : ''}`}>
+    <>
+      <div className={styles.historialContainer}>
         {/* Header */}
         <header className={styles.pageHeader}>
           <div className={styles.headerContent}>
@@ -490,31 +483,25 @@ function Historial() {
         </Card>
       </div>
 
-      {/* Modal de edición */}
+
+
       <EditRecordModal
         isOpen={showEditModal}
-        record={editingRecord}
+        record={recordToEdit}
+        onCancel={handleCloseEditModal}
         onSave={handleSaveEdit}
-        onCancel={() => {
-          setShowEditModal(false);
-          setEditingRecord(null);
-        }}
         simboloMoneda={currentPerfil.simboloMoneda}
       />
 
-      {/* Diálogo de confirmación para eliminar */}
       <ConfirmDialog
         isOpen={showConfirmDialog}
         title="Confirmar eliminación"
-        message={`¿Estás seguro de que quieres eliminar "${recordToDelete?.descripcion}"?`}
+        message="¿Estás seguro de que quieres eliminar este registro?"
         confirmText="Eliminar"
         cancelText="Cancelar"
         confirmVariant="danger"
         onConfirm={confirmDelete}
-        onCancel={() => {
-          setShowConfirmDialog(false);
-          setRecordToDelete(null);
-        }}
+        onCancel={handleCancelConfirm}
       />
 
       {/* Toast Notification */}
@@ -522,11 +509,11 @@ function Historial() {
         <Toast
           type={toast.type}
           message={toast.message}
-          onClose={() => setToast(null)}
+          onClose={handleCloseToast}
           duration={5000}
         />
       )}
-    </div>
+    </>
   );
 }
 

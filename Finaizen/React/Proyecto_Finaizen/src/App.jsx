@@ -19,6 +19,9 @@ import ConfigPerfiles from './pages/User/Config/ConfigPerfiles';
 import ConfigNotificaciones from './pages/User/Config/ConfigNotificaciones';
 import ConfigAyuda from './pages/User/Config/ConfigAyuda';
 
+// User Layout
+import UserLayout from './components/layout/UserLayout';
+
 // Admin
 import { DashboardAdmin, InteligenciaMercado, GestionRoles, GestionUsuarios, SupervisionCategorias, RegistroSeguridad, ReportesSoporte } from './pages/Admin';
 
@@ -34,12 +37,14 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Dashboard de Usuario */}
-        <Route path="/user/dashboard" element={<DashboardUser />} />
-        <Route path="/user/nuevo-ingreso" element={<NuevoIngreso />} />
-        <Route path="/user/nuevo-egreso" element={<NuevoEgreso />} />
-        <Route path="/user/historial" element={<Historial />} />
-        <Route path="/user/administrar-registros" element={<AdministrarRegistros />} />
-        <Route path="/user/presupuestos" element={<Presupuestos />} />
+        <Route path="/user" element={<UserLayout />}>
+          <Route path="dashboard" element={<DashboardUser />} />
+          <Route path="nuevo-ingreso" element={<NuevoIngreso />} />
+          <Route path="nuevo-egreso" element={<NuevoEgreso />} />
+          <Route path="historial" element={<Historial />} />
+          <Route path="administrar-registros" element={<AdministrarRegistros />} />
+          <Route path="presupuestos" element={<Presupuestos />} />
+        </Route>
 
         {/* Configuración - Rutas anidadas */}
         <Route path="/user/config" element={<ConfigLayout />}>

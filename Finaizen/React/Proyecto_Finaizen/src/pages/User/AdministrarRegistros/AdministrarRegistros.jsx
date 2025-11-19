@@ -2,9 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
-import { Sidebar } from '../../../components/layout';
 import { Button, Toast, ConfirmDialog } from '../../../components/ui';
-import { userSidebarMenuItems, userDropdownMenuItems } from '../../../config/sidebarConfig';
 import styles from './AdministrarRegistros.module.css';
 
 /**
@@ -17,7 +15,6 @@ function AdministrarRegistros() {
   const { currentUser, currentPerfil, loading: authLoading } = useAuth();
   
   // Estados
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [ingresos, setIngresos] = useState([]);
   const [egresos, setEgresos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -213,16 +210,8 @@ function AdministrarRegistros() {
 
   if (authLoading || loading) {
     return (
-      <div className={styles.adminPage}>
-        <Sidebar 
-          menuItems={userSidebarMenuItems} 
-          userMenuItems={userDropdownMenuItems} 
-          variant="user"
-          onCollapsedChange={setSidebarCollapsed}
-        />
-        <div className={`${styles.loadingContainer} ${sidebarCollapsed ? styles.collapsed : ''}`}>
-          <p>Cargando registros...</p>
-        </div>
+      <div className={styles.loadingContainer}>
+        <p>Cargando registros...</p>
       </div>
     );
   }
@@ -232,17 +221,9 @@ function AdministrarRegistros() {
   }
 
   return (
-    <div className={styles.adminPage}>
-      <Sidebar 
-        menuItems={userSidebarMenuItems} 
-        userMenuItems={userDropdownMenuItems} 
-        variant="user"
-        onCollapsedChange={setSidebarCollapsed}
-      />
-      
-      <div className={`${styles.mainContent} ${sidebarCollapsed ? styles.collapsed : ''}`}>
-        <div className={styles.recordsManager}>
-          <h1>Administrar registros</h1>
+    <div className={styles.mainContent}>
+      <div className={styles.recordsManager}>
+        <h1>Administrar registros</h1>
 
           {/* Filtros y Ordenamiento */}
           <div className={styles.filtersContainer}>
@@ -408,34 +389,33 @@ function AdministrarRegistros() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Diálogo de Confirmación */}
-      <ConfirmDialog
-        isOpen={showConfirmDialog}
-        title="Confirmar eliminación"
-        message={`¿Estás seguro de que quieres eliminar "${recordToDelete?.record?.descripcion}"?`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
-        confirmVariant="danger"
-        onConfirm={confirmDelete}
-        onCancel={() => {
-          setShowConfirmDialog(false);
-          setRecordToDelete(null);
-        }}
-      />
-
-      {/* Toast Notification */}
-      {toast && (
-        <Toast
-          type={toast.type}
-          message={toast.message}
-          onClose={() => setToast(null)}
-          duration={5000}
+        {/* Diálogo de Confirmación */}
+        <ConfirmDialog
+          isOpen={showConfirmDialog}
+          title="Confirmar eliminación"
+          message={`¿Estás seguro de que quieres eliminar "${recordToDelete?.record?.descripcion}"?`}
+          confirmText="Eliminar"
+          cancelText="Cancelar"
+          confirmVariant="danger"
+          onConfirm={confirmDelete}
+          onCancel={() => {
+            setShowConfirmDialog(false);
+            setRecordToDelete(null);
+          }}
         />
-      )}
-    </div>
-  );
+
+        {/* Toast Notification */}
+        {toast && (
+          <Toast
+            type={toast.type}
+            message={toast.message}
+            onClose={() => setToast(null)}
+            duration={5000}
+          />
+        )}
+      </div>
+    );
 }
 
 export default AdministrarRegistros;

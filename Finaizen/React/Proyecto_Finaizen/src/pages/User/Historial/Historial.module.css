@@ -7,44 +7,17 @@
 }
 
 .historialContainer {
-  flex: 1;
-  margin-left: 0;
-  padding: 2rem;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  transition: margin-left 0.3s ease, width 0.3s ease;
   overflow-x: hidden;
 }
 
 .loadingContainer {
-  margin-left: 0;
   padding: 3rem;
   text-align: center;
   color: #6b7280;
   font-size: 1.1rem;
-  transition: margin-left 0.3s ease;
-}
-
-/* Solo en desktop aplicar margin */
-@media (min-width: 1025px) {
-  .historialContainer {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-  }
-
-  .historialContainer.collapsed {
-    margin-left: 80px;
-    width: calc(100% - 80px);
-  }
-
-  .loadingContainer {
-    margin-left: 250px;
-  }
-
-  .loadingContainer.collapsed {
-    margin-left: 80px;
-  }
 }
 
 /* Header */
