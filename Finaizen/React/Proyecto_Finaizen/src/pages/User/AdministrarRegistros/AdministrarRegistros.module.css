@@ -27,7 +27,8 @@
   background-color: #ffffff;
   padding: 2rem;
   border-radius: 20px;
-  height: 85vh;
+  min-height: 85vh;
+  height: auto;
   width: 100%;
   max-width: 1000px;
   box-sizing: border-box;
@@ -35,7 +36,7 @@
   flex-direction: column;
   border: 1px solid #e9ecef;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
-  margin: 2rem;
+  margin: 1rem;
 }
 
 .recordsManager h1 {
@@ -130,14 +131,16 @@
 .recordsColumns {
   display: flex;
   gap: 2rem;
-  flex-grow: 1;
-  overflow: visible;
+  flex: 1;
+  overflow: hidden;
 }
 
 .column {
   flex: 1;
   display: flex;
   flex-direction: column;
+  height: auto;
+  max-height: 60vh;
   overflow: visible;
 }
 
@@ -150,7 +153,7 @@
 
 /* Lista de Registros (con scroll) */
 .recordsList {
-  flex-grow: 1;
+  flex: 1;
   overflow-y: auto;
   padding-right: 15px;
   padding-bottom: 0.5rem;
@@ -259,12 +262,7 @@
 
 /* Acción de columna (botón dentro de cada columna) */
 .columnAction {
-  margin-top: 1rem;
-  padding: 1rem 0 1rem 0;
-  border-top: 1px solid #e9ecef;
-  display: flex;
-  justify-content: center;
-  overflow: visible;
+  display: none;
 }
 
 .columnAction button {
@@ -326,6 +324,11 @@
   .recordsManager {
     height: auto;
     min-height: 85vh;
+  }
+
+  .column {
+    height: auto;
+    overflow: visible;
   }
 
   /* Mostrar switch en tablets */
@@ -412,6 +415,8 @@
 
   .column {
     display: none;
+    height: auto;
+    overflow: visible;
   }
 
   .column.mobileActive {

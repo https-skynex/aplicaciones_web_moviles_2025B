@@ -31,6 +31,9 @@ function AdministrarRegistros() {
   // Estado para vista móvil (switch entre ingresos/egresos)
   const [mobileView, setMobileView] = useState('ingresos'); // 'ingresos' | 'egresos'
 
+  // Estado para detectar si es desktop
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1024);
+
   /**
    * Carga los ingresos y egresos del perfil actual
    */
@@ -59,14 +62,15 @@ function AdministrarRegistros() {
     }
   }, [currentPerfil]);
 
-  // Detectar notificación del navigation state (cuando se regresa de editar)
+  // Detectar cambios de tamaño de ventana
   useEffect(() => {
-    if (location.state?.notification) {
-      setToast(location.state.notification);
-      // Limpiar el estado de navegación
-      window.history.replaceState({}, document.title);
-    }
-  }, [location]);
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 1024);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -113,10 +117,13 @@ function AdministrarRegistros() {
    * Obtiene el texto descriptivo de la frecuencia
    */
   const getFrequencyText = (record) => {
+    if (!record || !record.frecuencia) return '';
+
     switch (record.frecuencia) {
       case 'mensual':
-        return `El día ${record.diaMes} de cada mes`;
+        return record.diaMes ? `El día ${record.diaMes} de cada mes` : 'Mensual';
       case 'semanal': {
+        if (!record.diasSemana || !Array.isArray(record.diasSemana)) return 'Semanal';
         const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
         const dias = record.diasSemana.map(d => diasSemana[d]).join(', ');
         return `Cada ${dias}`;
@@ -126,6 +133,7 @@ function AdministrarRegistros() {
       case 'ocasional':
         return 'Ocasional';
       case 'anual':
+        if (!record.diaAnio || !record.diaAnio.dia || !record.diaAnio.mes) return 'Anual';
         return `El ${record.diaAnio.dia}/${record.diaAnio.mes} de cada año`;
       default:
         return '';
@@ -319,17 +327,7 @@ function AdministrarRegistros() {
                 )}
               </div>
               
-              {/* Botón de acción dentro de la columna de Ingresos */}
-              <div className={styles.columnAction}>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate('/user/nuevo-ingreso')}
-                  className={styles.btnIncome}
-                >
-                  Crear nuevo ingreso
-                </Button>
-              </div>
-            </div>
+            </div> 
 
             {/* Columna de Egresos */}
             <div className={`${styles.column} ${styles.egresosColumn} ${mobileView === 'egresos' ? styles.mobileActive : ''}`}>
@@ -376,17 +374,29 @@ function AdministrarRegistros() {
                 )}
               </div>
               
-              {/* Botón de acción dentro de la columna de Egresos */}
-              <div className={styles.columnAction}>
-                <Button
-                  variant="danger"
-                  onClick={() => navigate('/user/nuevo-egreso')}
-                  className={styles.btnExpense}
-                >
-                  Crear nuevo egreso
-                </Button>
-              </div>
             </div>
+          </div>
+
+          {/* Botones de Acción */}
+          <div className={styles.actionButtons}>
+            {(isDesktop || mobileView === 'ingresos') && (
+              <Button
+                variant="primary"
+                onClick={() => navigate('/user/nuevo-ingreso')}
+                className={styles.btnIncome}
+              >
+                Crear nuevo ingreso
+              </Button>
+            )}
+            {(isDesktop || mobileView === 'egresos') && (
+              <Button
+                variant="danger"
+                onClick={() => navigate('/user/nuevo-egreso')}
+                className={styles.btnExpense}
+              >
+                Crear nuevo egreso
+              </Button>
+            )}
           </div>
         </div>
 
