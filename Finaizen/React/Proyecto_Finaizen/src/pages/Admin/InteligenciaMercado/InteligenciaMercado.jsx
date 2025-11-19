@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import Sidebar from '../../../components/layout/Sidebar';
@@ -43,6 +43,23 @@ function InteligenciaMercado() {
   });
   const [insightText, setInsightText] = useState('');
 
+  // Generar insight
+  const generateInsight = useCallback((expensesDatasets, incomeData) => {
+    const ds1 = expensesDatasets[0];
+    const topCat1 = expenseLabels[ds1.data.indexOf(Math.max(...ds1.data))];
+    const topIncome = incomeLabels[incomeData.indexOf(Math.max(...incomeData))];
+    
+    let insight = `Para el grupo <strong>${ds1.label}</strong>, la categoría con mayor gasto es <strong>${topCat1}</strong>. Su principal fuente de ingresos es <strong>${topIncome}</strong>.`;
+
+    if (showComparison && expensesDatasets.length > 1) {
+      const ds2 = expensesDatasets[1];
+      const topCat2 = expenseLabels[ds2.data.indexOf(Math.max(...ds2.data))];
+      insight += `<br><br>En comparación, para <strong>${ds2.label}</strong>, la categoría principal es <strong>${topCat2}</strong>.`;
+    }
+
+    setInsightText(insight);
+  }, [showComparison]);
+
   // Proteger ruta
   useEffect(() => {
     if (!currentUser || !isAdmin) {
@@ -80,23 +97,7 @@ function InteligenciaMercado() {
 
     // Generar insight
     generateInsight(expensesDatasets, dataGroup1.incomeSources);
-  }, [age1, location1, age2, location2, showComparison, currentUser, isAdmin]);
-
-  const generateInsight = (expensesDatasets, incomeData) => {
-    const ds1 = expensesDatasets[0];
-    const topCat1 = expenseLabels[ds1.data.indexOf(Math.max(...ds1.data))];
-    const topIncome = incomeLabels[incomeData.indexOf(Math.max(...incomeData))];
-    
-    let insight = `Para el grupo <strong>${ds1.label}</strong>, la categoría con mayor gasto es <strong>${topCat1}</strong>. Su principal fuente de ingresos es <strong>${topIncome}</strong>.`;
-
-    if (showComparison && expensesDatasets.length > 1) {
-      const ds2 = expensesDatasets[1];
-      const topCat2 = expenseLabels[ds2.data.indexOf(Math.max(...ds2.data))];
-      insight += `<br><br>En comparación, para <strong>${ds2.label}</strong>, la categoría principal es <strong>${topCat2}</strong>.`;
-    }
-
-    setInsightText(insight);
-  };
+  }, [age1, location1, age2, location2, showComparison, currentUser, isAdmin, generateInsight]);
 
   const downloadCSV = () => {
     let csvContent = "data:text/csv;charset=utf-8,";

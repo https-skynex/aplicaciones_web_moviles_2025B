@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useAuth } from '../../../context/AuthContext';
@@ -32,13 +32,13 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
   const isEditMode = editId !== null;
   
   // Obtener fecha y hora actuales
-  const now = new Date();
-  const currentDay = now.getDate();
-  const currentDayOfWeek = now.getDay();
-  const currentDate = now.toLocaleDateString('en-CA'); // Formato YYYY-MM-DD en zona horaria local
+  const now = useMemo(() => new Date(), []);
+  const currentDay = useMemo(() => now.getDate(), [now]);
+  const currentDayOfWeek = useMemo(() => now.getDay(), [now]);
+  const currentDate = useMemo(() => now.toLocaleDateString('en-CA'), [now]); // Formato YYYY-MM-DD en zona horaria local
   
   // Calcular hora redondeada a intervalos de 15 minutos
-  const getDefaultTime = () => {
+  const getDefaultTime = useCallback(() => {
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes();
     let roundedMinutes;
@@ -49,7 +49,7 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
     else roundedMinutes = '45';
     
     return `${hours}:${roundedMinutes}`;
-  };
+  }, [now]);
 
   // Estado del formulario (formulario controlado)
   const [formData, setFormData] = useState({
@@ -110,7 +110,7 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
         });
       }
     }
-  }, [isEditMode, editId, type, currentPerfil]);
+  }, [isEditMode, editId, type, currentPerfil, currentDate, getDefaultTime]);
 
   // useEffect: Actualizar valores por defecto cuando cambie la frecuencia
   useEffect(() => {
@@ -123,7 +123,7 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
     if ((formData.frecuencia === 'ocasional' || formData.frecuencia === 'anual') && !formData.fechaEspecifica) {
       setFormData(prev => ({ ...prev, fechaEspecifica: currentDate }));
     }
-  }, [formData.frecuencia]); // Solo cuando cambie la frecuencia
+  }, [formData.frecuencia, currentDay, currentDayOfWeek, currentDate, formData.diaMes, formData.diasSemana.length, formData.fechaEspecifica]); // Solo cuando cambie la frecuencia
 
   // useEffect: Ajustar minutos exactos al cargar inicialmente si es ocasional
   useEffect(() => {
@@ -137,7 +137,7 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
         setFormData(prev => ({ ...prev, minutos: minutosActuales }));
       }
     }
-  }, []); // Solo al montar
+  }, [isEditMode, formData.frecuencia, formData.minutos, now]); // Solo al montar
 
   /**
    * Manejo de cambios en inputs (onChange)
@@ -324,6 +324,9 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
       : 1;
 
     // Crear registro directamente en historial
+    const [year, month, day] = formData.fechaEspecifica.split('-').map(Number);
+    const fechaEjecucion = new Date(year, month - 1, day);
+    
     const registroHistorial = new RegistroHistorial({
       id: historialId,
       perfilId: currentPerfil.id,
@@ -332,9 +335,9 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
       descripcion: formData.descripcion,
       categoria: formData.categoria,
       transaccionOrigenId: null, // No tiene origen porque es ocasional
-      fechaEjecucion: new Date(formData.fechaEspecifica),
-      mes: new Date(formData.fechaEspecifica).getMonth() + 1,
-      anio: new Date(formData.fechaEspecifica).getFullYear()
+      fechaEjecucion: fechaEjecucion,
+      mes: fechaEjecucion.getMonth() + 1,
+      anio: fechaEjecucion.getFullYear()
     });
 
     // Agregar a historial

@@ -108,13 +108,13 @@ class User {
       contraseña: this.contraseña,
       pais: this.pais,
       ciudad: this.ciudad,
-      fechaNacimiento: this.fechaNacimiento.toISOString(),
+      fechaNacimiento: this.fechaNacimiento && !isNaN(this.fechaNacimiento.getTime()) ? this.fechaNacimiento.toISOString() : null,
       genero: this.genero,
       rol: this.rol,
       perfiles: this.perfiles,
       notificaciones: this.notificaciones,
-      createdAt: this.createdAt.toISOString(),
-      updatedAt: this.updatedAt.toISOString()
+      createdAt: this.createdAt && !isNaN(this.createdAt.getTime()) ? this.createdAt.toISOString() : new Date().toISOString(),
+      updatedAt: this.updatedAt && !isNaN(this.updatedAt.getTime()) ? this.updatedAt.toISOString() : new Date().toISOString()
     };
   }
 

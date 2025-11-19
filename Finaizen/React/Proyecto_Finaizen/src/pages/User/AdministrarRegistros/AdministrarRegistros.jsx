@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
@@ -34,31 +34,10 @@ function AdministrarRegistros() {
   // Estado para vista móvil (switch entre ingresos/egresos)
   const [mobileView, setMobileView] = useState('ingresos'); // 'ingresos' | 'egresos'
 
-  // Detectar notificación del navigation state (cuando se regresa de editar)
-  useEffect(() => {
-    if (location.state?.notification) {
-      setToast(location.state.notification);
-      // Limpiar el estado de navegación
-      window.history.replaceState({}, document.title);
-    }
-  }, [location]);
-
-  // Cargar datos al montar el componente
-  useEffect(() => {
-    if (authLoading) return;
-
-    if (!currentUser || !currentPerfil) {
-      navigate('/login');
-      return;
-    }
-
-    loadRecords();
-  }, [currentPerfil, authLoading, currentUser, navigate]);
-
   /**
    * Carga los ingresos y egresos del perfil actual
    */
-  const loadRecords = () => {
+  const loadRecords = useCallback(() => {
     try {
       // Filtrar ingresos del perfil (excluyendo ocasionales)
       const perfilIngresos = mockDB.ingresos.filter(
@@ -81,7 +60,28 @@ function AdministrarRegistros() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPerfil]);
+
+  // Detectar notificación del navigation state (cuando se regresa de editar)
+  useEffect(() => {
+    if (location.state?.notification) {
+      setToast(location.state.notification);
+      // Limpiar el estado de navegación
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    if (authLoading) return;
+
+    if (!currentUser || !currentPerfil) {
+      navigate('/login');
+      return;
+    }
+
+    loadRecords();
+  }, [currentPerfil, authLoading, currentUser, navigate, loadRecords]);
 
   /**
    * Aplica filtros y ordenamiento a una lista de registros

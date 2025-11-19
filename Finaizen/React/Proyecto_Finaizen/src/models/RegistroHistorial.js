@@ -60,7 +60,7 @@ class RegistroHistorial {
       descripcion: this.descripcion,
       categoria: this.categoria,
       transaccionOrigenId: this.transaccionOrigenId,
-      fechaEjecucion: this.fechaEjecucion.toISOString(),
+      fechaEjecucion: this.fechaEjecucion && !isNaN(this.fechaEjecucion.getTime()) ? this.fechaEjecucion.toISOString() : new Date().toISOString(),
       mes: this.mes,
       anio: this.anio
     };

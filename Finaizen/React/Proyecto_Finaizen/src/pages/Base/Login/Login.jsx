@@ -140,6 +140,7 @@ function Login() {
               placeholder="••••••••"
               required
               error={errors.password}
+              autoComplete="current-password"
             />
 
             {/* Recordarme y Olvidé contraseña */}

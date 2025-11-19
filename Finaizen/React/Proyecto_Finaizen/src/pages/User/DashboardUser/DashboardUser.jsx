@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
@@ -15,11 +15,9 @@ import styles from './DashboardUser.module.css';
 function DashboardUser() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentUser, currentPerfil, loading: authLoading, logout } = useAuth();
+  const { currentUser, currentPerfil, loading: authLoading } = useAuth();
 
   // Estados
-  const [ingresos, setIngresos] = useState([]);
-  const [egresos, setEgresos] = useState([]);
   const [historial, setHistorial] = useState([]);
   const [presupuestos, setPresupuestos] = useState([]);
   const [logros, setLogros] = useState([]);
@@ -35,40 +33,17 @@ function DashboardUser() {
     ahorro: 0
   });
 
-  // Cargar datos al montar el componente
-  useEffect(() => {
-    // Esperar a que termine de cargar la autenticación
-    if (authLoading) return;
-
-    if (!currentUser || !currentPerfil) {
-      navigate('/login');
-      return;
-    }
-
-    cargarDatos();
-  }, [currentUser, currentPerfil, authLoading, navigate]);
-
-  // Mostrar notificación si viene del formulario de transacción
-  useEffect(() => {
-    if (location.state?.notification) {
-      setToast(location.state.notification);
-      
-      // Limpiar el estado de navegación para evitar mostrar la notificación nuevamente
-      window.history.replaceState({}, document.title);
-    }
-  }, [location]);
-
-  const cargarDatos = () => {
+  const cargarDatos = useCallback(() => {
+    if (!currentPerfil) return;
+    
     setLoading(true);
 
-    const ing = mockDB.getIngresosDePerf(currentPerfil.id);
-    const egr = mockDB.getEgresosDePerf(currentPerfil.id);
+    mockDB.getIngresosDePerf(currentPerfil.id);
+    mockDB.getEgresosDePerf(currentPerfil.id);
     const hist = mockDB.getHistorialDePerfil(currentPerfil.id);
     const pres = mockDB.getPresupuestosDePerfil(currentPerfil.id);
     const logr = mockDB.getLogrosDePerfil(currentPerfil.id);
 
-    setIngresos(ing);
-    setEgresos(egr);
     setHistorial(hist);
     setLogros(logr);
 
@@ -136,12 +111,30 @@ function DashboardUser() {
     });
 
     setLoading(false);
-  };
+  }, [currentPerfil]);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    // Esperar a que termine de cargar la autenticación
+    if (authLoading) return;
+
+    if (!currentUser || !currentPerfil) {
+      navigate('/login');
+      return;
+    }
+
+    cargarDatos();
+  }, [currentUser, currentPerfil, authLoading]);
+
+  // Mostrar notificación si viene del formulario de transacción
+  useEffect(() => {
+    if (location.state?.notification) {
+      setToast(location.state.notification);
+      
+      // Limpiar el estado de navegación para evitar mostrar la notificación nuevamente
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   // Datos para la gráfica del mes actual
   const chartDataMonthly = [
@@ -198,7 +191,7 @@ function DashboardUser() {
     });
     
     return balancesPorMes;
-  }, [historial, currentPerfil?.id]); // Recalcular cuando cambie el historial o el perfil
+  }, [historial]); // Recalcular cuando cambie el historial
 
   // Logros desbloqueados
   const logrosDesbloqueados = logros.filter(l => l.desbloqueado).length;
@@ -211,7 +204,7 @@ function DashboardUser() {
   ];
 
   // Mostrar loading mientras carga auth o datos
-  if (authLoading || loading) {
+  if (authLoading || loading || !currentPerfil) {
     return (
       <div className={styles.dashboardPage}>
         <Sidebar 
@@ -240,8 +233,8 @@ function DashboardUser() {
         {/* Header */}
         <header className={styles.dashboardHeader}>
           <div className={styles.welcomeSection}>
-            <h1>¡Hola, {currentUser.nombre}! 👋</h1>
-            <p>Perfil: <strong>{currentPerfil.nombre}</strong> ({currentPerfil.moneda})</p>
+            <h1>¡Hola, {currentUser?.nombre || 'Usuario'}! 👋</h1>
+            <p>Perfil: <strong>{currentPerfil?.nombre || 'Cargando'}</strong> ({currentPerfil?.moneda || ''})</p>
           </div>
         </header>
 

@@ -9,7 +9,6 @@ import SupervisionFilters from '../../../components/supervision/SupervisionFilte
 import SupervisionTable from '../../../components/supervision/SupervisionTable';
 import CorrectionModal from '../../../components/supervision/CorrectionModal';
 import { transactionsData, kpiData, chartData, categories } from '../../../utils/supervisionData';
-import { adminSidebarMenuItems, adminDropdownMenuItems } from '../../../config/adminSidebarConfig';
 import styles from './SupervisionCategorias.module.css';
 
 function SupervisionCategorias() {

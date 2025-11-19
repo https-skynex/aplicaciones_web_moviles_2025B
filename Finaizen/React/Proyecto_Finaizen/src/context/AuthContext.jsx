@@ -11,6 +11,7 @@ const AuthContext = createContext(null);
  * Hook personalizado para usar el contexto de autenticación
  * @returns {Object} Contexto de autenticación
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

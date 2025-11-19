@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useLocation } from 'react-router-dom';
 import Sidebar from '../../../components/layout/Sidebar';
@@ -26,20 +26,7 @@ export default function Presupuestos() {
   const [filtro, setFiltro] = useState('todos'); // 'todos', 'mensual', 'semanal', 'anual'
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  useEffect(() => {
-    cargarPresupuestos();
-  }, [currentPerfil]);
-
-  // Mostrar toast si viene de otra página
-  useEffect(() => {
-    if (location.state?.message) {
-      showToast(location.state.message, location.state.type || 'success');
-      // Limpiar el state
-      window.history.replaceState({}, document.title);
-    }
-  }, [location]);
-
-  const cargarPresupuestos = () => {
+  const cargarPresupuestos = useCallback(() => {
     if (!currentPerfil) return;
 
     const todosPresupuestos = mockDB.presupuestos;
@@ -92,7 +79,11 @@ export default function Presupuestos() {
     });
 
     setPresupuestos(presupuestosConGastoReal);
-  };
+  }, [currentPerfil]);
+
+  useEffect(() => {
+    cargarPresupuestos();
+  }, [currentPerfil, cargarPresupuestos]);
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });

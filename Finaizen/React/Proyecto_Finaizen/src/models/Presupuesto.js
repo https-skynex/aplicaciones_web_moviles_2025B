@@ -141,8 +141,8 @@ class Presupuesto {
       activo: this.activo,
       mes: this.mes,
       anio: this.anio,
-      createdAt: this.createdAt.toISOString(),
-      updatedAt: this.updatedAt.toISOString()
+      createdAt: this.createdAt && !isNaN(this.createdAt.getTime()) ? this.createdAt.toISOString() : new Date().toISOString(),
+      updatedAt: this.updatedAt && !isNaN(this.updatedAt.getTime()) ? this.updatedAt.toISOString() : new Date().toISOString()
     };
   }
 

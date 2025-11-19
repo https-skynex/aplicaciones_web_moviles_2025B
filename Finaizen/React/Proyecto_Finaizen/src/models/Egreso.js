@@ -30,7 +30,15 @@ class Egreso {
     this.frecuencia = frecuencia;
     this.diasSemana = diasSemana;
     this.diaMes = diaMes;
-    this.fechaEspecifica = fechaEspecifica ? new Date(fechaEspecifica) : null;
+    
+    // Convertir fechaEspecifica a Date local si es string
+    if (typeof fechaEspecifica === 'string') {
+      const [year, month, day] = fechaEspecifica.split('-').map(Number);
+      this.fechaEspecifica = new Date(year, month - 1, day);
+    } else {
+      this.fechaEspecifica = fechaEspecifica ? new Date(fechaEspecifica) : null;
+    }
+    
     this.delay = delay;
     this.notificacionActiva = notificacionActiva;
     this.activo = activo;
@@ -165,13 +173,13 @@ class Egreso {
       frecuencia: this.frecuencia,
       diasSemana: this.diasSemana,
       diaMes: this.diaMes,
-      fechaEspecifica: this.fechaEspecifica ? this.fechaEspecifica.toISOString() : null,
+      fechaEspecifica: this.fechaEspecifica && !isNaN(this.fechaEspecifica.getTime()) ? this.fechaEspecifica.toISOString() : null,
       delay: this.delay,
       notificacionActiva: this.notificacionActiva,
       activo: this.activo,
-      proximaEjecucion: this.proximaEjecucion ? this.proximaEjecucion.toISOString() : null,
-      createdAt: this.createdAt.toISOString(),
-      updatedAt: this.updatedAt.toISOString()
+      proximaEjecucion: this.proximaEjecucion && !isNaN(this.proximaEjecucion.getTime()) ? this.proximaEjecucion.toISOString() : null,
+      createdAt: this.createdAt && !isNaN(this.createdAt.getTime()) ? this.createdAt.toISOString() : new Date().toISOString(),
+      updatedAt: this.updatedAt && !isNaN(this.updatedAt.getTime()) ? this.updatedAt.toISOString() : new Date().toISOString()
     };
   }
 

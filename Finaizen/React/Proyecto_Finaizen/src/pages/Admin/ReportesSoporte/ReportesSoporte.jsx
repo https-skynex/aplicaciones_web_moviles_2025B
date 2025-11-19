@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '../../../context/AuthContext';
 import Sidebar from '../../../components/layout/Sidebar';
 import SupportKPIs from '../../../components/support/SupportKPIs';
 import SupportFilters from '../../../components/support/SupportFilters';
@@ -10,9 +9,8 @@ import { supportTickets as initialTickets, kpiData, assignOptions } from '../../
 import styles from './ReportesSoporte.module.css';
 
 const ReportesSoporte = () => {
-  const { currentUser, isAdmin } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [tickets, setTickets] = useState(initialTickets);
+  const [tickets] = useState(initialTickets);
   const [statusFilter, setStatusFilter] = useState('todos');
   const [searchValue, setSearchValue] = useState('');
   const [assignModalOpen, setAssignModalOpen] = useState(false);

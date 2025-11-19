@@ -132,7 +132,7 @@ class Perfil {
       nombre: this.nombre,
       moneda: this.moneda,
       simboloMoneda: this.simboloMoneda,
-      createdAt: this.createdAt.toISOString(),
+      createdAt: this.createdAt && !isNaN(this.createdAt.getTime()) ? this.createdAt.toISOString() : new Date().toISOString(),
       ingresos: this.ingresos,
       egresos: this.egresos,
       transacciones: this.transacciones,

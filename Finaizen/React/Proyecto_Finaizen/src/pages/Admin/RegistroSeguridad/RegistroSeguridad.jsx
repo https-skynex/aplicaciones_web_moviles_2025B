@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '../../../context/AuthContext';
 import Sidebar from '../../../components/layout/Sidebar';
 import SecurityKPIs from '../../../components/security/SecurityKPIs';
 import SecurityFilters from '../../../components/security/SecurityFilters';
@@ -9,7 +8,6 @@ import { securityLogs as initialLogs, kpiData } from '../../../utils/securityDat
 import styles from './RegistroSeguridad.module.css';
 
 const RegistroSeguridad = () => {
-  const { currentUser, isAdmin } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [logs, setLogs] = useState(initialLogs);
   const [eventFilter, setEventFilter] = useState('todos');
