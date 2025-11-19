@@ -124,7 +124,7 @@ function DashboardUser() {
     }
 
     cargarDatos();
-  }, [currentUser, currentPerfil, authLoading]);
+  }, [currentUser, currentPerfil, authLoading, navigate, cargarDatos]);
 
   // Mostrar notificación si viene del formulario de transacción
   useEffect(() => {

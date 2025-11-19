@@ -85,6 +85,15 @@ export default function Presupuestos() {
     cargarPresupuestos();
   }, [currentPerfil, cargarPresupuestos]);
 
+  // Mostrar toast si viene de otra página
+  useEffect(() => {
+    if (location.state?.message) {
+      showToast(location.state.message, location.state.type || 'success');
+      // Limpiar el state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
   };
