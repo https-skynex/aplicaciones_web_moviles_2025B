@@ -35,7 +35,7 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
   const now = new Date();
   const currentDay = now.getDate();
   const currentDayOfWeek = now.getDay();
-  const currentDate = now.toISOString().split('T')[0];
+  const currentDate = now.toLocaleDateString('en-CA'); // Formato YYYY-MM-DD en zona horaria local
   
   // Calcular hora redondeada a intervalos de 15 minutos
   const getDefaultTime = () => {
@@ -214,21 +214,6 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
    */
   const handleMonthDaySelect = (day) => {
     setFormData(prev => ({ ...prev, diaMes: day }));
-  };
-
-  /**
-   * Redondear minutos a intervalos de 15 (00, 15, 30, 45)
-   */
-  const roundMinutesToQuarter = (timeString) => {
-    const [hours, minutes] = timeString.split(':').map(Number);
-    let roundedMinutes;
-    
-    if (minutes < 15) roundedMinutes = '00';
-    else if (minutes < 30) roundedMinutes = '15';
-    else if (minutes < 45) roundedMinutes = '30';
-    else roundedMinutes = '45';
-    
-    return `${hours.toString().padStart(2, '0')}:${roundedMinutes}`;
   };
 
   /**
@@ -513,31 +498,6 @@ function TransactionForm({ type = 'ingreso', onSubmitSuccess }) {
         }
       }
     });
-  };
-
-  /**
-    });
-  };
-
-  /**
-   * Resetear formulario a valores iniciales
-   */
-  const resetForm = () => {
-    const defaultTime = getDefaultTime();
-    setFormData({
-      monto: '0.00',
-      descripcion: '',
-      categoria: type === 'ingreso' ? 'Otros' : 'Otros',
-      frecuencia: 'ocasional',
-      diasSemana: [],
-      diaMes: null,
-      fechaEspecifica: currentDate,
-      hora: defaultTime.split(':')[0],
-      minutos: defaultTime.split(':')[1],
-      notificacionActiva: false,
-      clasificacion: 'prioritario'
-    });
-    setErrors({});
   };
 
   // Array de días de la semana

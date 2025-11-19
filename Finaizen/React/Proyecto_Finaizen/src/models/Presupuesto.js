@@ -98,11 +98,12 @@ class Presupuesto {
     this.montoGastado = 0;
     
     switch (this.periodo) {
-      case 'mensual':
+      case 'mensual': {
         const ahora = new Date();
         this.mes = ahora.getMonth() + 1;
         this.anio = ahora.getFullYear();
         break;
+      }
       // Implementar lógica para otros periodos si es necesario
     }
     

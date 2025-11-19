@@ -27,10 +27,6 @@ function AdministrarRegistros() {
   const [filterBy, setFilterBy] = useState('todos'); // 'todos' | 'mensual' | 'semanal' | 'diario' | 'ocasional'
   const [sortBy, setSortBy] = useState('fecha'); // 'fecha' | 'monto-asc' | 'monto-desc'
 
-  // Estados para modal de edición
-  const [editingRecord, setEditingRecord] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-
   // Estados para diálogo de confirmación
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState(null);
@@ -123,10 +119,11 @@ function AdministrarRegistros() {
     switch (record.frecuencia) {
       case 'mensual':
         return `El día ${record.diaMes} de cada mes`;
-      case 'semanal':
+      case 'semanal': {
         const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
         const dias = record.diasSemana.map(d => diasSemana[d]).join(', ');
         return `Cada ${dias}`;
+      }
       case 'diario':
         return 'Todos los días';
       case 'ocasional':
