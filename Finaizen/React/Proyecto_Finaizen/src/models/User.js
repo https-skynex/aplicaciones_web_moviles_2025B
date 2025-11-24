@@ -17,6 +17,12 @@ class User {
     rol = 'user', // 'user' | 'admin'
     perfiles = [],
     notificaciones = [],
+    // Campos Premium
+    isPremium = false,
+    premiumSince = null,
+    subscriptionType = null, // 'mensual' | 'anual' | null
+    subscriptionEndDate = null,
+    paymentMethod = null, // { type: 'tarjeta', last4: '4242', expiry: '12/25' }
     createdAt = new Date(),
     updatedAt = new Date()
   }) {
@@ -33,6 +39,12 @@ class User {
     this.rol = rol;
     this.perfiles = perfiles; // Array de IDs de perfiles
     this.notificaciones = notificaciones;
+    // Premium
+    this.isPremium = isPremium;
+    this.premiumSince = premiumSince ? new Date(premiumSince) : null;
+    this.subscriptionType = subscriptionType;
+    this.subscriptionEndDate = subscriptionEndDate ? new Date(subscriptionEndDate) : null;
+    this.paymentMethod = paymentMethod;
     this.createdAt = createdAt instanceof Date ? createdAt : new Date(createdAt);
     this.updatedAt = updatedAt instanceof Date ? updatedAt : new Date(updatedAt);
   }
@@ -96,6 +108,45 @@ class User {
   }
 
   /**
+   * Activa la suscripción premium
+   */
+  activarPremium(tipo, paymentMethod) {
+    this.isPremium = true;
+    this.premiumSince = new Date();
+    this.subscriptionType = tipo; // 'mensual' o 'anual'
+    
+    // Calcular fecha de fin
+    const endDate = new Date();
+    if (tipo === 'mensual') {
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else if (tipo === 'anual') {
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    }
+    this.subscriptionEndDate = endDate;
+    this.paymentMethod = paymentMethod;
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Cancela la suscripción premium
+   */
+  cancelarPremium() {
+    this.isPremium = false;
+    this.subscriptionType = null;
+    this.subscriptionEndDate = null;
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Verifica si la suscripción está activa
+   */
+  get premiumActivo() {
+    if (!this.isPremium) return false;
+    if (!this.subscriptionEndDate) return false;
+    return new Date() < this.subscriptionEndDate;
+  }
+
+  /**
    * Serializa el usuario (para guardar en localStorage)
    */
   toJSON() {
@@ -113,6 +164,11 @@ class User {
       rol: this.rol,
       perfiles: this.perfiles,
       notificaciones: this.notificaciones,
+      isPremium: this.isPremium,
+      premiumSince: this.premiumSince && !isNaN(this.premiumSince.getTime()) ? this.premiumSince.toISOString() : null,
+      subscriptionType: this.subscriptionType,
+      subscriptionEndDate: this.subscriptionEndDate && !isNaN(this.subscriptionEndDate.getTime()) ? this.subscriptionEndDate.toISOString() : null,
+      paymentMethod: this.paymentMethod,
       createdAt: this.createdAt && !isNaN(this.createdAt.getTime()) ? this.createdAt.toISOString() : new Date().toISOString(),
       updatedAt: this.updatedAt && !isNaN(this.updatedAt.getTime()) ? this.updatedAt.toISOString() : new Date().toISOString()
     };

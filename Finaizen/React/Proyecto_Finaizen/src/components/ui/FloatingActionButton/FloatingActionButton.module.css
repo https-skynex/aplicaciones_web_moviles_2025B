@@ -27,8 +27,8 @@
 
 /* Botón FAB principal */
 .fab {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -102,12 +102,12 @@
 
 /* Icono del FAB */
 .fabIcon {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 200;
   color: white;
-  line-height: 64px;
-  height: 64px;
-  width: 64px;
+  line-height: 56px;
+  height: 56px;
+  width: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,7 +143,7 @@
 /* Menú desplegable */
 .fabMenu {
   position: absolute;
-  bottom: 80px;
+  bottom: 68px;
   right: 0;
   display: flex;
   flex-direction: column;
@@ -161,7 +161,7 @@
 .top_right .fabMenu,
 .top_left .fabMenu {
   bottom: auto;
-  top: 80px;
+  top: 68px;
 }
 
 @keyframes slideUp {
@@ -299,5 +299,159 @@
 
   .bottom_left {
     left: 1rem;
+  }
+}
+
+/* ========================================
+   ESTILOS PREMIUM
+   ======================================== */
+
+/* Botón FAB Premium (cuando el usuario es premium) */
+.fab.premium {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.5);
+  animation: premiumPulse 3s ease-in-out infinite;
+  position: relative;
+  overflow: visible;
+}
+
+/* Efecto de anillo premium sutil */
+.fab.premium::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: premiumRotate 4s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes premiumPulse {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.6);
+  }
+}
+
+@keyframes premiumRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.fab.premium:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  transform: scale(1.05);
+}
+
+.fab.premium.open {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.fab.premium.open:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Item Premium del menú (ChatBot) */
+.fabMenuItem.premiumItem {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.fabMenuItem.premiumItem::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(102, 126, 234, 0.1) 50%,
+    transparent 70%
+  );
+  animation: premiumShine 3s infinite;
+}
+
+@keyframes premiumShine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.fabMenuItem.premiumItem:hover {
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  border-color: rgba(102, 126, 234, 0.5);
+  transform: translateX(-12px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.fabMenuItem.premiumItem .fabMenuIcon {
+  animation: premiumIconBounce 2s ease-in-out infinite;
+}
+
+@keyframes premiumIconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.fabMenuItem.premiumItem .fabMenuLabel {
+  color: #667eea;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Badge "PREMIUM" en el icono del ChatBot */
+.fabMenuItem.premiumItem .fabMenuIcon::after {
+  content: '✨';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 0.75rem;
+  animation: premiumSparkle 2s ease-in-out infinite;
+}
+
+@keyframes premiumSparkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+/* Responsive Premium */
+@media (max-width: 768px) {
+  .fab.premium::before {
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
   }
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { useAuth } from '../../../context/AuthContext';
 import styles from './FloatingActionButton.module.css';
 
 /**
@@ -17,16 +18,21 @@ function FloatingActionButton({
   color = 'primary'
 }) {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleMenuItemClick = (path) => {
+  const handleMenuItemClick = (item) => {
     setIsOpen(false);
-    if (path) {
-      navigate(path);
+    if (item.action) {
+      // Ejecutar acción personalizada (como abrir ChatBot)
+      item.action();
+    } else if (item.path) {
+      // Navegar a ruta
+      navigate(item.path);
     }
   };
 
@@ -34,6 +40,7 @@ function FloatingActionButton({
   const fabClasses = [
     styles.fab,
     styles[color],
+    currentUser?.premiumActivo ? styles.premium : '',
     isOpen ? styles.open : ''
   ].filter(Boolean).join(' ');
 
@@ -58,8 +65,8 @@ function FloatingActionButton({
           {menuItems.map((item, index) => (
             <button
               key={index}
-              className={styles.fabMenuItem}
-              onClick={() => handleMenuItemClick(item.path)}
+              className={`${styles.fabMenuItem} ${item.isPremium ? styles.premiumItem : ''}`}
+              onClick={() => handleMenuItemClick(item)}
               disabled={item.disabled}
             >
               <span className={styles.fabMenuIcon}>{item.icon}</span>

@@ -160,10 +160,10 @@ class Ingreso {
   static fromJSON(json) {
     return new Ingreso({
       ...json,
-      fechaEspecifica: json.fechaEspecifica,
-      proximaEjecucion: json.proximaEjecucion,
-      createdAt: new Date(json.createdAt),
-      updatedAt: new Date(json.updatedAt)
+      fechaEspecifica: json.fechaEspecifica ? new Date(json.fechaEspecifica) : null,
+      proximaEjecucion: json.proximaEjecucion ? new Date(json.proximaEjecucion) : null,
+      createdAt: json.createdAt ? new Date(json.createdAt) : new Date(),
+      updatedAt: json.updatedAt ? new Date(json.updatedAt) : new Date()
     });
   }
 }

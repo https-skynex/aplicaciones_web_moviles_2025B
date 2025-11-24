@@ -96,7 +96,23 @@ class MockDatabase {
         }
         return new Perfil(p);
       });
-      this.ingresos = data.ingresos.map(i => new Ingreso(i));
+      
+      // Usar fromJSON si existe, o constructor con validación de fechas
+      this.ingresos = data.ingresos.map(i => {
+        try {
+          return Ingreso.fromJSON ? Ingreso.fromJSON(i) : new Ingreso({
+            ...i,
+            fechaEspecifica: i.fechaEspecifica ? new Date(i.fechaEspecifica) : null,
+            proximaEjecucion: i.proximaEjecucion ? new Date(i.proximaEjecucion) : null,
+            createdAt: i.createdAt ? new Date(i.createdAt) : new Date(),
+            updatedAt: i.updatedAt ? new Date(i.updatedAt) : new Date()
+          });
+        } catch (error) {
+          console.error('Error cargando ingreso:', error);
+          return null;
+        }
+      }).filter(i => i !== null);
+      
       this.egresos = data.egresos.map(e => new Egreso(e));
       this.historial = data.historial.map(h => new RegistroHistorial(h));
       this.presupuestos = data.presupuestos.map(p => new Presupuesto(p));
@@ -149,7 +165,7 @@ class MockDatabase {
       createdAt: new Date('2024-01-01')
     });
 
-    // Usuario 2: Usuario Regular 1
+    // Usuario 2: Usuario Premium (María)
     const user1 = new User({
       id: 2,
       nombre: 'María',
@@ -162,6 +178,18 @@ class MockDatabase {
       fechaNacimiento: '1998-03-20',
       genero: 'femenino',
       rol: 'user',
+      // PREMIUM
+      isPremium: true,
+      premiumSince: new Date('2024-10-01'),
+      subscriptionType: 'anual',
+      subscriptionEndDate: new Date('2026-10-01'),
+      paymentMethod: {
+        type: 'tarjeta',
+        brand: 'Visa',
+        last4: '4242',
+        expiry: '12/26',
+        holderName: 'María González'
+      },
       createdAt: new Date('2024-02-15')
     });
 
@@ -589,13 +617,34 @@ class MockDatabase {
         logro.desbloquear();
       }
 
-      // Progreso parcial en otros
+      // Progreso parcial en logros generales
       if (logroTemplate.id === 'logro_racha_7_dias') {
         logro.actualizarProgreso(5);
       }
 
       if (logroTemplate.id === 'logro_50_registros') {
         logro.actualizarProgreso(12);
+      }
+
+      // Progreso en logros de empresas
+      if (logroTemplate.id === 'logro_mcdonalds_5') {
+        logro.actualizarProgreso(1); // 1 de 5 consumos
+        logro.progreso = 5;           // ← Completar progreso
+        logro.desbloqueado = true;    // ← Marcar como desbloqueado
+        logro.fechaDesbloqueo = new Date();  // ← Fecha actual
+      }
+
+      if (logroTemplate.id === 'logro_pichincha_ahorro_200') {
+        logro.actualizarProgreso(200); // Completado - 200 de 200
+        logro.desbloquear();
+      }
+
+      if (logroTemplate.id === 'logro_pichincha_pagador_puntual') {
+        logro.actualizarProgreso(2); // 2 de 3 meses
+      }
+
+      if (logroTemplate.id === 'logro_netflix_6_meses') {
+        logro.actualizarProgreso(3); // 3 de 6 meses
       }
 
       this.logros.push(logro);
@@ -1091,6 +1140,103 @@ class MockDatabase {
     }
     
     return attempt.count >= this.securityConfig.maxLoginAttempts;
+  }
+
+  /**
+   * Actualiza progreso de logros basado en transacciones
+   * Se llama automáticamente cuando se crean egresos/ingresos
+   */
+  actualizarProgresosLogros(perfilId) {
+    const logros = this.getLogrosDePerfil(perfilId);
+    const ingresos = this.getIngresosDePerf(perfilId);
+    const egresos = this.getEgresosDePerf(perfilId);
+    const historial = this.getHistorialDePerfil(perfilId);
+
+    logros.forEach(logro => {
+      let nuevoProgreso = logro.progreso;
+
+      switch(logro.id) {
+        // Logros de empresas - McDonald's
+        case 'logro_mcdonalds_5':
+          nuevoProgreso = egresos.filter(e => 
+            e.descripcion?.toLowerCase().includes('mcdonalds') ||
+            e.descripcion?.toLowerCase().includes('mcdonald') ||
+            e.etiquetas?.includes('mcdonalds')
+          ).length;
+          break;
+
+        // Logros de empresas - KFC
+        case 'logro_kfc_10':
+          nuevoProgreso = egresos.filter(e => 
+            e.descripcion?.toLowerCase().includes('kfc') ||
+            e.etiquetas?.includes('kfc')
+          ).length;
+          break;
+
+        // Logros de empresas - Uber
+        case 'logro_uber_20':
+          nuevoProgreso = egresos.filter(e => 
+            e.descripcion?.toLowerCase().includes('uber') ||
+            e.etiquetas?.includes('uber')
+          ).length;
+          break;
+
+        // Logros de empresas - Netflix
+        case 'logro_netflix_6_meses':
+          nuevoProgreso = egresos.filter(e => 
+            e.descripcion?.toLowerCase().includes('netflix') ||
+            e.categoria === 'Suscripciones' && e.descripcion?.toLowerCase().includes('netflix')
+          ).length;
+          break;
+
+        // Logros de empresas - Banco Pichincha Ahorro
+        case 'logro_pichincha_ahorro_200':
+          const ahorrosPichincha = ingresos.filter(i => 
+            i.categoria === 'Ahorro' && 
+            (i.descripcion?.toLowerCase().includes('pichincha') ||
+             i.etiquetas?.includes('banco pichincha'))
+          );
+          nuevoProgreso = ahorrosPichincha.reduce((sum, i) => sum + i.monto, 0);
+          break;
+
+        // Logros generales - Primer ingreso
+        case 'logro_primer_ingreso':
+          nuevoProgreso = ingresos.length > 0 ? 1 : 0;
+          break;
+
+        // Logros generales - Primer egreso
+        case 'logro_primer_egreso':
+          nuevoProgreso = egresos.length > 0 ? 1 : 0;
+          break;
+
+        // Logros generales - Total de registros
+        case 'logro_50_registros':
+        case 'logro_100_registros':
+          nuevoProgreso = historial.length;
+          break;
+
+        // Logros de ahorro
+        case 'logro_ahorro_100':
+        case 'logro_ahorro_500':
+          const totalIngresos = historial.filter(h => h.tipo === 'ingreso').reduce((sum, h) => sum + h.monto, 0);
+          const totalEgresos = historial.filter(h => h.tipo === 'egreso').reduce((sum, h) => sum + h.monto, 0);
+          nuevoProgreso = totalIngresos - totalEgresos;
+          break;
+      }
+
+      // Actualizar progreso si cambió
+      if (nuevoProgreso !== logro.progreso) {
+        logro.actualizarProgreso(nuevoProgreso);
+        console.log(`📊 Logro actualizado: ${logro.nombre} (${logro.progreso}/${logro.meta})`);
+        
+        // Si se desbloqueó, guardamos
+        if (logro.desbloqueado) {
+          console.log(`🏆 ¡Logro desbloqueado!: ${logro.nombre}`);
+        }
+      }
+    });
+
+    this.saveToLocalStorage();
   }
 
   /**

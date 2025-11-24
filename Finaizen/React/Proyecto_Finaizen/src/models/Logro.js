@@ -9,12 +9,19 @@ class Logro {
     nombre,
     descripcion,
     icono = '🏆',
-    tipo, // 'ahorro' | 'racha' | 'presupuesto' | 'registro' | 'especial'
+    tipo, // 'ahorro' | 'racha' | 'presupuesto' | 'registro' | 'especial' | 'empresa'
     condicion, // Condición para desbloquear
     desbloqueado = false,
     fechaDesbloqueo = null,
     progreso = 0, // Progreso actual (0-100)
-    meta = 100 // Meta para completar
+    meta = 100, // Meta para completar
+    // Nuevos campos para recompensas de empresas
+    empresa = null, // Nombre de la empresa asociada (ej: 'McDonald\'s', 'Banco Pichincha')
+    logoEmpresa = null, // URL del logo de la empresa
+    recompensa = null, // Descripción de la recompensa (ej: '$10 USD en productos McDonald\'s')
+    valorRecompensa = 0, // Valor monetario de la recompensa en USD
+    requiereComprobante = false, // Si requiere subir comprobante para verificar
+    comprobantes = [] // Array de URLs de comprobantes subidos
   }) {
     this.id = id;
     this.perfilId = perfilId;
@@ -27,6 +34,12 @@ class Logro {
     this.fechaDesbloqueo = fechaDesbloqueo ? new Date(fechaDesbloqueo) : null;
     this.progreso = progreso;
     this.meta = meta;
+    this.empresa = empresa;
+    this.logoEmpresa = logoEmpresa;
+    this.recompensa = recompensa;
+    this.valorRecompensa = valorRecompensa;
+    this.requiereComprobante = requiereComprobante;
+    this.comprobantes = comprobantes || [];
   }
 
   /**
@@ -58,6 +71,17 @@ class Logro {
   }
 
   /**
+   * Agrega un comprobante (foto de recibo/depósito)
+   */
+  agregarComprobante(urlComprobante) {
+    this.comprobantes.push({
+      url: urlComprobante,
+      fecha: new Date(),
+      verificado: false
+    });
+  }
+
+  /**
    * Serializa el logro
    */
   toJSON() {
@@ -72,7 +96,13 @@ class Logro {
       desbloqueado: this.desbloqueado,
       fechaDesbloqueo: this.fechaDesbloqueo ? this.fechaDesbloqueo.toISOString() : null,
       progreso: this.progreso,
-      meta: this.meta
+      meta: this.meta,
+      empresa: this.empresa,
+      logoEmpresa: this.logoEmpresa,
+      recompensa: this.recompensa,
+      valorRecompensa: this.valorRecompensa,
+      requiereComprobante: this.requiereComprobante,
+      comprobantes: this.comprobantes
     };
   }
 
@@ -91,6 +121,93 @@ class Logro {
  * Logros predefinidos del sistema
  */
 export const LOGROS_PREDEFINIDOS = [
+  // === LOGROS DE EMPRESAS CON RECOMPENSAS REALES ===
+  {
+    id: 'logro_mcdonalds_5',
+    nombre: 'Rey de la Comida Rápida',
+    descripcion: 'Registra 5 consumos en McDonald\'s para desbloquear',
+    icono: '🍔',
+    tipo: 'empresa',
+    condicion: 'consumos_mcdonalds',
+    meta: 5,
+    empresa: 'McDonald\'s',
+    logoEmpresa: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/McDonald%27s_Golden_Arches.svg/1200px-McDonald%27s_Golden_Arches.svg.png',
+    recompensa: '$10 USD en productos McDonald\'s',
+    valorRecompensa: 10,
+    requiereComprobante: true
+  },
+  {
+    id: 'logro_pichincha_ahorro_200',
+    nombre: 'Ahorrador Maestro',
+    descripcion: 'Ahorra $200 en tu cuenta de Banco Pichincha',
+    icono: '💵',
+    tipo: 'empresa',
+    condicion: 'ahorro_banco_pichincha',
+    meta: 200,
+    empresa: 'Banco Pichincha',
+    logoEmpresa: 'https://www.pichincha.com/portal/EC/resource/img/logo-banco-pichincha.png',
+    recompensa: '$5 USD acreditados en tu cuenta',
+    valorRecompensa: 5,
+    requiereComprobante: true
+  },
+  {
+    id: 'logro_pichincha_pagador_puntual',
+    nombre: 'Pagador Puntual',
+    descripcion: 'Paga tu tarjeta de crédito a tiempo 3 meses seguidos',
+    icono: '💳',
+    tipo: 'empresa',
+    condicion: 'pagos_puntuales_tarjeta',
+    meta: 3,
+    empresa: 'Banco Pichincha',
+    logoEmpresa: 'https://www.pichincha.com/portal/EC/resource/img/logo-banco-pichincha.png',
+    recompensa: 'Aumento de 500 Puntos Pichincha',
+    valorRecompensa: 0,
+    requiereComprobante: true
+  },
+  {
+    id: 'logro_kfc_10',
+    nombre: 'Fan del Coronel',
+    descripcion: 'Registra 10 consumos en KFC',
+    icono: '🍗',
+    tipo: 'empresa',
+    condicion: 'consumos_kfc',
+    meta: 10,
+    empresa: 'KFC',
+    logoEmpresa: 'https://logos-world.net/wp-content/uploads/2020/04/KFC-Logo.png',
+    recompensa: 'Combo Familiar Gratis',
+    valorRecompensa: 25,
+    requiereComprobante: true
+  },
+  {
+    id: 'logro_uber_20',
+    nombre: 'Viajero Frecuente',
+    descripcion: 'Realiza 20 viajes en Uber',
+    icono: '🚗',
+    tipo: 'empresa',
+    condicion: 'viajes_uber',
+    meta: 20,
+    empresa: 'Uber',
+    logoEmpresa: 'https://logo-marque.com/wp-content/uploads/2020/09/Uber-Logo.png',
+    recompensa: '$15 USD en créditos Uber',
+    valorRecompensa: 15,
+    requiereComprobante: true
+  },
+  {
+    id: 'logro_netflix_6_meses',
+    nombre: 'Binge Watcher',
+    descripcion: 'Mantén tu suscripción Netflix activa 6 meses',
+    icono: '📺',
+    tipo: 'empresa',
+    condicion: 'suscripcion_netflix',
+    meta: 6,
+    empresa: 'Netflix',
+    logoEmpresa: 'https://logos-world.net/wp-content/uploads/2020/04/Netflix-Logo.png',
+    recompensa: '1 mes gratis de Netflix',
+    valorRecompensa: 15.99,
+    requiereComprobante: true
+  },
+  
+  // === LOGROS GENERALES ===
   {
     id: 'logro_primer_ingreso',
     nombre: 'Primer Paso',

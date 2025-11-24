@@ -1,0 +1,317 @@
+/* ComprobanteModal.module.css */
+
+/* Overlay del modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Contenido del modal */
+.modalContent {
+  background: white;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Header del modal */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1a2a3a;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.closeBtn:hover {
+  background-color: #f8f9fa;
+  color: #1a2a3a;
+}
+
+/* Body del modal */
+.modalBody {
+  padding: 30px;
+}
+
+/* Información del logro */
+.logroInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.logroIcon {
+  font-size: 3rem;
+  flex-shrink: 0;
+}
+
+.logroInfo h3 {
+  margin: 0 0 5px 0;
+  color: #1a2a3a;
+  font-size: 1.2rem;
+}
+
+.logroInfo p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.empresaTag {
+  display: inline-block;
+  margin-top: 8px !important;
+  padding: 4px 12px;
+  background: white;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #1a2a3a !important;
+  font-size: 0.85rem !important;
+}
+
+/* Area de subida */
+.uploadArea {
+  margin-bottom: 20px;
+}
+
+.uploadLabel {
+  display: block;
+  cursor: pointer;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadPlaceholder {
+  border: 2px dashed #ced4da;
+  border-radius: 12px;
+  padding: 50px 20px;
+  text-align: center;
+  transition: all 0.3s;
+  background: #f8f9fa;
+}
+
+.uploadPlaceholder:hover {
+  border-color: #1a2a3a;
+  background: white;
+}
+
+.uploadIcon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.uploadPlaceholder p {
+  margin: 0;
+  color: #495057;
+}
+
+.uploadHint {
+  font-size: 0.85rem;
+  color: #6c757d !important;
+  margin-top: 8px !important;
+}
+
+/* Preview de imagen */
+.previewContainer {
+  text-align: center;
+}
+
+.preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+}
+
+.removeBtn {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #495057;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.removeBtn:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+/* Form group */
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  transition: all 0.2s;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #1a2a3a;
+  box-shadow: 0 0 0 3px rgba(26, 42, 58, 0.1);
+}
+
+/* Info box */
+.infoBox {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background: #e7f3ff;
+  border-left: 4px solid #0d6efd;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.infoIcon {
+  font-size: 1.5rem;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.infoBox p {
+  margin: 0 0 8px 0;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.infoBox strong {
+  color: #1a2a3a;
+}
+
+.infoBox ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.infoBox li {
+  margin: 5px 0;
+  color: #495057;
+  font-size: 0.85rem;
+}
+
+.infoNote {
+  font-size: 0.8rem !important;
+  color: #6c757d !important;
+  margin-top: 12px !important;
+  font-style: italic;
+}
+
+/* Footer del modal */
+.modalFooter {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modalContent {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+
+  .modalHeader {
+    padding: 20px;
+  }
+
+  .modalBody {
+    padding: 20px;
+  }
+
+  .logroInfo {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .uploadPlaceholder {
+    padding: 40px 15px;
+  }
+
+  .modalFooter {
+    flex-direction: column-reverse;
+  }
+
+  .modalFooter button {
+    width: 100%;
+  }
+}

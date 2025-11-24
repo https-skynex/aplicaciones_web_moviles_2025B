@@ -9,6 +9,7 @@ export const userSidebarMenuItems = [
   { label: 'Ajuste de presupuestos', path: '/user/presupuestos' },
   { label: 'Planificador de deudas', path: '/user/planificador-deudas' },
   { label: 'Logros y Recompensas', path: '/user/logros' },
+  { label: 'Notificaciones', path: '/user/notificaciones' },
 ];
 
 export const userDropdownMenuItems = [
