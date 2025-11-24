@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import ModalSuscripcion from '../../ModalSuscripcion/ModalSuscripcion';
 import styles from './Sidebar.module.css';
 
 /**
@@ -15,6 +16,7 @@ function Sidebar({ menuItems, userMenuItems = [], variant = 'user', onCollapsedC
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showPerfilesDropdown, setShowPerfilesDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showModalSuscripcion, setShowModalSuscripcion] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, currentPerfil, perfiles, cambiarPerfil, logout } = useAuth();
@@ -213,6 +215,30 @@ function Sidebar({ menuItems, userMenuItems = [], variant = 'user', onCollapsedC
                     
                     <li><div className={styles.divider}></div></li>
                     
+                    {/* Opción Premium */}
+                    <li>
+                      <button 
+                        onClick={() => {
+                          if (currentUser?.premiumActivo) {
+                            navigate('/user/config/cuenta');
+                          } else {
+                            setShowModalSuscripcion(true);
+                          }
+                          setShowUserDropdown(false);
+                        }}
+                        className={currentUser?.premiumActivo ? styles.premiumActiveLink : styles.premiumLink}
+                      >
+                        <span className={styles.icon}>
+                          {currentUser?.premiumActivo ? '👑' : '⭐'}
+                        </span>
+                        <span className={styles.text}>
+                          {currentUser?.premiumActivo ? 'Gestionar Premium' : 'Hazte Premium'}
+                        </span>
+                      </button>
+                    </li>
+                    
+                    <li><div className={styles.divider}></div></li>
+                    
                     <li>
                       <button 
                         onClick={handleLogout}
@@ -234,6 +260,17 @@ function Sidebar({ menuItems, userMenuItems = [], variant = 'user', onCollapsedC
       {isMobileMenuOpen && (
         <div className={styles.mobileOverlay} onClick={() => setIsMobileMenuOpen(false)}></div>
       )}
+
+      {/* Modal de Suscripción Premium */}
+      <ModalSuscripcion 
+        isOpen={showModalSuscripcion}
+        onClose={() => setShowModalSuscripcion(false)}
+        currentUser={currentUser}
+        onSuccess={() => {
+          setShowModalSuscripcion(false);
+          // AuthContext se actualizará automáticamente al recargar
+        }}
+      />
     </>
   );
 }

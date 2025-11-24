@@ -10,6 +10,8 @@ import NuevoEgreso from './pages/User/NuevoEgreso';
 import Historial from './pages/User/Historial';
 import AdministrarRegistros from './pages/User/AdministrarRegistros';
 import Presupuestos from './pages/User/Presupuestos';
+import Logros from './pages/User/Logros';
+import Notificaciones from './pages/User/Notificaciones';
 
 // Configuración
 import ConfigLayout from './components/layout/ConfigLayout';
@@ -44,6 +46,8 @@ function App() {
           <Route path="historial" element={<Historial />} />
           <Route path="administrar-registros" element={<AdministrarRegistros />} />
           <Route path="presupuestos" element={<Presupuestos />} />
+          <Route path="logros" element={<Logros />} />
+          <Route path="notificaciones" element={<Notificaciones />} />
         </Route>
 
         {/* Configuración - Rutas anidadas */}

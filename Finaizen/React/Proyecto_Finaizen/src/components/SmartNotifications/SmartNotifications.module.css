@@ -1,0 +1,221 @@
+/* Contenedor principal */
+.container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 400px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  animation: slideIn 0.4s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Contenido */
+.content {
+  padding: 20px;
+}
+
+.messageText {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-weight: 500;
+  min-height: 60px;
+}
+
+/* Controles */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.navButton,
+.dismissButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.navButton:hover,
+.dismissButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.navButton:active,
+.dismissButton:active {
+  transform: scale(0.95);
+}
+
+.counter {
+  font-size: 12px;
+  opacity: 0.9;
+  font-weight: 600;
+}
+
+.dismissButton {
+  margin-left: auto;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Barra de progreso */
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.progress {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  transition: width 0.3s ease;
+}
+
+/* TIPOS DE MENSAJE - Colores específicos */
+
+/* Alertas de gasto - Rojo */
+.alert {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* Sugerencias - Verde */
+.suggestion {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* Logros próximos - Dorado */
+.achievement {
+  background: linear-gradient(135deg, #ffd89b 0%, #ff6b6b 100%);
+}
+
+/* Motivación - Púrpura */
+.motivation {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+/* Educación - Azul */
+.education {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Recordatorios - Naranja */
+.reminder {
+  background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
+  color: #333;
+}
+
+.reminder .navButton,
+.reminder .dismissButton {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.reminder .navButton:hover,
+.reminder .dismissButton:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Contextual tiempo - Cyan */
+.contextual {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+}
+
+/* Inteligente - Magenta */
+.intelligent {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+
+  .messageText {
+    font-size: 14px;
+    min-height: 50px;
+  }
+
+  .content {
+    padding: 15px;
+  }
+
+  .navButton,
+  .dismissButton {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+
+/* Animaciones adicionales */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.container:hover {
+  animation: pulse 2s infinite;
+}
+
+/* Accesibilidad */
+.navButton:focus,
+.dismissButton:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Estado de carga */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Transición entre mensajes */
+.messageText {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

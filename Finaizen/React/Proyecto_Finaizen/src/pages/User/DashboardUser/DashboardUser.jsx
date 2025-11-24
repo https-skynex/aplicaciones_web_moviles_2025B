@@ -4,6 +4,8 @@ import { useAuth } from '../../../context/AuthContext';
 import mockDB from '../../../utils/mockDatabase';
 import { FloatingActionButton, Toast } from '../../../components/ui';
 import { StatsCards, ChartsSection, PresupuestosSection, TransaccionesRecientes } from '../../../components/dashboard';
+import NotificationBell from '../../../components/NotificationBell';
+import ChatBot from '../../../components/ChatBot/ChatBot';
 import styles from './DashboardUser.module.css';
 
 /**
@@ -21,6 +23,7 @@ function DashboardUser() {
   const [logros, setLogros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const [showChatBot, setShowChatBot] = useState(false);
 
   // Estadísticas calculadas
   const [stats, setStats] = useState({
@@ -194,7 +197,12 @@ function DashboardUser() {
   const logrosDesbloqueados = logros.filter(l => l.desbloqueado).length;
 
   // Items del FAB (Floating Action Button)
-  const fabMenuItems = [
+  const fabMenuItems = currentUser?.premiumActivo ? [
+    { icon: '🤖', label: 'ChatBot IA Premium', action: () => setShowChatBot(true), isPremium: true },
+    { icon: '💰', label: 'Nuevo Ingreso', path: '/user/nuevo-ingreso' },
+    { icon: '💸', label: 'Nuevo Egreso', path: '/user/nuevo-egreso' },
+    { icon: '📋', label: 'Historial', path: '/user/historial' }
+  ] : [
     { icon: '💰', label: 'Nuevo Ingreso', path: '/user/nuevo-ingreso' },
     { icon: '💸', label: 'Nuevo Egreso', path: '/user/nuevo-egreso' },
     { icon: '📋', label: 'Historial', path: '/user/historial' }
@@ -214,9 +222,22 @@ function DashboardUser() {
         {/* Header */}
         <header className={styles.dashboardHeader}>
           <div className={styles.welcomeSection}>
-            <h1>¡Hola, {currentUser?.nombre || 'Usuario'}! 👋</h1>
+            <h1>
+              ¡Hola, {currentUser?.nombre || 'Usuario'}! 👋
+              {currentUser?.premiumActivo && (
+                <span className={styles.premiumBadge}>
+                  <span className={styles.premiumIcon}>✨</span>
+                  <span className={styles.premiumText}>PREMIUM</span>
+                  <span className={styles.premiumIcon}>⭐</span>
+                </span>
+              )}
+            </h1>
             <p>Perfil: <strong>{currentPerfil?.nombre || 'Cargando'}</strong> ({currentPerfil?.moneda || ''})</p>
           </div>
+          {/* Campanita de Notificaciones */}
+          <NotificationBell 
+            userId={currentUser.id}
+          />
         </header>
 
         {/* Stats Cards */}
@@ -267,6 +288,14 @@ function DashboardUser() {
             message={toast.message}
             onClose={() => setToast(null)}
             duration={5000}
+          />
+        )}
+
+        {/* ChatBot Premium */}
+        {currentUser?.premiumActivo && (
+          <ChatBot 
+            isOpen={showChatBot}
+            onClose={() => setShowChatBot(false)}
           />
         )}
       </div>

@@ -1,0 +1,407 @@
+/* src/pages/User/Logros/Logros.module.css */
+
+/* Container principal */
+.achievementsPage {
+  padding: 30px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Loading state */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  font-size: 1.2rem;
+  color: #6c757d;
+}
+
+/* Header de la página */
+.pageHeader {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.pageHeader h1 {
+  font-size: 2.5rem;
+  color: #1a2a3a;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+/* Barra de estadísticas */
+.statsBar {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: white;
+  padding: 15px 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.statIcon {
+  font-size: 2.5rem;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a2a3a;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Barra de filtros */
+.filtersBar {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.filterBtn {
+  padding: 10px 20px;
+  border: 2px solid #e9ecef;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+.filterBtn:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+.filterBtn.active {
+  background: #1a2a3a;
+  color: white;
+  border-color: #1a2a3a;
+}
+
+/* Grid de logros */
+.achievementsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+/* Tarjeta de logro */
+.achievementCard {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.achievementCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Logro completado */
+.achievementCard.isCompleted {
+  border-color: #ffd700;
+}
+
+.achievementCard.isCompleted .achievementCardHeader {
+  background: linear-gradient(135deg, #fffaf0 0%, #fff8e1 100%);
+}
+
+/* Badge de completado */
+.badge {
+  position: absolute;
+  top: 15px;
+  right: -30px;
+  background-color: #ffd700;
+  color: #495057;
+  padding: 5px 30px;
+  font-size: 0.8em;
+  font-weight: bold;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* Header de la tarjeta */
+.achievementCardHeader {
+  padding: 25px 20px;
+  text-align: center;
+  border-bottom: 1px solid #e9ecef;
+  background: white;
+  position: relative;
+}
+
+.companyLogo {
+  max-height: 50px;
+  max-width: 150px;
+  margin-bottom: 15px;
+  object-fit: contain;
+}
+
+.achievementIcon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+
+.empresaBadge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #ffd700, #ffb300);
+  color: #1a2a3a;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.achievementCardHeader h3 {
+  margin: 0;
+  color: #343a40;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Body de la tarjeta */
+.achievementCardBody {
+  padding: 25px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.description {
+  margin: 0 0 20px 0;
+  color: #6c757d;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Barra de progreso */
+.progressBar {
+  width: 100%;
+  background-color: #e9ecef;
+  border-radius: 20px;
+  height: 12px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700, #ffb300);
+  border-radius: 20px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.progressBarFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 50px 50px;
+  animation: move 2s linear infinite;
+}
+
+@keyframes move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+.progressText {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 15px;
+}
+
+.reward {
+  margin-top: auto;
+  padding-top: 15px;
+  font-size: 0.9rem;
+  color: #495057;
+  border-top: 1px dashed #e9ecef;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reward strong {
+  color: #1a2a3a;
+}
+
+.valorRecompensa {
+  display: inline-block;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.comprobantesInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: #e7f3ff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #0d6efd;
+  margin-top: 12px;
+}
+
+.comprobanteIcon {
+  font-size: 1.2rem;
+  color: #10b981;
+}
+
+/* Footer de la tarjeta */
+.achievementCardFooter {
+  padding: 20px;
+  background-color: #f8f9fa;
+  text-align: center;
+}
+
+/* Estado vacío */
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.emptyState p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .achievementsPage {
+    padding: 20px;
+  }
+
+  .pageHeader h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .statsBar {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .statItem {
+    justify-content: center;
+  }
+
+  .filtersBar {
+    flex-wrap: wrap;
+  }
+
+  .filterBtn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+
+  .achievementsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .achievementsPage {
+    padding: 15px;
+  }
+
+  .pageHeader h1 {
+    font-size: 1.5rem;
+  }
+
+  .achievementCardHeader h3 {
+    font-size: 1.1rem;
+  }
+
+  .achievementIcon {
+    font-size: 2.5rem;
+  }
+}
