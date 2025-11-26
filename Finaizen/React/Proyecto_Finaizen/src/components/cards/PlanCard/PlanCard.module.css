@@ -1,0 +1,195 @@
+.planCard {
+  background: white;
+  border-radius: 12px;
+  border-left: 5px solid #4CAF50;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.planCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.titleSection {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.icono {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.nombre {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.categoria {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.estado {
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.content {
+  margin-bottom: 15px;
+}
+
+.descripcion {
+  margin-bottom: 12px;
+}
+
+.descripcion p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.progresoBarra {
+  margin-bottom: 12px;
+}
+
+.barraFondo {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.barraProgreso {
+  height: 100%;
+  background: #4CAF50;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.porcentaje {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.dato {
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.dato label {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.valor {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.fechas {
+  font-size: 12px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.fechas.warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.btnDetalles,
+.btnEditar,
+.btnEliminar {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnDetalles {
+  background: #2196F3;
+  color: white;
+}
+
+.btnDetalles:hover {
+  background: #1976D2;
+}
+
+.btnEditar {
+  background: #FF9800;
+  color: white;
+}
+
+.btnEditar:hover {
+  background: #F57C00;
+}
+
+.btnEliminar {
+  background: #F44336;
+  color: white;
+}
+
+.btnEliminar:hover {
+  background: #D32F2F;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .datos {
+    grid-template-columns: 1fr;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+}

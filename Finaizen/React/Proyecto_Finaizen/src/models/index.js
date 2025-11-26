@@ -11,3 +11,5 @@ export { default as RegistroHistorial } from './RegistroHistorial';
 export { default as Presupuesto } from './Presupuesto';
 export { default as Logro, LOGROS_PREDEFINIDOS } from './Logro';
 export { default as Notificacion } from './Notificacion';
+export { default as PlanAhorro, CATEGORIAS_PLAN_AHORRO, ICONOS_CATEGORIA, COLORES_CATEGORIA } from './PlanAhorro';
+export { default as PlanDeuda, CATEGORIAS_PLAN_DEUDA, ICONOS_CATEGORIA_DEUDA, COLORES_CATEGORIA_DEUDA, ESTRATEGIAS_DEUDA } from './PlanDeuda';
