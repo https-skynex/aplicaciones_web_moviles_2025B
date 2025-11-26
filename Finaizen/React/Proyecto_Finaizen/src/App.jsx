@@ -10,6 +10,8 @@ import NuevoEgreso from './pages/User/NuevoEgreso';
 import Historial from './pages/User/Historial';
 import AdministrarRegistros from './pages/User/AdministrarRegistros';
 import Presupuestos from './pages/User/Presupuestos';
+import PlanAhorro from './pages/User/PlanAhorro';
+import PlanDeuda from './pages/User/PlanDeuda';
 import Logros from './pages/User/Logros';
 import Notificaciones from './pages/User/Notificaciones';
 
@@ -46,6 +48,8 @@ function App() {
           <Route path="historial" element={<Historial />} />
           <Route path="administrar-registros" element={<AdministrarRegistros />} />
           <Route path="presupuestos" element={<Presupuestos />} />
+          <Route path="plan-ahorro" element={<PlanAhorro />} />
+          <Route path="plan-deuda" element={<PlanDeuda />} />
           <Route path="logros" element={<Logros />} />
           <Route path="notificaciones" element={<Notificaciones />} />
         </Route>

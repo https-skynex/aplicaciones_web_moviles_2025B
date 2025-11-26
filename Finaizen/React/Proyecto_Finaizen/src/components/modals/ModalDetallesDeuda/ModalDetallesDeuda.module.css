@@ -1,0 +1,348 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.header {
+  padding: 20px;
+  border-left: 5px solid #FF6B6B;
+  background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.headerContent > div {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.icono {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+}
+
+.acreedor {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #999;
+}
+
+.btnCerrar {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.btnCerrar:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.estado {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  margin-top: 10px;
+}
+
+.content {
+  padding: 20px;
+}
+
+.seccion {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.seccion:last-of-type {
+  border-bottom: none;
+}
+
+.seccionTitulo {
+  margin: 0 0 15px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  border-left: 3px solid #FF6B6B;
+  padding-left: 10px;
+}
+
+.progresoBarra {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.barraFondo {
+  flex: 1;
+  height: 10px;
+  background: #E0E0E0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.barraProgreso {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+  text-align: right;
+}
+
+.porcentaje {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+}
+
+.fechas {
+  font-size: 12px;
+  color: #999;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.dato {
+  background: #F5F5F5;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.dato label {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.valor {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+}
+
+.configs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.config {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.config .label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.config .value {
+  font-size: 13px;
+  color: #333;
+}
+
+.historial {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.movimiento {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #F9F9F9;
+  border-radius: 8px;
+  border-left: 4px solid #666;
+}
+
+.movimiento.pago {
+  border-left-color: #4CAF50;
+  background: #F1F8F4;
+}
+
+.movimiento.retiro {
+  border-left-color: #FF9800;
+  background: #FFF3E0;
+}
+
+.movInfo {
+  flex: 1;
+}
+
+.movTipo {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.movDesc {
+  margin: 0;
+  font-size: 11px;
+  color: #999;
+}
+
+.movMonto {
+  text-align: right;
+}
+
+.movValor {
+  margin: 0 0 2px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+.movFecha {
+  margin: 0;
+  font-size: 11px;
+  color: #999;
+}
+
+.btnPago {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #FF6B6B, #FF5252);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnPago:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #DDD;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #FF6B6B;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.btnGroup {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btnGroup button {
+  flex: 1;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  padding: 15px 20px;
+  border-top: 1px solid #E0E0E0;
+}
+
+.acciones button {
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .datos,
+  .configs {
+    grid-template-columns: 1fr;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+}

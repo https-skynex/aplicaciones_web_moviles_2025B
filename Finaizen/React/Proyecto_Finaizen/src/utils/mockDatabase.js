@@ -7,6 +7,8 @@ import Presupuesto from '../models/Presupuesto';
 import Logro, { LOGROS_PREDEFINIDOS } from '../models/Logro';
 import Notificacion from '../models/Notificacion';
 import SecurityLog, { EventTypes, EventCategories, SeverityLevels, EventStatus } from '../models/SecurityLog';
+import PlanAhorro, { CATEGORIAS_PLAN_AHORRO, ICONOS_CATEGORIA, COLORES_CATEGORIA } from '../models/PlanAhorro';
+import PlanDeuda, { CATEGORIAS_PLAN_DEUDA, ICONOS_CATEGORIA_DEUDA, COLORES_CATEGORIA_DEUDA } from '../models/PlanDeuda';
 
 /**
  * MockDatabase - Base de Datos Simulada para Finaizen
@@ -24,6 +26,8 @@ class MockDatabase {
     this.logros = [];
     this.notificaciones = [];
     this.securityLogs = [];
+    this.planesAhorro = [];  // Array para planes de ahorro
+    this.planesDeuda = [];   // Array para planes de deuda
     
     // Configuración de seguridad
     this.securityConfig = {
@@ -66,6 +70,8 @@ class MockDatabase {
         presupuestos: this.presupuestos.map(p => p.toJSON()),
         logros: this.logros.map(l => l.toJSON()),
         notificaciones: this.notificaciones.map(n => n.toJSON()),
+        planesAhorro: this.planesAhorro.map(p => p.toJSON()),
+        planesDeuda: this.planesDeuda.map(p => p.toJSON()),
         securityLogs: this.securityLogs.map(s => s.toJSON()),
         securityConfig: this.securityConfig,
         loginAttempts: this.loginAttempts
@@ -84,7 +90,7 @@ class MockDatabase {
     try {
       const stored = localStorage.getItem('finaizen_mockdb');
       if (!stored) return false;
-
+      
       const data = JSON.parse(stored);
       
       // Reconstruir objetos desde JSON
@@ -118,6 +124,8 @@ class MockDatabase {
       this.presupuestos = data.presupuestos.map(p => new Presupuesto(p));
       this.logros = data.logros.map(l => new Logro(l));
       this.notificaciones = data.notificaciones.map(n => new Notificacion(n));
+      this.planesAhorro = (data.planesAhorro || []).map(p => PlanAhorro.fromJSON ? PlanAhorro.fromJSON(p) : new PlanAhorro(p));
+      this.planesDeuda = (data.planesDeuda || []).map(p => PlanDeuda.fromJSON ? PlanDeuda.fromJSON(p) : new PlanDeuda(p));
       this.securityLogs = (data.securityLogs || []).map(s => new SecurityLog(s));
       this.securityConfig = data.securityConfig || this.securityConfig;
       this.loginAttempts = data.loginAttempts || {};
@@ -696,6 +704,105 @@ class MockDatabase {
 
     this.notificaciones.push(notif1, notif2, notif3);
 
+    // =====================================================
+    // PLANES DE AHORRO
+    // =====================================================
+
+    const ahora = new Date();
+    
+    // Plan 1: Viaje a París (María)
+    const plan1 = new PlanAhorro({
+      id: 1,
+      perfilId: perfilMaria.id,
+      nombre: 'Viaje a París',
+      descripcion: 'Vacaciones en la ciudad de la luz con familia',
+      objetivo: 'Pasar 2 semanas en París visitando museos y parques',
+      montoActual: 1200,
+      montoMeta: 3000,
+      montoAhorrarMensual: 500,
+      categoria: 'Viajes',
+      fechaInicio: new Date(ahora.getTime() - 60 * 24 * 60 * 60 * 1000), // 60 días atrás
+      fechaMeta: new Date(ahora.getTime() + 120 * 24 * 60 * 60 * 1000), // 120 días adelante
+      estado: 'activo',
+      prioridad: 'alta',
+      icono: '✈️',
+      color: '#2196F3',
+      estrategia: 'consistente',
+      notificacionActiva: true,
+      depositosRealizados: 2,
+      historialAhorros: [
+        { tipo: 'deposito', monto: 500, descripcion: 'Primer deposito', fecha: new Date(ahora.getTime() - 40 * 24 * 60 * 60 * 1000), saldoAnterior: 0, saldoNuevo: 500 },
+        { tipo: 'deposito', monto: 700, descripcion: 'Bono de trabajo', fecha: new Date(ahora.getTime() - 20 * 24 * 60 * 60 * 1000), saldoAnterior: 500, saldoNuevo: 1200 }
+      ]
+    });
+
+    // Plan 2: Auto Nuevo (María)
+    const plan2 = new PlanAhorro({
+      id: 2,
+      perfilId: perfilMaria.id,
+      nombre: 'Comprar Auto Nuevo',
+      descripcion: 'Ahorrar para cambiar el auto por uno más nuevo',
+      objetivo: 'Cuota inicial para auto 2025',
+      montoActual: 2500,
+      montoMeta: 8000,
+      montoAhorrarMensual: 800,
+      categoria: 'Vehículo',
+      fechaInicio: new Date(ahora.getTime() - 90 * 24 * 60 * 60 * 1000),
+      fechaMeta: new Date(ahora.getTime() + 200 * 24 * 60 * 60 * 1000),
+      estado: 'activo',
+      prioridad: 'normal',
+      icono: '🚗',
+      color: '#FF9800',
+      estrategia: 'consistente',
+      notificacionActiva: true,
+      depositosRealizados: 3
+    });
+
+    // Plan 3: Educación Hija (María) - Casi completado
+    const plan3 = new PlanAhorro({
+      id: 3,
+      perfilId: perfilMaria.id,
+      nombre: 'Curso de Inglés Hija',
+      descripcion: 'Matricula del curso de inglés avanzado',
+      objetivo: 'Pagar curso completo de 3 meses',
+      montoActual: 950,
+      montoMeta: 1000,
+      montoAhorrarMensual: 250,
+      categoria: 'Educación',
+      fechaInicio: new Date(ahora.getTime() - 120 * 24 * 60 * 60 * 1000),
+      fechaMeta: new Date(ahora.getTime() + 30 * 24 * 60 * 60 * 1000),
+      estado: 'activo',
+      prioridad: 'urgente',
+      icono: '📚',
+      color: '#E91E63',
+      estrategia: 'agresiva',
+      notificacionActiva: true,
+      depositosRealizados: 4
+    });
+
+    // Plan 4: Emergencia (Carlos)
+    const plan4 = new PlanAhorro({
+      id: 4,
+      perfilId: perfilCarlos.id,
+      nombre: 'Fondo de Emergencia',
+      descripcion: 'Ahorrar equivalente a 3 meses de gastos',
+      objetivo: 'Tener respaldo para imprevistos',
+      montoActual: 3000,
+      montoMeta: 5000,
+      montoAhorrarMensual: 300,
+      categoria: 'Emergencia',
+      fechaInicio: new Date(ahora.getTime() - 200 * 24 * 60 * 60 * 1000),
+      fechaMeta: new Date(ahora.getTime() + 90 * 24 * 60 * 60 * 1000),
+      estado: 'activo',
+      prioridad: 'alta',
+      icono: '🚨',
+      color: '#F44336',
+      estrategia: 'flexible',
+      notificacionActiva: true
+    });
+
+    this.planesAhorro.push(plan1, plan2, plan3, plan4);
+
     console.log('✅ MockDatabase cargada con datos iniciales');
     console.log(`📊 Usuarios: ${this.users.length}`);
     console.log(`📊 Perfiles: ${this.perfiles.length}`);
@@ -703,6 +810,7 @@ class MockDatabase {
     console.log(`📊 Egresos: ${this.egresos.length}`);
     console.log(`📊 Historial: ${this.historial.length}`);
     console.log(`📊 Presupuestos: ${this.presupuestos.length}`);
+    console.log(`📊 Planes de Ahorro: ${this.planesAhorro.length}`);
     console.log(`📊 Logros: ${this.logros.length}`);
     console.log(`📊 Notificaciones: ${this.notificaciones.length}`);
   }
@@ -896,6 +1004,346 @@ class MockDatabase {
     }
     
     return notifs.sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  // =====================================================
+  // PLANES DE AHORRO
+  // =====================================================
+
+  /**
+   * Crea un nuevo plan de ahorro
+   */
+  crearPlanAhorro(planData) {
+    const nuevoId = Math.max(0, ...this.planesAhorro.map(p => p.id), 0) + 1;
+    const plan = new PlanAhorro({
+      ...planData,
+      id: nuevoId,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    
+    this.planesAhorro.push(plan);
+    this.saveToLocalStorage();
+    
+    return {
+      success: true,
+      plan,
+      message: 'Plan de ahorro creado exitosamente'
+    };
+  }
+
+  /**
+   * Obtiene todos los planes de ahorro de un perfil
+   */
+  getPlanesDePerfil(perfilId) {
+    return this.planesAhorro.filter(p => p.perfilId === perfilId).sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  /**
+   * Obtiene un plan de ahorro específico
+   */
+  obtenerPlanAhorro(planId) {
+    return this.planesAhorro.find(p => p.id === planId);
+  }
+
+  /**
+   * Actualiza un plan de ahorro
+   */
+  actualizarPlanAhorro(planId, datosActualizados) {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    Object.assign(plan, datosActualizados, { updatedAt: new Date() });
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      plan,
+      message: 'Plan de ahorro actualizado exitosamente'
+    };
+  }
+
+  /**
+   * Agrega un depósito a un plan de ahorro
+   */
+  agregarDepositoPlan(planId, monto, descripcion = '') {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    plan.agregarDeposito(monto, descripcion);
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      plan,
+      message: 'Depósito agregado exitosamente'
+    };
+  }
+
+  /**
+   * Retira dinero de un plan de ahorro
+   */
+  retirarDelPlan(planId, monto, descripcion = '') {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    if (monto > plan.montoActual) {
+      return {
+        success: false,
+        message: 'Monto insuficiente en el plan'
+      };
+    }
+
+    plan.retirarDeposito(monto, descripcion);
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      plan,
+      message: 'Retiro realizado exitosamente'
+    };
+  }
+
+  /**
+   * Reajusta los parámetros de un plan
+   */
+  reajustarPlan(planId, nuevasMetas) {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    plan.reajustar(nuevasMetas);
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      plan,
+      message: 'Plan reajustado exitosamente'
+    };
+  }
+
+  /**
+   * Completa un plan de ahorro
+   */
+  completarPlan(planId) {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    plan.completar();
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      plan,
+      message: 'Plan completado exitosamente'
+    };
+  }
+
+  /**
+   * Pausa un plan de ahorro
+   */
+  pausarPlan(planId) {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    plan.pausar();
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      plan,
+      message: 'Plan pausado exitosamente'
+    };
+  }
+
+  /**
+   * Reactiva un plan pausado
+   */
+  reactivarPlan(planId) {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    plan.reactivar();
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      plan,
+      message: 'Plan reactivado exitosamente'
+    };
+  }
+
+  /**
+   * Cancela un plan de ahorro
+   */
+  cancelarPlan(planId) {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    plan.cancelar();
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      plan,
+      message: 'Plan cancelado exitosamente'
+    };
+  }
+
+  /**
+   * Elimina un plan de ahorro
+   */
+  eliminarPlan(planId) {
+    const index = this.planesAhorro.findIndex(p => p.id === planId);
+    
+    if (index === -1) {
+      return {
+        success: false,
+        message: 'Plan de ahorro no encontrado'
+      };
+    }
+
+    this.planesAhorro.splice(index, 1);
+    this.saveToLocalStorage();
+
+    return {
+      success: true,
+      message: 'Plan de ahorro eliminado exitosamente'
+    };
+  }
+
+  /**
+   * Genera consejos basados en el rendimiento del plan
+   */
+  generarConsejosAhorro(planId) {
+    const plan = this.obtenerPlanAhorro(planId);
+    
+    if (!plan) {
+      return [];
+    }
+
+    const consejos = [];
+
+    // Consejo 1: Velocidad de ahorro
+    if (plan.velocidadAhorro < plan.montoAhorrarMensual * 0.8) {
+      consejos.push({
+        tipo: 'advertencia',
+        titulo: '⚠️ Ahorro por debajo del objetivo',
+        mensaje: `Estás ahorrando $${plan.velocidadAhorro.toFixed(2)}/mes, pero tu objetivo es $${plan.montoAhorrarMensual.toFixed(2)}/mes. Considera aumentar tus ahorros.`,
+        accion: 'reajustar'
+      });
+    } else if (plan.velocidadAhorro > plan.montoAhorrarMensual * 1.2) {
+      consejos.push({
+        tipo: 'exito',
+        titulo: '🎉 ¡Vas muy bien!',
+        mensaje: `Estás ahorrando $${plan.velocidadAhorro.toFixed(2)}/mes, ¡superando tu objetivo! A este ritmo, podrías alcanzar tu meta antes.`,
+        accion: 'ninguna'
+      });
+    }
+
+    // Consejo 2: Atraso
+    if (plan.estaAtrasado) {
+      consejos.push({
+        tipo: 'alerta',
+        titulo: '⏰ Estás atrasado en tu plan',
+        mensaje: `Tu plan está retrasado. Acelera tus ahorros para ponerte al día.`,
+        accion: 'reajustar'
+      });
+    }
+
+    // Consejo 3: Proximidad a meta
+    if (plan.progreso >= 75 && plan.progreso < 100) {
+      consejos.push({
+        tipo: 'info',
+        titulo: '📈 ¡Casi lo logras!',
+        mensaje: `Estás al ${plan.progreso.toFixed(1)}% de tu meta. Solo falta $${plan.montoFaltante.toFixed(2)}.`,
+        accion: 'ninguna'
+      });
+    }
+
+    // Consejo 4: Estrategia flexible
+    if (plan.estrategia === 'flexible' && plan.mesasRestantes > 6) {
+      consejos.push({
+        tipo: 'sugerencia',
+        titulo: '💡 Considera cambiar de estrategia',
+        mensaje: `Con tu estrategia flexible y tiempo disponible, podrías adoptar una estrategia más agresiva para alcanzar tu meta antes.`,
+        accion: 'reajustar'
+      });
+    }
+
+    return consejos;
+  }
+
+  /**
+   * Obtiene estadísticas de ahorro
+   */
+  obtenerEstadisticasAhorro(perfilId) {
+    const planes = this.getPlanesDePerfil(perfilId);
+
+    return {
+      totalPlanes: planes.length,
+      planesActivos: planes.filter(p => p.estado === 'activo').length,
+      planesCompletados: planes.filter(p => p.estado === 'completado').length,
+      planesPausados: planes.filter(p => p.estado === 'pausado').length,
+      planesCancelados: planes.filter(p => p.estado === 'cancelado').length,
+      montoAhorradoTotal: planes.reduce((sum, p) => sum + p.montoActual, 0),
+      montoMetaTotal: planes.reduce((sum, p) => sum + p.montoMeta, 0),
+      porcentajePromedioCompletitud: planes.length > 0 
+        ? planes.reduce((sum, p) => sum + p.progreso, 0) / planes.length
+        : 0,
+      planesEnPeligro: planes.filter(p => p.estaAtrasado && p.estado === 'activo'),
+      proximosPlanesACompletar: planes
+        .filter(p => p.estado === 'activo' && p.progreso < 100)
+        .sort((a, b) => b.progreso - a.progreso)
+        .slice(0, 3)
+    };
   }
 
   // =====================================================
@@ -1265,6 +1713,292 @@ class MockDatabase {
     historialPerfil.forEach(h => {
       console.log(`- [${h.tipo}] ${h.descripcion}: $${h.monto} (${h.fechaEjecucion.toLocaleDateString()}) - OrigenID: ${h.transaccionOrigenId || 'Ocasional'}`);
     });
+  }
+
+  // ======================== MÉTODOS PARA PLANES DE DEUDA ========================
+
+  /**
+   * Crear nuevo plan de deuda
+   */
+  crearPlanDeuda(planData) {
+    try {
+      const nuevoId = Math.max(0, ...this.planesDeuda.map(p => p.id), 0) + 1;
+      const plan = new PlanDeuda({
+        ...planData,
+        id: nuevoId,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      this.planesDeuda.push(plan);
+      this.saveToLocalStorage();
+
+      console.log(`✓ Deuda "${plan.nombre}" creada (ID: ${plan.id})`);
+      return { success: true, plan };
+    } catch (error) {
+      console.error('Error al crear deuda:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Obtener deudas del perfil actual
+   */
+  getPlanesDePerfil_Deuda(perfilId) {
+    return this.planesDeuda.filter(p => p.perfilId === perfilId).sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  /**
+   * Obtener deuda específica por ID
+   */
+  obtenerPlanDeuda(planId) {
+    return this.planesDeuda.find(p => p.id === planId);
+  }
+
+  /**
+   * Actualizar plan de deuda
+   */
+  actualizarPlanDeuda(planId, updates) {
+    try {
+      const plan = this.obtenerPlanDeuda(planId);
+      if (!plan) return { success: false, error: 'Plan no encontrado' };
+
+      Object.assign(plan, updates, { updatedAt: new Date() });
+      this.saveToLocalStorage();
+
+      console.log(`✓ Deuda "${plan.nombre}" actualizada`);
+      return { success: true, plan };
+    } catch (error) {
+      console.error('Error al actualizar deuda:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Agregar pago a una deuda
+   */
+  agregarPagoPlan(planId, monto, descripcion = '') {
+    try {
+      const plan = this.obtenerPlanDeuda(planId);
+      if (!plan) return { success: false, error: 'Plan no encontrado' };
+
+      const result = plan.agregarPago(monto, descripcion);
+      if (!result) return { success: false, error: 'No se pudo agregar el pago' };
+
+      this.saveToLocalStorage();
+      console.log(`✓ Pago de $${monto} agregado a "${plan.nombre}"`);
+      return { success: true, plan };
+    } catch (error) {
+      console.error('Error al agregar pago:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Reducir pago de una deuda
+   */
+  reducirPagoPlan(planId, monto, descripcion = '') {
+    try {
+      const plan = this.obtenerPlanDeuda(planId);
+      if (!plan) return { success: false, error: 'Plan no encontrado' };
+
+      const result = plan.reducirPago(monto, descripcion);
+      if (!result) return { success: false, error: 'Monto insuficiente' };
+
+      this.saveToLocalStorage();
+      console.log(`✓ Pago de $${monto} reducido de "${plan.nombre}"`);
+      return { success: true, plan };
+    } catch (error) {
+      console.error('Error al reducir pago:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Pausar plan de deuda
+   */
+  pausarPlanDeuda(planId) {
+    try {
+      const plan = this.obtenerPlanDeuda(planId);
+      if (!plan) return { success: false, error: 'Plan no encontrado' };
+
+      const result = plan.pausar();
+      if (!result) return { success: false, error: 'No se puede pausar este plan' };
+
+      this.saveToLocalStorage();
+      console.log(`✓ Deuda "${plan.nombre}" pausada`);
+      return { success: true, plan };
+    } catch (error) {
+      console.error('Error al pausar deuda:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Reactivar plan de deuda
+   */
+  reactivarPlanDeuda(planId) {
+    try {
+      const plan = this.obtenerPlanDeuda(planId);
+      if (!plan) return { success: false, error: 'Plan no encontrado' };
+
+      const result = plan.reactivar();
+      if (!result) return { success: false, error: 'No se puede reactivar este plan' };
+
+      this.saveToLocalStorage();
+      console.log(`✓ Deuda "${plan.nombre}" reactivada`);
+      return { success: true, plan };
+    } catch (error) {
+      console.error('Error al reactivar deuda:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Completar plan de deuda (marcar como pagado)
+   */
+  completarPlanDeuda(planId) {
+    try {
+      const plan = this.obtenerPlanDeuda(planId);
+      if (!plan) return { success: false, error: 'Plan no encontrado' };
+
+      plan.completar();
+      this.saveToLocalStorage();
+      console.log(`✓ Deuda "${plan.nombre}" completada`);
+      return { success: true, plan };
+    } catch (error) {
+      console.error('Error al completar deuda:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Cancelar plan de deuda
+   */
+  cancelarPlanDeuda(planId) {
+    try {
+      const plan = this.obtenerPlanDeuda(planId);
+      if (!plan) return { success: false, error: 'Plan no encontrado' };
+
+      plan.cancelar();
+      this.saveToLocalStorage();
+      console.log(`✓ Deuda "${plan.nombre}" cancelada`);
+      return { success: true, plan };
+    } catch (error) {
+      console.error('Error al cancelar deuda:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Eliminar plan de deuda
+   */
+  eliminarPlanDeuda(planId) {
+    try {
+      const index = this.planesDeuda.findIndex(p => p.id === planId);
+      if (index === -1) return { success: false, error: 'Plan no encontrado' };
+
+      const planEliminado = this.planesDeuda[index];
+      this.planesDeuda.splice(index, 1);
+      this.saveToLocalStorage();
+
+      console.log(`✓ Deuda "${planEliminado.nombre}" eliminada`);
+      return { success: true };
+    } catch (error) {
+      console.error('Error al eliminar deuda:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Generar consejos inteligentes para una deuda
+   */
+  generarConsejosDeuda(planId) {
+    const plan = this.obtenerPlanDeuda(planId);
+    if (!plan) return [];
+
+    const consejos = [];
+
+    // Consejo 1: Deuda atrasada
+    if (plan.estaAtrasada) {
+      consejos.push({
+        tipo: 'warning',
+        titulo: '⚠️ Deuda Atrasada',
+        descripcion: `Tu deuda "${plan.nombre}" venció hace ${Math.abs(plan.diasRestantes)} días. Realiza un pago lo antes posible.`,
+        urgencia: 'alta'
+      });
+    }
+
+    // Consejo 2: Fecha de pago próxima
+    if (plan.diasRestantes > 0 && plan.diasRestantes <= 7 && plan.estado === 'activo') {
+      consejos.push({
+        tipo: 'info',
+        titulo: '📅 Próxima Cuota Vencimiento',
+        descripcion: `Tu próxima cuota vence en ${plan.diasRestantes} días. Asegúrate de realizar el pago a tiempo.`,
+        urgencia: 'media'
+      });
+    }
+
+    // Consejo 3: Interés acumulado
+    if (plan.interesGenerado > 0 && plan.estado === 'activo') {
+      consejos.push({
+        tipo: 'alert',
+        titulo: '💰 Interés Acumulado',
+        descripcion: `Se ha acumulado $${plan.interesGenerado.toFixed(2)} en intereses. Considera aumentar tus pagos.`,
+        urgencia: 'media'
+      });
+    }
+
+    // Consejo 4: Progreso bueno
+    if (plan.progreso > 50 && plan.progreso < 100 && plan.estado === 'activo') {
+      consejos.push({
+        tipo: 'success',
+        titulo: '🎯 ¡Buen Progreso!',
+        descripcion: `Ya has pagado el ${Math.round(plan.progreso)}% de tu deuda. ¡Sigue así!`,
+        urgencia: 'baja'
+      });
+    }
+
+    // Consejo 5: Recomendación de pago aumentado
+    if (plan.mesesFaltantes > 12 && plan.estado === 'activo') {
+      const nuevaCuota = (plan.montoFaltante / Math.min(plan.mesesFaltantes - 3, 12)).toFixed(2);
+      consejos.push({
+        tipo: 'suggestion',
+        titulo: '💡 Estrategia de Pago',
+        descripcion: `Aumentar tu cuota a $${nuevaCuota}/mes te permitiría terminar en 12 meses en lugar de ${plan.mesesFaltantes}.`,
+        urgencia: 'baja'
+      });
+    }
+
+    return consejos;
+  }
+
+  /**
+   * Obtener estadísticas de deudas del perfil
+   */
+  obtenerEstadisticasDeuda(perfilId) {
+    const deudas = this.getPlanesDePerfil_Deuda(perfilId);
+    
+    return {
+      totalDeudas: deudas.length,
+      deudasActivas: deudas.filter(d => d.estado === 'activo').length,
+      totalDeuda: deudas.reduce((sum, d) => sum + d.montoDeuda, 0),
+      totalPagado: deudas.reduce((sum, d) => sum + d.montoPagado, 0),
+      totalFaltante: deudas.reduce((sum, d) => sum + d.montoFaltante, 0),
+      promedioProgreso: deudas.length > 0 
+        ? (deudas.reduce((sum, d) => sum + d.progreso, 0) / deudas.length).toFixed(2)
+        : 0,
+      deudasCompletadas: deudas.filter(d => d.estado === 'completado').length,
+      tasaInteresProm: deudas.length > 0
+        ? (deudas.reduce((sum, d) => sum + d.tasaInteres, 0) / deudas.length).toFixed(2)
+        : 0,
+      deudasAtrasadas: deudas.filter(d => d.estaAtrasada).length,
+      proximoVencimiento: deudas.filter(d => d.estado === 'activo').sort((a, b) => a.diasRestantes - b.diasRestantes)[0] || null,
+      deudaMasPrioritaria: deudas.filter(d => d.estado === 'activo').sort((a, b) => {
+        const prioridades = { urgente: 4, alta: 3, normal: 2, baja: 1 };
+        return prioridades[b.prioridad] - prioridades[a.prioridad];
+      })[0] || null
+    };
   }
 }
 

@@ -1,0 +1,206 @@
+.deudaCard {
+  background: white;
+  border-radius: 12px;
+  border-left: 5px solid #FF6B6B;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.deudaCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.titleSection {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.icono {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.nombre {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.acreedor {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.estado {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+}
+
+.content {
+  margin: 15px 0;
+}
+
+.descripcion p {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.progresoBarra {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.barraFondo {
+  flex: 1;
+  height: 8px;
+  background: #E0E0E0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barraProgreso {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.porcentaje {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  min-width: 40px;
+  text-align: right;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.dato {
+  background: #F5F5F5;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.dato label {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.valor {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+}
+
+.interes {
+  background: #FFF3CD;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #856404;
+  margin: 10px 0;
+  border-left: 3px solid #FF9800;
+}
+
+.fechas {
+  background: #E8F5E9;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #2E7D32;
+  margin: 10px 0;
+  border-left: 3px solid #4CAF50;
+}
+
+.fechas.warning {
+  background: #FFEBEE;
+  color: #C62828;
+  border-left-color: #F44336;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.btnDetalles,
+.btnEditar,
+.btnEliminar {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnDetalles {
+  background: #4CAF50;
+  color: white;
+}
+
+.btnDetalles:hover {
+  background: #45a049;
+}
+
+.btnEditar {
+  background: #2196F3;
+  color: white;
+}
+
+.btnEditar:hover {
+  background: #0b7dda;
+}
+
+.btnEliminar {
+  background: #F44336;
+  color: white;
+}
+
+.btnEliminar:hover {
+  background: #da190b;
+}
+
+@media (max-width: 768px) {
+  .datos {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+}

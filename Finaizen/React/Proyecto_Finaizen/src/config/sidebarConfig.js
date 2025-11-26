@@ -7,7 +7,7 @@ export const userSidebarMenuItems = [
   { label: 'Administrador ingresos/egresos', path: '/user/administrar-registros' },
   { label: 'Plan de Ahorros', path: '/user/plan-ahorro' },
   { label: 'Ajuste de presupuestos', path: '/user/presupuestos' },
-  { label: 'Planificador de deudas', path: '/user/planificador-deudas' },
+  { label: 'Planificador de deudas', path: '/user/plan-deuda' },
   { label: 'Logros y Recompensas', path: '/user/logros' },
   { label: 'Notificaciones', path: '/user/notificaciones' },
 ];
